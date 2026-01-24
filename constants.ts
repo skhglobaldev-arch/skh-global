@@ -110,7 +110,7 @@ export const STEPS: StepItem[] = [
 export const PAIN_POINTS: PainPoint[] = [
   {
     question: "Do you really own a business, or just a website?",
-    pain: "Most sites are static brochures that don't do any real work.",
+    pain: "Most Sites are static brochures that don't do any real work.",
     solution: "We build revenue-ready systems with booking, payments, and dashboards that run your business 24/7.",
     icon: Rocket
   },
