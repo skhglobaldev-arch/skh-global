@@ -4,6 +4,7 @@ import { NavBar } from './components/NavBar';
 import { Footer } from './components/Footer';
 import { AIFaq } from './components/AIFaq';
 import { DigitalRainBackground } from './components/DigitalRainBackground';
+import { SystemIntro } from './components/SystemIntro';
 
 // Page Views
 import { HomeView } from './views/HomeView';
@@ -15,6 +16,7 @@ import { ContactView } from './views/ContactView';
 export default function App() {
   const [activePage, setActivePage] = useState('home');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isSystemInitialized, setIsSystemInitialized] = useState(false);
 
   const handlePageChange = (page: string) => {
     if (page === activePage) return;
@@ -32,8 +34,13 @@ export default function App() {
       {/* 1. Permanent Background Layer */}
       <DigitalRainBackground />
       
-      {/* 2. Content Layer */}
-      <div className="relative z-10">
+      {/* 2. Entrance Gate */}
+      {!isSystemInitialized && (
+        <SystemIntro onComplete={() => setIsSystemInitialized(true)} />
+      )}
+
+      {/* 3. Content Layer (Only visible after initialization) */}
+      <div className={`relative z-10 transition-opacity duration-1000 ${isSystemInitialized ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <NavBar activePage={activePage} setActivePage={handlePageChange} />
         
         <main className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
