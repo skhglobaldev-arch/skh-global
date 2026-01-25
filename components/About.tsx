@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, Users, Quote, Building2 } from 'lucide-react';
+import { CheckCircle2, Quote, Building2 } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 import { Reveal } from './Reveal';
 
@@ -62,13 +62,14 @@ export const About: React.FC = () => {
                 ))}
               </div>
 
-              <div className="flex items-center gap-4 pt-8 border-t border-slate-800/50">
-                 <div className="w-14 h-14 rounded-2xl bg-slate-900/60 flex items-center justify-center border border-slate-700/50 shadow-lg backdrop-blur-md">
-                   <Users className="text-brand-400" size={24} />
+              <div className="flex items-center gap-5 pt-8 border-t border-slate-800/50">
+                 <div className="relative group">
+                    <div className="absolute inset-0 bg-brand-500/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <img src="https://files.catbox.moe/rx7p0x.jpg" alt="SKH Team" className="w-14 h-14 object-cover rounded-xl brightness-110 relative z-10 shadow-lg" />
                  </div>
                  <div>
-                   <p className="text-white font-bold font-display text-lg tracking-tight">The SKH Team</p>
-                   <p className="text-xs text-slate-500 font-mono uppercase tracking-widest">Senior Engineers & Architects</p>
+                   <p className="text-white font-bold font-display text-xl tracking-tight">The SKH Team</p>
+                   <p className="text-xs text-slate-500 font-mono uppercase tracking-[0.3em] font-bold">Engineering Excellence</p>
                  </div>
               </div>
             </div>

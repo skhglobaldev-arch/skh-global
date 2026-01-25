@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, Sparkles, Hexagon } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, Sparkles } from 'lucide-react';
 import { chatWithAI } from '../services/gemini';
 import { ChatMessage } from '../types';
 
@@ -54,39 +55,39 @@ export const AIFaq: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="w-[350px] sm:w-[400px] h-[500px] glass-panel border border-slate-700/50 rounded-2xl flex flex-col shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-300">
+        <div className="w-[350px] sm:w-[400px] h-[550px] glass-panel border border-slate-700/50 rounded-3xl flex flex-col shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-300">
           
           {/* Chat Header */}
-          <div className="bg-slate-900/90 p-4 border-b border-slate-700 flex justify-between items-center backdrop-blur-md">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center">
-                 <Hexagon size={16} className="text-brand-400 fill-brand-400/20" />
+          <div className="bg-slate-900/95 p-5 border-b border-slate-800 flex justify-between items-center backdrop-blur-md">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center p-1.5 shadow-inner">
+                 <img src="https://files.catbox.moe/rx7p0x.jpg" alt="SKH" className="w-full h-full object-cover rounded-lg brightness-110" />
               </div>
               <div>
-                 <h3 className="text-white font-bold text-sm font-display">SKH Assistant</h3>
+                 <h3 className="text-white font-black text-sm font-display tracking-tight uppercase">SKH Assistant</h3>
                  <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider">Online</span>
+                    <span className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">Protocol_Active</span>
                  </div>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white transition-colors bg-slate-800/50 p-1.5 rounded-md hover:bg-slate-700">
-              <X size={16} />
+            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white transition-colors bg-slate-800/50 p-2 rounded-xl hover:bg-slate-700">
+              <X size={18} />
             </button>
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-950/30">
+          <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar bg-slate-950/40">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${
+                  className={`max-w-[85%] rounded-[1.5rem] px-6 py-4 text-sm leading-relaxed shadow-xl ${
                     msg.role === 'user'
-                      ? 'bg-brand-600 text-white rounded-br-sm shadow-md'
-                      : 'bg-slate-800 text-slate-200 rounded-bl-sm border border-slate-700 shadow-sm'
+                      ? 'bg-brand-600 text-white rounded-br-none'
+                      : 'bg-slate-800/80 text-slate-200 rounded-bl-none border border-slate-700'
                   }`}
                 >
                   {msg.text}
@@ -95,10 +96,10 @@ export const AIFaq: React.FC = () => {
             ))}
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-slate-800 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1 border border-slate-700">
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-75"></span>
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-150"></span>
+                <div className="bg-slate-800/80 rounded-[1.5rem] rounded-bl-none px-5 py-4 flex items-center gap-1.5 border border-slate-700 shadow-xl">
+                  <span className="w-1.5 h-1.5 bg-brand-400 rounded-full animate-bounce"></span>
+                  <span className="w-1.5 h-1.5 bg-brand-400 rounded-full animate-bounce delay-75"></span>
+                  <span className="w-1.5 h-1.5 bg-brand-400 rounded-full animate-bounce delay-150"></span>
                 </div>
               </div>
             )}
@@ -106,20 +107,20 @@ export const AIFaq: React.FC = () => {
           </div>
 
           {/* Input Area */}
-          <form onSubmit={handleSend} className="p-3 bg-slate-900/90 border-t border-slate-700 flex gap-2 backdrop-blur-md">
+          <form onSubmit={handleSend} className="p-4 bg-slate-900/95 border-t border-slate-800 flex gap-3 backdrop-blur-md">
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask the SKH team..."
-              className="flex-1 bg-slate-800/50 text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-brand-500 border border-slate-700 placeholder-slate-500 transition-all"
+              placeholder="Query architectural team..."
+              className="flex-1 bg-slate-800/50 text-white text-sm rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-500/50 border border-slate-700 placeholder-slate-600 transition-all font-medium"
             />
             <button
               type="submit"
               disabled={!inputValue.trim() || isTyping}
-              className="p-3 bg-brand-600 rounded-xl text-white hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20"
+              className="p-4 bg-brand-600 rounded-2xl text-white hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-brand-500/20 active:scale-90"
             >
-              {isTyping ? <Loader2 size={18} className="animate-spin"/> : <Send size={18} />}
+              {isTyping ? <Loader2 size={20} className="animate-spin"/> : <Send size={20} />}
             </button>
           </form>
         </div>

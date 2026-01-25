@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Mail, Menu, X, Hexagon } from 'lucide-react';
+import { Mail, Menu, X } from 'lucide-react';
 
 interface NavBarProps {
   activePage: string;
@@ -31,18 +32,20 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             
-            {/* Logo Module */}
+            {/* Logo Module with New Image */}
             <div 
-              className={`pointer-events-auto flex items-center gap-3 backdrop-blur-xl border border-white/10 px-4 py-2.5 rounded-2xl transition-all duration-500 ${scrolled ? 'bg-slate-900/80 shadow-lg' : 'bg-slate-900/40'}`}
+              className={`pointer-events-auto flex items-center gap-3 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-2xl transition-all duration-500 cursor-pointer ${scrolled ? 'bg-slate-900/80 shadow-lg' : 'bg-slate-900/40'}`}
               onClick={() => setActivePage('home')}
             >
-              <div className="relative group cursor-pointer">
-                 <div className="absolute inset-0 bg-brand-500/40 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                 <div className="relative w-8 h-8 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center text-brand-400">
-                    <Hexagon size={18} className="animate-spin-slow" />
-                 </div>
+              <div className="relative group">
+                 <div className="absolute inset-0 bg-brand-500/30 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                 <img 
+                    src="https://files.catbox.moe/rx7p0x.jpg" 
+                    alt="SKH Logo" 
+                    className="relative w-10 h-10 object-cover rounded-lg brightness-110 contrast-110 filter drop-shadow-[0_0_8px_rgba(14,165,233,0.3)]" 
+                 />
               </div>
-              <span className="font-display font-bold text-lg tracking-tight text-white hidden sm:block">
+              <span className="font-display font-black text-xl tracking-tighter text-white hidden sm:block uppercase">
                 SKH<span className="text-brand-400">.GLOBAL</span>
               </span>
             </div>
@@ -99,6 +102,8 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
          {/* Background Grid */}
          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none"></div>
          
+         <img src="https://files.catbox.moe/rx7p0x.jpg" alt="Logo" className="w-20 h-20 mb-4 rounded-2xl brightness-110 contrast-110 shadow-2xl" />
+
          {navItems.map((item, idx) => (
             <button
                key={item.id}
