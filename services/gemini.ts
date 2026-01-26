@@ -1,7 +1,5 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+import { GoogleGenAI } from "@google/genai";
 
 const SYSTEM_INSTRUCTION_ADVISOR = `
 You are the Lead Solutions Architect at SKH.GLOBAL.
@@ -15,66 +13,84 @@ Output a structured response in MARKDOWN:
 `;
 
 const SYSTEM_INSTRUCTION_DEMO = `
-You are a Senior Creative Director at a top-tier digital agency.
-Based on the user's concept, generate a JSON for a ultra-premium, conversion-focused landing page.
-Avoid generic text. Use high-impact business terminology.
-
+You are a World-Class Creative Director.
+Generate a JSON for a high-end, "shik" (chic), and ultra-modern landing page.
+Use high-contrast layouts, Bento grids, and sophisticated color palettes.
 JSON Structure:
 {
-  "appName": "The Brand Name",
-  "primaryColor": "A premium hex code reflecting the brand identity",
-  "fontStyle": "serif" | "sans" | "display",
-  "layoutMode": "dark" | "light",
-  "hero": {
-    "title": "A headline that commands attention",
-    "subtitle": "A subheadline that defines the value proposition clearly",
-    "imageSearch": "Hyper-specific Unsplash search term for high-quality, professional photography"
+  "appName": "Brand Name",
+  "primaryColor": "#hex (vibrant neon or deep luxurious gold/blue)",
+  "fontStyle": "display",
+  "layoutMode": "dark",
+  "hero": { 
+    "title": "A powerful 4-6 word headline", 
+    "subtitle": "A persuasive sub-headline", 
+    "imageSearch": "luxury tech aesthetic" 
   },
+  "navigation": ["Services", "Architecture", "Roadmap", "Connect"],
   "sections": [
     {
       "type": "bento-grid",
-      "title": "System Core Capabilities",
+      "title": "Core Ecosystem",
       "items": [
-        {"title": "Core Perk 1", "desc": "Detailed USP description", "imageSearch": "specific keyword", "size": "large"},
-        {"title": "Core Perk 2", "desc": "Detailed USP description", "imageSearch": "specific keyword", "size": "small"},
-        {"title": "Core Perk 3", "desc": "Detailed USP description", "imageSearch": "specific keyword", "size": "small"}
+        { "title": "Neural Logic", "desc": "Autonomous decision engines.", "size": "large" },
+        { "title": "Cloud Matrix", "desc": "Infinite scaling via edge computing.", "size": "small" },
+        { "title": "Real-time Sync", "desc": "Zero-latency data synchronization.", "size": "small" },
+        { "title": "Secure Vault", "desc": "Bank-grade encryption protocols.", "size": "small" }
       ]
-    },
-    {
-      "type": "showcase",
-      "title": "High-Performance Integration",
-      "content": "Professional copy about how this system integrates into their business life.",
-      "imageSearch": "stunning industrial or lifestyle photography keyword"
     },
     {
       "type": "pricing",
-      "title": "Tiered Acquisition Models",
+      "title": "Project Scale",
       "plans": [
-        {"name": "Standard License", "price": "$1,999", "features": ["Feature Set Alpha", "Cloud Deployment", "Standard Support"]},
-        {"name": "Architect Suite", "price": "Custom", "features": ["Full Module Access", "Neural Integration", "Priority 1 Support"], "popular": true}
+        { "name": "MVP Genesis", "price": "$5k", "features": ["Core Architecture", "High-End UI", "Standard Automations"], "popular": false },
+        { "name": "Empire Elite", "price": "$15k", "features": ["Full Automation", "Global Scalability", "24/7 Priority Ops"], "popular": true }
       ]
     }
-  ],
-  "navigation": ["Solutions", "Infrastructure", "Investment", "Contact"]
+  ]
 }
-Keywords for images must be in English for Unsplash compatibility.
 `;
 
-export const generateProjectPlan = async (userIdea: string): Promise<string> => {
+/**
+ * Helper to handle retries for overloaded models (503) or rate limits (429)
+ */
+async function callWithRetry(fn: () => Promise<any>, retries = 3, delay = 1000): Promise<any> {
   try {
+    return await fn();
+  } catch (error: any) {
+    const isRetryable = error?.message?.includes("503") || error?.message?.includes("429") || error?.message?.includes("overloaded");
+    if (isRetryable && retries > 0) {
+      console.warn(`Model overloaded. Retrying in ${delay}ms... (${retries} attempts left)`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return callWithRetry(fn, retries - 1, delay * 2);
+    }
+    throw error;
+  }
+}
+
+export const generateProjectPlan = async (userIdea: string): Promise<string> => {
+  return callWithRetry(async () => {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: userIdea,
-      config: { systemInstruction: SYSTEM_INSTRUCTION_ADVISOR },
+      config: { 
+        systemInstruction: SYSTEM_INSTRUCTION_ADVISOR,
+        temperature: 0.8 
+      },
     });
-    return response.text || "Error generating blueprint.";
-  } catch (error) {
-    return "Connection error to AI Architect.";
-  }
+    return response.text || "Synthesis complete.";
+  }).catch(error => {
+    if (error?.message?.includes("API key not valid") || error?.message?.includes("400")) {
+      throw new Error("AUTH_REQUIRED");
+    }
+    throw error;
+  });
 };
 
 export const generateVisualDemo = async (userIdea: string): Promise<any> => {
-  try {
+  return callWithRetry(async () => {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: userIdea,
@@ -84,18 +100,20 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
       },
     });
     return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+  }).catch(() => null);
 };
 
-export const chatWithAI = async (message: string, history: { role: 'user' | 'model', text: string }[]): Promise<string> => {
-  const chat = ai.chats.create({
-    model: "gemini-3-flash-preview",
-    config: { systemInstruction: "You are the SKH.GLOBAL official AI consultant. Be professional, concise, and helpful." },
-    history: history.map(h => ({ role: h.role, parts: [{ text: h.text }] }))
-  });
-  const result = await chat.sendMessage({ message });
-  return result.text || "";
+export const chatWithAI = async (message: string, history: any[]): Promise<string> => {
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    const chat = ai.chats.create({
+      model: "gemini-3-flash-preview",
+      config: { systemInstruction: "You are the SKH.GLOBAL official AI. Be elite, professional, and helpful." },
+      history: history.map((h: any) => ({ role: h.role, parts: [{ text: h.text }] }))
+    });
+    const result = await chat.sendMessage({ message });
+    return result.text || "";
+  } catch (error) {
+    return "The communication array is offline. Our engineers are investigating.";
+  }
 };
