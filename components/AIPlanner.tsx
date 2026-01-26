@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateProjectPlan, generateVisualDemo } from '../services/gemini';
-import { Loader2, Copy, CheckCircle2, Layout, FileText, Zap, Cpu, Key, AlertTriangle, RefreshCcw, ExternalLink } from 'lucide-react';
+import { Loader2, Copy, CheckCircle2, Layout, FileText, Zap, Cpu, Key, RefreshCcw, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { AppPreview } from './AppPreview';
 
@@ -13,15 +13,25 @@ export const AIPlanner: React.FC = () => {
   const [loadingStep, setLoadingStep] = useState('');
   const [isCopied, setIsCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'blueprint' | 'demo'>('blueprint');
-  const [errorType, setErrorType] = useState<'none' | 'auth' | 'overloaded' | 'general'>('none');
+  const [errorState, setErrorState] = useState<'none' | 'auth' | 'overloaded'>('none');
+  const [hasKey, setHasKey] = useState(true);
 
-  const handleRepairConnection = async () => {
-    if ((window as any).aistudio) {
-      // این متد دیالوگ تنظیم کلید را باز می‌کند
+  useEffect(() => {
+    const checkKey = async () => {
+      if ((window as any).aistudio?.hasSelectedApiKey) {
+        const selected = await (window as any).aistudio.hasSelectedApiKey();
+        setHasKey(selected);
+      }
+    };
+    checkKey();
+  }, []);
+
+  const handleOpenKeyDialog = async () => {
+    if ((window as any).aistudio?.openSelectKey) {
       await (window as any).aistudio.openSelectKey();
-      // بعد از بستن دیالوگ، شبیه‌سازی موفقیت‌آمیز بودن برای اجازه تلاش مجدد
-      setErrorType('none');
-      window.location.reload(); // رفرش برای اعمال کلید جدید
+      // Assume success as per guidelines to avoid race condition
+      setHasKey(true);
+      setErrorState('none');
     }
   };
 
@@ -30,33 +40,34 @@ export const AIPlanner: React.FC = () => {
     if (!idea.trim()) return;
 
     setIsLoading(true);
-    setErrorType('none');
+    setErrorState('none');
     setPlan('');
     setDemoData(null);
-    setLoadingStep('Initializing Neural Link...');
+    setLoadingStep('Accessing Neural Substrate...');
     
     try {
-      setLoadingStep('Accessing Gemini Matrix...');
       const planResult = await generateProjectPlan(idea);
       setPlan(planResult);
 
-      setLoadingStep('Rendering UI Prototype...');
+      setLoadingStep('Simulating Visual Interface...');
       const demoResult = await generateVisualDemo(idea);
-      setDemoData(demoResult);
-      
-      setActiveTab(demoResult ? 'demo' : 'blueprint');
-    } catch (err: any) {
-      console.error("Critical System Error:", err);
-      if (err.message === "AUTH_REQUIRED") {
-        setErrorType('auth');
-      } else if (err?.message?.includes("503") || err?.message?.includes("overloaded")) {
-        setErrorType('overloaded');
+      if (demoResult) {
+        setDemoData(demoResult);
+        setActiveTab('demo');
       } else {
-        setErrorType('general');
+        setActiveTab('blueprint');
+      }
+    } catch (err: any) {
+      const msg = err?.message?.toLowerCase() || "";
+      if (msg.includes("auth") || msg.includes("api_key") || msg.includes("not found")) {
+        setErrorState('auth');
+      } else if (msg.includes("503") || msg.includes("overloaded")) {
+        setErrorState('overloaded');
+      } else {
+        setErrorState('none');
       }
     } finally {
       setIsLoading(false);
-      setLoadingStep('');
     }
   };
 
@@ -66,49 +77,52 @@ export const AIPlanner: React.FC = () => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  if (!hasKey) {
+    return (
+      <div className="max-w-4xl mx-auto glass-panel p-16 rounded-[4rem] text-center border border-brand-500/20 shadow-2xl animate-in zoom-in duration-500">
+        <Key className="text-brand-400 mx-auto mb-10 animate-pulse" size={64} />
+        <h3 className="text-4xl font-display font-black text-white mb-6 uppercase tracking-tighter">Authorization Required</h3>
+        <p className="text-slate-400 text-xl mb-12 font-light leading-relaxed max-w-lg mx-auto">
+          To initialize the System Architect, you must select a valid Gemini API Key from a paid project.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <button 
+            onClick={handleOpenKeyDialog}
+            className="px-12 py-5 bg-brand-600 text-white font-black rounded-2xl hover:bg-brand-500 transition-all flex items-center justify-center gap-3 shadow-[0_20px_60px_rgba(14,165,233,0.3)]"
+          >
+            <Zap size={22} /> Connect Key
+          </button>
+          <a 
+            href="https://ai.google.dev/gemini-api/docs/billing" 
+            target="_blank" 
+            className="px-12 py-5 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-3"
+          >
+            Billing Docs <ExternalLink size={18} />
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-12">
-      <div className="glass-panel rounded-[3.5rem] p-12 border border-slate-700 shadow-2xl relative overflow-hidden max-w-5xl mx-auto w-full">
+      <div className="glass-panel rounded-[3.5rem] p-12 border border-slate-700 shadow-2xl relative overflow-hidden max-w-5xl mx-auto w-full bg-slate-950/40">
         <div className="flex items-center gap-8 mb-10">
-          <div className="w-20 h-20 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center justify-center">
-            <Cpu size={40} className={isLoading ? 'animate-spin' : ''} />
+          <div className="w-16 h-16 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(14,165,233,0.1)]">
+            <Cpu size={32} className={isLoading ? 'animate-spin' : ''} />
           </div>
           <div>
-            <h3 className="text-3xl font-display font-black text-white">System Architect <span className="text-brand-400">v3.8</span></h3>
-            <p className="text-slate-400 text-sm">Automated logic-to-infrastructure compiler.</p>
+            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">Lead Architect <span className="text-brand-400">GPT-3.0</span></h3>
+            <p className="text-slate-500 text-xs font-mono uppercase tracking-[0.3em]">Holographic Logic Engine</p>
           </div>
         </div>
 
-        {errorType === 'auth' ? (
-          <div className="p-10 rounded-3xl bg-amber-500/10 border border-amber-500/30 text-center mb-8 animate-in fade-in zoom-in duration-500">
-            <Key className="text-amber-500 mx-auto mb-6" size={48} />
-            <h4 className="text-2xl font-bold text-white mb-4">Authentication Error</h4>
-            <p className="text-amber-200/70 mb-8 max-w-md mx-auto">
-              The current API Key is either missing, expired, or doesn't have access to Gemini 2.0/3.0 models.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={handleRepairConnection}
-                className="px-10 py-4 bg-amber-500 text-black font-black rounded-2xl hover:bg-amber-400 transition-all flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(245,158,11,0.3)]"
-              >
-                <RefreshCcw size={20} /> Fix Connection
-              </button>
-              <a 
-                href="https://aistudio.google.com/app/apikey" 
-                target="_blank" 
-                className="px-10 py-4 bg-slate-800 text-white font-bold rounded-2xl hover:bg-slate-700 transition-all flex items-center justify-center gap-3"
-              >
-                Get New Key <ExternalLink size={18} />
-              </a>
-            </div>
-          </div>
-        ) : errorType === 'overloaded' ? (
-          <div className="p-10 rounded-3xl bg-brand-500/10 border border-brand-500/30 text-center mb-8">
-            <AlertTriangle className="text-brand-400 mx-auto mb-6" size={48} />
-            <h4 className="text-2xl font-bold text-white mb-4">Neural Overload</h4>
-            <p className="text-slate-400 mb-8">Gemini servers are busy. Please wait 10 seconds and retry.</p>
-            <button onClick={handleSubmit} className="px-10 py-4 bg-white text-black font-black rounded-2xl hover:bg-brand-50 transition-all">
-              <Zap size={20} /> Re-try Synthesis
+        {errorState === 'auth' ? (
+          <div className="p-10 rounded-3xl bg-red-500/10 border border-red-500/20 text-center animate-in fade-in zoom-in duration-500">
+            <h4 className="text-xl font-bold text-white mb-4">Neural Link Severed</h4>
+            <p className="text-slate-400 mb-8">The requested model was not found or the key is invalid. Please re-authorize.</p>
+            <button onClick={handleOpenKeyDialog} className="px-10 py-4 bg-white text-black font-black rounded-xl hover:bg-brand-50 transition-all flex items-center gap-2 mx-auto">
+               <RefreshCcw size={18} /> Re-Connect System
             </button>
           </div>
         ) : (
@@ -116,52 +130,56 @@ export const AIPlanner: React.FC = () => {
             <textarea
               value={idea}
               onChange={(e) => setIdea(e.target.value)}
-              placeholder="Describe your vision (e.g., A luxury real-time booking system for yacht rentals)..."
-              className="w-full h-48 bg-slate-900/60 border-2 border-slate-800 rounded-[2rem] p-8 text-white focus:ring-4 focus:ring-brand-500/20 focus:border-brand-500/50 outline-none transition-all text-xl mb-8"
+              placeholder="Input your vision (e.g., A global logistics automation hub)..."
+              className="w-full h-40 bg-slate-900/60 border-2 border-slate-800/50 rounded-[2rem] p-8 text-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500/50 outline-none transition-all text-xl mb-8 placeholder:opacity-20"
             />
             <button
               type="submit"
               disabled={isLoading || !idea.trim()}
-              className="w-full py-6 bg-white text-slate-950 rounded-2xl font-black text-xl hover:bg-brand-50 transition-all flex items-center justify-center gap-4 disabled:opacity-50 shadow-xl"
+              className="w-full py-6 bg-brand-600 text-white rounded-2xl font-black text-xl hover:bg-brand-500 transition-all flex items-center justify-center gap-4 disabled:opacity-30 shadow-[0_20px_50px_rgba(14,165,233,0.2)]"
             >
               {isLoading ? <Loader2 className="animate-spin" /> : <Zap size={24} />}
-              {isLoading ? 'Synthesizing Protocol...' : 'Initialize Build'}
+              {isLoading ? 'Processing Neural Streams...' : 'Synthesize Architecture'}
             </button>
           </form>
         )}
       </div>
 
-      {(plan || isLoading) && errorType === 'none' && (
-        <div className="max-w-full mx-auto w-full animate-in fade-in slide-in-from-bottom-10 duration-700">
+      {(plan || isLoading) && errorState === 'none' && (
+        <div className="max-w-full mx-auto w-full animate-in fade-in slide-in-from-bottom-10 duration-1000">
           <div className="flex justify-center mb-10">
-             <div className="flex p-2 bg-slate-900/80 rounded-[2rem] border border-white/5 backdrop-blur-md">
-                <button onClick={() => setActiveTab('demo')} className={`flex items-center gap-3 px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === 'demo' ? 'bg-brand-600 text-white' : 'text-slate-500 hover:text-white'}`}><Layout size={18} /> UI Preview</button>
-                <button onClick={() => setActiveTab('blueprint')} className={`flex items-center gap-3 px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === 'blueprint' ? 'bg-brand-600 text-white' : 'text-slate-500 hover:text-white'}`}><FileText size={18} /> Blueprint</button>
+             <div className="flex p-1.5 bg-slate-900/90 rounded-2xl border border-white/5 backdrop-blur-xl">
+                <button onClick={() => setActiveTab('demo')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'demo' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><Layout size={14} /> UI Prototype</button>
+                <button onClick={() => setActiveTab('blueprint')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'blueprint' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><FileText size={14} /> Logic Blueprint</button>
              </div>
           </div>
-          <div className="glass-panel rounded-[3.5rem] p-10 border border-white/5 min-h-[600px] relative overflow-hidden bg-slate-950/40">
+          <div className="glass-panel rounded-[4rem] p-1 border border-white/5 min-h-[600px] relative overflow-hidden">
             {isLoading && (
-              <div className="absolute inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex flex-col items-center justify-center text-center p-8">
-                 <div className="w-24 h-24 rounded-full border-4 border-slate-800 border-t-brand-500 animate-spin mb-8"></div>
-                 <p className="text-2xl font-display font-bold text-white tracking-widest uppercase mb-2">Processing Protocol...</p>
-                 <p className="text-brand-400 font-mono text-xs animate-pulse">{loadingStep}</p>
+              <div className="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-3xl flex flex-col items-center justify-center text-center">
+                 <div className="w-16 h-16 rounded-full border-2 border-slate-800 border-t-brand-500 animate-spin mb-6"></div>
+                 <p className="text-xl font-display font-black text-white tracking-[0.2em] uppercase mb-2">Architecting...</p>
+                 <p className="text-brand-400 font-mono text-[10px] uppercase tracking-[0.4em] animate-pulse">{loadingStep}</p>
               </div>
             )}
-            {activeTab === 'blueprint' ? (
-              <div className="prose prose-invert prose-xl max-w-none">
-                <div className="flex justify-end mb-8">
-                  <button onClick={copyToClipboard} className="flex items-center gap-2 text-sm bg-white/5 p-3 rounded-xl border border-white/10 hover:bg-white/10">
-                    {isCopied ? <CheckCircle2 className="text-green-500" size={18}/> : <Copy size={18}/>}
-                    {isCopied ? "Copied" : "Export Blueprint"}
-                  </button>
+            <div className="p-8 md:p-12">
+              {activeTab === 'blueprint' ? (
+                <div className="prose prose-invert prose-lg max-w-none animate-in fade-in duration-500">
+                  <div className="flex justify-end mb-8">
+                    <button onClick={copyToClipboard} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-white/5 px-6 py-3 rounded-full border border-white/10 hover:bg-white/10 transition-all">
+                      {isCopied ? <CheckCircle2 className="text-emerald-500" size={14}/> : <Copy size={14}/>}
+                      {isCopied ? "Copied" : "Export Assets"}
+                    </button>
+                  </div>
+                  <div className="bg-slate-950/50 p-10 rounded-[3rem] border border-white/5 shadow-inner">
+                    <ReactMarkdown>{plan}</ReactMarkdown>
+                  </div>
                 </div>
-                <div className="bg-slate-900/40 p-8 md:p-12 rounded-3xl border border-white/5">
-                  <ReactMarkdown>{plan}</ReactMarkdown>
+              ) : (
+                <div className="animate-in fade-in zoom-in-95 duration-700">
+                  <AppPreview data={demoData} />
                 </div>
-              </div>
-            ) : (
-              demoData ? <AppPreview data={demoData} /> : <div className="text-center py-32 text-slate-500">Visual generation in progress...</div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

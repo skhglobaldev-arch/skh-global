@@ -5,42 +5,48 @@ const SYSTEM_INSTRUCTION_ADVISOR = `
 You are the Lead Solutions Architect at SKH.GLOBAL.
 Analyze the user's business idea and provide a technical and strategic plan.
 Output a structured response in MARKDOWN.
-1. **System Architecture**: Professional breakdown of infrastructure.
-2. **Key Features**: High-revenue features tailored to the idea.
-3. **Timeline**: Realistic phase-by-phase roadmap.
+1. **System Architecture**: High-level infrastructure breakdown.
+2. **Revenue Strategy**: How this system generates and scales profit.
+3. **Execution Roadmap**: Week-by-week delivery phases.
 `;
 
 const SYSTEM_INSTRUCTION_DEMO = `
-You are a World-Class Creative Director and UI Architect.
-Task: Generate a high-end, ultra-modern "shik" JSON configuration for a landing page.
-Rules:
-- Layout: Use sophisticated spacing and "Bento" inspired components.
-- Colors: Suggest vibrant neon accents over deep luxurious dark backgrounds.
-- MUST return ONLY a valid raw JSON object. NO markdown blocks, NO backticks.
+You are a Visionary Creative Director and UI Architect.
+Task: Generate an ultra-high-end "Shik" (Chic) JSON for a bespoke landing page.
+Aesthetics: Cyber-luxury, minimalist but high-impact, deep shadows, vibrant accents.
+Layout: Experimental, uses "Bento-Grid" and asymmetric sections.
+
+MUST return a valid raw JSON object ONLY. No markdown, no commentary.
 
 Structure:
 {
-  "appName": "Brand Name",
-  "primaryColor": "#hex",
+  "appName": "Premium Brand Name",
+  "primaryColor": "#hex (vibrant)",
   "fontStyle": "display",
   "layoutMode": "dark",
-  "hero": { "title": "Headline", "subtitle": "Sub-headline", "imageSearch": "keywords" },
-  "navigation": ["Services", "Architecture", "Pricing", "Connect"],
+  "hero": { 
+    "title": "A short, punchy 3-4 word headline", 
+    "subtitle": "An elegant, descriptive 1-sentence value proposition", 
+    "imageSearch": "keywords for high-end visuals" 
+  },
+  "navigation": ["Vision", "Technology", "Investment", "Initialize"],
   "sections": [
     {
       "type": "bento-grid",
-      "title": "Core Ecosystem",
+      "title": "The Neural Network",
       "items": [
-        { "title": "Feature 1", "desc": "Description", "size": "large" },
-        { "title": "Feature 2", "desc": "Description", "size": "small" }
+        { "title": "Precision Scaling", "desc": "Autonomous algorithms that grow with your user base.", "size": "large" },
+        { "title": "Zero Latency", "desc": "Edge-computed interactions.", "size": "small" },
+        { "title": "Bank-Grade", "desc": "Encrypted to the core.", "size": "small" },
+        { "title": "Smart Logic", "desc": "AI that predicts user behavior.", "size": "large" }
       ]
     },
     {
       "type": "pricing",
-      "title": "Scale Your Vision",
+      "title": "Select Tier",
       "plans": [
-        { "name": "Basic", "price": "$1k", "features": ["F1", "F2"], "popular": false },
-        { "name": "Enterprise", "price": "$5k", "features": ["F1", "F2", "F3"], "popular": true }
+        { "name": "Foundations", "price": "$2,500", "features": ["Core Architecture", "Real-time Sync", "Basic Support"], "popular": false },
+        { "name": "Ecosystem", "price": "$7,500", "features": ["Full Automation", "AI Integration", "Priority 24/7", "Custom Dashboard"], "popular": true }
       ]
     }
   ]
@@ -48,15 +54,10 @@ Structure:
 `;
 
 function cleanJsonResponse(text: string): string {
-  // Removes potential markdown code blocks like ```json ... ```
   let cleaned = text.trim();
   if (cleaned.startsWith("```")) {
     const lines = cleaned.split("\n");
-    if (lines[0].toLowerCase().includes("json")) {
-      cleaned = lines.slice(1, -1).join("\n");
-    } else {
-      cleaned = lines.slice(1, -1).join("\n");
-    }
+    cleaned = lines.filter(line => !line.trim().startsWith("```")).join("\n");
   }
   return cleaned.trim();
 }
@@ -65,7 +66,10 @@ async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000):
   try {
     return await fn();
   } catch (error: any) {
-    const errorStr = JSON.stringify(error).toLowerCase();
+    const errorStr = error?.message?.toLowerCase() || "";
+    if (errorStr.includes("requested entity was not found")) {
+      throw new Error("AUTH_REQUIRED");
+    }
     if ((errorStr.includes("503") || errorStr.includes("429") || errorStr.includes("overloaded")) && retries > 0) {
       await new Promise(resolve => setTimeout(resolve, delay));
       return callWithRetry(fn, retries - 1, delay * 2);
@@ -75,35 +79,23 @@ async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000):
 }
 
 export const generateProjectPlan = async (userIdea: string): Promise<string> => {
-  const key = process.env.API_KEY || '';
-  if (!key) throw new Error("AUTH_REQUIRED");
-
   return callWithRetry(async () => {
-    const ai = new GoogleGenAI({ apiKey: key });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview", 
       contents: userIdea,
       config: { 
         systemInstruction: SYSTEM_INSTRUCTION_ADVISOR,
-        temperature: 0.8 
+        temperature: 0.9 
       },
     });
     return response.text || "Synthesis complete.";
-  }).catch(error => {
-    const msg = error?.message || "";
-    if (msg.includes("401") || msg.includes("API_KEY_INVALID") || msg.includes("400") || msg.includes("not found")) {
-      throw new Error("AUTH_REQUIRED");
-    }
-    throw error;
   });
 };
 
 export const generateVisualDemo = async (userIdea: string): Promise<any> => {
-  const key = process.env.API_KEY || '';
-  if (!key) return null;
-
   return callWithRetry(async () => {
-    const ai = new GoogleGenAI({ apiKey: key });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: userIdea,
@@ -114,38 +106,24 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
     });
     const cleaned = cleanJsonResponse(response.text || "{}");
     return JSON.parse(cleaned);
-  }).catch(() => {
-    // Fallback static demo if generation fails but we still want to show "something"
-    return {
-      appName: "Neural Dynamics",
-      primaryColor: "#0ea5e9",
-      fontStyle: "display",
-      layoutMode: "dark",
-      hero: {
-        title: "The Architecture of Tomorrow",
-        subtitle: "Custom systems engineered for global scale.",
-        imageSearch: "cyberpunk luxury tech"
-      },
-      navigation: ["About", "Tech", "Contact"],
-      sections: []
-    };
+  }).catch((e) => {
+    console.error("Visual gen failed:", e);
+    return null;
   });
 };
 
 export const chatWithAI = async (message: string, history: any[]): Promise<string> => {
-  const key = process.env.API_KEY || '';
-  if (!key) return "Please link a valid API Key to use the AI assistant.";
-
   try {
-    const ai = new GoogleGenAI({ apiKey: key });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const chat = ai.chats.create({
       model: "gemini-3-flash-preview",
-      config: { systemInstruction: "You are the SKH.GLOBAL official AI." },
+      config: { systemInstruction: "You are the SKH.GLOBAL official AI Assistant." },
       history: history.map((h: any) => ({ role: h.role, parts: [{ text: h.text }] }))
     });
     const result = await chat.sendMessage({ message });
     return result.text || "";
-  } catch (error) {
-    return "Connection error. Please check your API Key.";
+  } catch (error: any) {
+    if (error?.message?.toLowerCase().includes("not found")) return "System re-authorization required. Please refresh or update API settings.";
+    return "Neural bridge instability detected. Please try again.";
   }
 };
