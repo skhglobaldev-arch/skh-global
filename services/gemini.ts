@@ -28,22 +28,19 @@ JSON Structure:
 
 export const generateProjectPlan = async (userIdea: string): Promise<string> => {
   try {
-    // ایجاد نمونه جدید در هر بار فراخوانی برای اطمینان از دریافت جدیدترین API Key
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash", // استفاده از نسخه پایدارتر برای جلوگیری از خطای 400
+      model: "gemini-3-flash-preview",
       contents: userIdea,
-      config: { systemInstruction: SYSTEM_INSTRUCTION_ADVISOR },
+      config: { 
+        systemInstruction: SYSTEM_INSTRUCTION_ADVISOR,
+        temperature: 0.7 
+      },
     });
-    return response.text || "Error: Response was empty.";
+    return response.text || "Synthesis complete, but buffer was empty.";
   } catch (error: any) {
-    console.error("Gemini API Error:", error);
-    
-    // اگر کلید نامعتبر بود، به کاربر اطلاع می‌دهیم که از ابزار انتخاب کلید استفاده کند
-    if (error?.message?.includes("API key not valid") || error?.message?.includes("INVALID_ARGUMENT")) {
-      return "AUTH_REQUIRED";
-    }
-    return "The neural link is unstable. Please try again in a moment.";
+    console.error("Gemini Project Plan Error:", error);
+    return `Analysis failed: ${error?.message || "Internal neural link error"}`;
   }
 };
 
@@ -51,7 +48,7 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: userIdea,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION_DEMO,
@@ -60,6 +57,7 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
     });
     return JSON.parse(response.text || "{}");
   } catch (error) {
+    console.error("Visual Demo Error:", error);
     return null;
   }
 };
@@ -68,13 +66,14 @@ export const chatWithAI = async (message: string, history: any[]): Promise<strin
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const chat = ai.chats.create({
-      model: "gemini-2.5-flash",
-      config: { systemInstruction: "You are the SKH.GLOBAL assistant. Professional and concise." },
+      model: "gemini-3-flash-preview",
+      config: { systemInstruction: "You are the SKH.GLOBAL official AI. Be elite, professional, and helpful." },
       history: history.map((h: any) => ({ role: h.role, parts: [{ text: h.text }] }))
     });
     const result = await chat.sendMessage({ message });
     return result.text || "";
   } catch (error) {
-    return "Connection issues detected.";
+    console.error("Chat Error:", error);
+    return "The communication array is offline. Please verify system credentials.";
   }
 };

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { generateProjectPlan, generateVisualDemo } from '../services/gemini';
-import { Loader2, Copy, CheckCircle2, Layout, FileText, Zap, Cpu, ArrowRight, Key } from 'lucide-react';
+import { Loader2, Copy, CheckCircle2, Layout, FileText, Zap, Cpu, ArrowRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { AppPreview } from './AppPreview';
 
@@ -12,7 +12,6 @@ export const AIPlanner: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'blueprint' | 'demo'>('blueprint');
-  const [errorStatus, setErrorStatus] = useState<'none' | 'auth'>('none');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,29 +20,23 @@ export const AIPlanner: React.FC = () => {
     setIsLoading(true);
     setPlan('');
     setDemoData(null);
-    setErrorStatus('none');
     
-    const planResult = await generateProjectPlan(idea);
-    
-    if (planResult === "AUTH_REQUIRED") {
-      setErrorStatus('auth');
+    try {
+      const planResult = await generateProjectPlan(idea);
+      setPlan(planResult);
+
+      const demoResult = await generateVisualDemo(idea);
+      setDemoData(demoResult);
+      
+      if (demoResult) {
+        setActiveTab('demo');
+      } else {
+        setActiveTab('blueprint');
+      }
+    } catch (err) {
+      setPlan("System synthesis failed. Please ensure your environment API key is valid.");
+    } finally {
       setIsLoading(false);
-      return;
-    }
-
-    const demoResult = await generateVisualDemo(idea);
-    
-    setPlan(planResult);
-    setDemoData(demoResult);
-    setActiveTab(demoResult ? 'demo' : 'blueprint');
-    setIsLoading(false);
-  };
-
-  const handleOpenKeyManager = async () => {
-    if ((window as any).aistudio) {
-      await (window as any).aistudio.openSelectKey();
-      // بعد از باز شدن دیالوگ، فرض می‌کنیم کاربر کلید را ست می‌کند
-      setErrorStatus('none');
     }
   };
 
@@ -55,13 +48,14 @@ export const AIPlanner: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-12">
+      {/* Input Module */}
       <div className="glass-panel rounded-[3.5rem] p-12 border border-slate-700 shadow-2xl relative overflow-hidden max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-8 mb-10">
           <div className="w-20 h-20 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center justify-center">
             <Cpu size={40} className={isLoading ? 'animate-spin' : ''} />
           </div>
           <div>
-            <h3 className="text-3xl font-display font-black text-white">System Architect <span className="text-brand-400">v2.5</span></h3>
+            <h3 className="text-3xl font-display font-black text-white">System Architect <span className="text-brand-400">v3.0</span></h3>
             <p className="text-slate-400 text-sm">Convert business logic into technical infrastructure.</p>
           </div>
         </div>
@@ -70,76 +64,75 @@ export const AIPlanner: React.FC = () => {
           <textarea
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
-            placeholder="Describe your project (e.g. A real estate platform with automated lead tracking)..."
+            placeholder="Describe your ecosystem (e.g., A global marketplace for luxury watches with escrow integration)..."
             className="w-full h-48 bg-slate-900/60 border-2 border-slate-800 rounded-[2rem] p-8 text-white focus:ring-4 focus:ring-brand-500/20 focus:border-brand-500/50 outline-none transition-all text-xl mb-8"
           />
           
-          {errorStatus === 'auth' ? (
-            <div className="flex flex-col items-center gap-4 p-8 bg-amber-500/10 border border-amber-500/30 rounded-3xl mb-8">
-              <Key className="text-amber-500" size={32} />
-              <p className="text-amber-200 text-center font-medium">
-                The API Key provided in environment variables seems invalid for Gemini models.
-              </p>
-              <button
-                type="button"
-                onClick={handleOpenKeyManager}
-                className="px-8 py-3 bg-amber-500 text-black font-bold rounded-xl hover:bg-amber-400 transition-all"
-              >
-                Connect Valid API Key
-              </button>
-            </div>
-          ) : (
-            <button
-              type="submit"
-              disabled={isLoading || !idea.trim()}
-              className="w-full py-6 bg-white text-slate-950 rounded-2xl font-black text-xl hover:bg-brand-50 transition-all flex items-center justify-center gap-4 disabled:opacity-50 shadow-xl"
-            >
-              {isLoading ? <Loader2 className="animate-spin" /> : <Zap size={24} />}
-              {isLoading ? 'Synthesizing...' : 'Initialize Build'}
-            </button>
-          )}
+          <button
+            type="submit"
+            disabled={isLoading || !idea.trim()}
+            className="w-full py-6 bg-white text-slate-950 rounded-2xl font-black text-xl hover:bg-brand-50 transition-all flex items-center justify-center gap-4 disabled:opacity-50 shadow-xl"
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : <Zap size={24} />}
+            {isLoading ? 'Synthesizing Protocol...' : 'Initialize Build'}
+          </button>
         </form>
       </div>
 
-      {(plan || isLoading) && errorStatus === 'none' && (
+      {/* Result Module */}
+      {(plan || isLoading) && (
         <div className="max-w-full mx-auto w-full animate-in fade-in slide-in-from-bottom-10 duration-700">
           <div className="flex justify-center mb-10">
-             <div className="flex p-2 bg-slate-900/80 rounded-[2rem] border border-white/5">
+             <div className="flex p-2 bg-slate-900/80 rounded-[2rem] border border-white/5 backdrop-blur-md">
                 <button 
                   onClick={() => setActiveTab('demo')}
-                  className={`flex items-center gap-3 px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === 'demo' ? 'bg-brand-600 text-white' : 'text-slate-500'}`}
+                  className={`flex items-center gap-3 px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === 'demo' ? 'bg-brand-600 text-white' : 'text-slate-500 hover:text-white'}`}
                 >
                   <Layout size={18} /> UI Preview
                 </button>
                 <button 
                   onClick={() => setActiveTab('blueprint')}
-                  className={`flex items-center gap-3 px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === 'blueprint' ? 'bg-brand-600 text-white' : 'text-slate-500'}`}
+                  className={`flex items-center gap-3 px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === 'blueprint' ? 'bg-brand-600 text-white' : 'text-slate-500 hover:text-white'}`}
                 >
                   <FileText size={18} /> Technical Blueprint
                 </button>
              </div>
           </div>
 
-          <div className="glass-panel rounded-[3.5rem] p-10 border border-white/5 min-h-[600px] relative overflow-hidden">
+          <div className="glass-panel rounded-[3.5rem] p-10 border border-white/5 min-h-[600px] relative overflow-hidden bg-slate-950/40">
             {isLoading && (
               <div className="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-center">
-                 <Loader2 className="animate-spin text-brand-500 mb-6" size={60} />
-                 <p className="text-2xl font-display font-bold text-white">Architecting System...</p>
+                 <div className="relative mb-8">
+                    <div className="w-24 h-24 rounded-full border-4 border-slate-800 border-t-brand-500 animate-spin"></div>
+                    <Cpu className="absolute inset-0 m-auto text-brand-500 animate-pulse" size={32} />
+                 </div>
+                 <p className="text-2xl font-display font-bold text-white tracking-widest uppercase">Mapping Infrastructure...</p>
               </div>
             )}
 
             {activeTab === 'blueprint' ? (
-              <div className="prose prose-invert prose-xl max-w-none">
+              <div className="prose prose-invert prose-xl max-w-none animate-in fade-in duration-500">
                 <div className="flex justify-end mb-8">
-                  <button onClick={copyToClipboard} className="flex items-center gap-2 text-sm bg-white/5 p-3 rounded-xl border border-white/10 hover:bg-white/10">
+                  <button onClick={copyToClipboard} className="flex items-center gap-2 text-sm bg-white/5 p-3 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
                     {isCopied ? <CheckCircle2 className="text-green-500" size={18}/> : <Copy size={18}/>}
-                    {isCopied ? "Copied" : "Copy Blueprint"}
+                    {isCopied ? "Protocol Copied" : "Export Blueprint"}
                   </button>
                 </div>
-                <ReactMarkdown>{plan}</ReactMarkdown>
+                <div className="bg-slate-900/40 p-8 md:p-12 rounded-3xl border border-white/5">
+                  <ReactMarkdown>{plan}</ReactMarkdown>
+                </div>
               </div>
             ) : (
-              demoData && <AppPreview data={demoData} />
+              <div className="animate-in fade-in duration-500">
+                {demoData ? (
+                  <AppPreview data={demoData} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-32 text-slate-500">
+                    <Layout size={48} className="mb-4 opacity-20" />
+                    <p>Visual preview generation deferred to system architect.</p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
