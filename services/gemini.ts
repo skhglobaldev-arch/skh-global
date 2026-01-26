@@ -4,64 +4,31 @@ import { GoogleGenAI } from "@google/genai";
 const SYSTEM_INSTRUCTION_ADVISOR = `
 You are the Lead Solutions Architect at SKH.GLOBAL.
 Analyze the user's business idea and provide a technical and strategic plan.
-Output a structured response in MARKDOWN:
+Output a structured response in MARKDOWN.
 1. **System Architecture**: Professional breakdown of infrastructure.
 2. **Key Features**: High-revenue features tailored to the idea.
-3. **Automation Opportunities**: Advanced Make.com or custom Node.js automation logic.
-4. **Timeline**: Realistic phase-by-phase roadmap.
-5. **Why SKH.GLOBAL**: A persuasive closing call to action.
+3. **Timeline**: Realistic phase-by-phase roadmap.
 `;
 
 const SYSTEM_INSTRUCTION_DEMO = `
 You are a World-Class Creative Director.
 Generate a JSON for a high-end, "shik" (chic), and ultra-modern landing page.
-Use high-contrast layouts, Bento grids, and sophisticated color palettes.
-JSON Structure:
-{
-  "appName": "Brand Name",
-  "primaryColor": "#hex (vibrant neon or deep luxurious gold/blue)",
-  "fontStyle": "display",
-  "layoutMode": "dark",
-  "hero": { 
-    "title": "A powerful 4-6 word headline", 
-    "subtitle": "A persuasive sub-headline", 
-    "imageSearch": "luxury tech aesthetic" 
-  },
-  "navigation": ["Services", "Architecture", "Roadmap", "Connect"],
-  "sections": [
-    {
-      "type": "bento-grid",
-      "title": "Core Ecosystem",
-      "items": [
-        { "title": "Neural Logic", "desc": "Autonomous decision engines.", "size": "large" },
-        { "title": "Cloud Matrix", "desc": "Infinite scaling via edge computing.", "size": "small" },
-        { "title": "Real-time Sync", "desc": "Zero-latency data synchronization.", "size": "small" },
-        { "title": "Secure Vault", "desc": "Bank-grade encryption protocols.", "size": "small" }
-      ]
-    },
-    {
-      "type": "pricing",
-      "title": "Project Scale",
-      "plans": [
-        { "name": "MVP Genesis", "price": "$5k", "features": ["Core Architecture", "High-End UI", "Standard Automations"], "popular": false },
-        { "name": "Empire Elite", "price": "$15k", "features": ["Full Automation", "Global Scalability", "24/7 Priority Ops"], "popular": true }
-      ]
-    }
-  ]
-}
+MUST return a valid JSON object with: 
+- appName (string)
+- primaryColor (hex string)
+- fontStyle ('serif' | 'sans' | 'display')
+- layoutMode ('dark' | 'light')
+- hero (object: { title, subtitle, imageSearch })
+- navigation (array of strings)
+- sections (array of objects with type 'bento-grid' or 'pricing')
 `;
 
-/**
- * Helper to handle retries for overloaded models (503) or rate limits (429)
- */
-async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1500): Promise<any> {
+async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000): Promise<any> {
   try {
     return await fn();
   } catch (error: any) {
     const errorStr = JSON.stringify(error).toLowerCase();
-    const isRetryable = errorStr.includes("503") || errorStr.includes("429") || errorStr.includes("overloaded");
-    
-    if (isRetryable && retries > 0) {
+    if ((errorStr.includes("503") || errorStr.includes("429") || errorStr.includes("overloaded")) && retries > 0) {
       await new Promise(resolve => setTimeout(resolve, delay));
       return callWithRetry(fn, retries - 1, delay * 2);
     }
@@ -69,19 +36,14 @@ async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1500):
   }
 }
 
-const getApiKey = () => {
-  // Injected by some environments or defined in process.env
-  return process.env.API_KEY || '';
-};
-
 export const generateProjectPlan = async (userIdea: string): Promise<string> => {
-  const key = getApiKey();
+  const key = process.env.API_KEY || '';
   if (!key) throw new Error("AUTH_REQUIRED");
 
   return callWithRetry(async () => {
     const ai = new GoogleGenAI({ apiKey: key });
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview", // Use flash-preview for better compatibility
+      model: "gemini-3-flash-preview", 
       contents: userIdea,
       config: { 
         systemInstruction: SYSTEM_INSTRUCTION_ADVISOR,
@@ -90,8 +52,8 @@ export const generateProjectPlan = async (userIdea: string): Promise<string> => 
     });
     return response.text || "Synthesis complete.";
   }).catch(error => {
-    const errorStr = JSON.stringify(error);
-    if (errorStr.includes("400") || errorStr.includes("API_KEY_INVALID") || errorStr.includes("not found")) {
+    const msg = error?.message || "";
+    if (msg.includes("API_KEY_INVALID") || msg.includes("400") || msg.includes("not found")) {
       throw new Error("AUTH_REQUIRED");
     }
     throw error;
@@ -99,7 +61,7 @@ export const generateProjectPlan = async (userIdea: string): Promise<string> => 
 };
 
 export const generateVisualDemo = async (userIdea: string): Promise<any> => {
-  const key = getApiKey();
+  const key = process.env.API_KEY || '';
   if (!key) return null;
 
   return callWithRetry(async () => {
@@ -117,19 +79,19 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
 };
 
 export const chatWithAI = async (message: string, history: any[]): Promise<string> => {
-  const key = getApiKey();
-  if (!key) return "System Authentication Required. Please link a valid API Key.";
+  const key = process.env.API_KEY || '';
+  if (!key) return "Please link a valid API Key to use the AI assistant.";
 
   try {
     const ai = new GoogleGenAI({ apiKey: key });
     const chat = ai.chats.create({
       model: "gemini-3-flash-preview",
-      config: { systemInstruction: "You are the SKH.GLOBAL official AI. Be elite, professional, and helpful." },
+      config: { systemInstruction: "You are the SKH.GLOBAL official AI." },
       history: history.map((h: any) => ({ role: h.role, parts: [{ text: h.text }] }))
     });
     const result = await chat.sendMessage({ message });
     return result.text || "";
   } catch (error) {
-    return "The communication array is offline. Please check your system link.";
+    return "Connection error. Please check your API Key.";
   }
 };
