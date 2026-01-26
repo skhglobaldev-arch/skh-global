@@ -54,13 +54,14 @@ JSON Structure:
 /**
  * Helper to handle retries for overloaded models (503) or rate limits (429)
  */
-async function callWithRetry(fn: () => Promise<any>, retries = 3, delay = 1000): Promise<any> {
+async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1500): Promise<any> {
   try {
     return await fn();
   } catch (error: any) {
-    const isRetryable = error?.message?.includes("503") || error?.message?.includes("429") || error?.message?.includes("overloaded");
+    const errorStr = JSON.stringify(error).toLowerCase();
+    const isRetryable = errorStr.includes("503") || errorStr.includes("429") || errorStr.includes("overloaded");
+    
     if (isRetryable && retries > 0) {
-      console.warn(`Model overloaded. Retrying in ${delay}ms... (${retries} attempts left)`);
       await new Promise(resolve => setTimeout(resolve, delay));
       return callWithRetry(fn, retries - 1, delay * 2);
     }
@@ -68,11 +69,19 @@ async function callWithRetry(fn: () => Promise<any>, retries = 3, delay = 1000):
   }
 }
 
+const getApiKey = () => {
+  // Injected by some environments or defined in process.env
+  return process.env.API_KEY || '';
+};
+
 export const generateProjectPlan = async (userIdea: string): Promise<string> => {
+  const key = getApiKey();
+  if (!key) throw new Error("AUTH_REQUIRED");
+
   return callWithRetry(async () => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    const ai = new GoogleGenAI({ apiKey: key });
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-flash-preview", // Use flash-preview for better compatibility
       contents: userIdea,
       config: { 
         systemInstruction: SYSTEM_INSTRUCTION_ADVISOR,
@@ -81,7 +90,8 @@ export const generateProjectPlan = async (userIdea: string): Promise<string> => 
     });
     return response.text || "Synthesis complete.";
   }).catch(error => {
-    if (error?.message?.includes("API key not valid") || error?.message?.includes("400")) {
+    const errorStr = JSON.stringify(error);
+    if (errorStr.includes("400") || errorStr.includes("API_KEY_INVALID") || errorStr.includes("not found")) {
       throw new Error("AUTH_REQUIRED");
     }
     throw error;
@@ -89,8 +99,11 @@ export const generateProjectPlan = async (userIdea: string): Promise<string> => 
 };
 
 export const generateVisualDemo = async (userIdea: string): Promise<any> => {
+  const key = getApiKey();
+  if (!key) return null;
+
   return callWithRetry(async () => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    const ai = new GoogleGenAI({ apiKey: key });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: userIdea,
@@ -104,8 +117,11 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
 };
 
 export const chatWithAI = async (message: string, history: any[]): Promise<string> => {
+  const key = getApiKey();
+  if (!key) return "System Authentication Required. Please link a valid API Key.";
+
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    const ai = new GoogleGenAI({ apiKey: key });
     const chat = ai.chats.create({
       model: "gemini-3-flash-preview",
       config: { systemInstruction: "You are the SKH.GLOBAL official AI. Be elite, professional, and helpful." },
@@ -114,6 +130,6 @@ export const chatWithAI = async (message: string, history: any[]): Promise<strin
     const result = await chat.sendMessage({ message });
     return result.text || "";
   } catch (error) {
-    return "The communication array is offline. Our engineers are investigating.";
+    return "The communication array is offline. Please check your system link.";
   }
 };
