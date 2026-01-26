@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { generateProjectPlan, generateVisualDemo } from '../services/gemini';
-import { Loader2, Sparkles, Send, Copy, CheckCircle2, Layout, FileText, ChevronRight, Zap, Cpu, ArrowRight } from 'lucide-react';
+import { Loader2, Sparkles, Send, Copy, CheckCircle2, Layout, FileText, ChevronRight, Zap, Cpu, ArrowRight, Key } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { AppPreview } from './AppPreview';
 
@@ -12,6 +12,7 @@ export const AIPlanner: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'blueprint' | 'demo'>('blueprint');
+  const [showKeyHint, setShowKeyHint] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,12 +21,19 @@ export const AIPlanner: React.FC = () => {
     setIsLoading(true);
     setPlan('');
     setDemoData(null);
+    setShowKeyHint(false);
     
     try {
-      const [planResult, demoResult] = await Promise.all([
-        generateProjectPlan(idea),
-        generateVisualDemo(idea)
-      ]);
+      const planResult = await generateProjectPlan(idea);
+      
+      if (planResult.includes("API Key is selected")) {
+        setShowKeyHint(true);
+        setPlan(planResult);
+        setIsLoading(false);
+        return;
+      }
+
+      const demoResult = await generateVisualDemo(idea);
       
       setPlan(planResult);
       setDemoData(demoResult);
@@ -34,6 +42,12 @@ export const AIPlanner: React.FC = () => {
       setPlan("System error: Neural synthesis failed. Please re-establish link.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleOpenKeyManager = async () => {
+    if ((window as any).aistudio) {
+      await (window as any).aistudio.openSelectKey();
     }
   };
 
@@ -86,10 +100,25 @@ export const AIPlanner: React.FC = () => {
             )}
           </button>
         </form>
+
+        {showKeyHint && (
+          <div className="mt-8 p-6 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-4">
+             <div className="flex items-center gap-4 text-amber-200">
+                <Key size={24} />
+                <p className="text-sm font-medium">To use Gemini 3 models, you must select an API key from a paid project.</p>
+             </div>
+             <button 
+                onClick={handleOpenKeyManager}
+                className="px-6 py-2 bg-amber-500 text-black font-bold rounded-xl hover:bg-amber-400 transition-colors text-sm"
+             >
+                Select Key
+             </button>
+          </div>
+        )}
       </div>
 
       {/* Result Module */}
-      {(plan || isLoading) && (
+      {(plan || isLoading) && !showKeyHint && (
         <div className="max-w-full mx-auto w-full animate-in slide-in-from-bottom-20 duration-1000">
           
           <div className="flex justify-center mb-14">

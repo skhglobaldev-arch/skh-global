@@ -1,8 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const SYSTEM_INSTRUCTION_ADVISOR = `
 You are the Lead Solutions Architect at SKH.GLOBAL.
 Analyze the user's business idea and provide a technical and strategic plan.
@@ -62,21 +60,28 @@ Keywords for images must be in English for Unsplash compatibility.
 
 export const generateProjectPlan = async (userIdea: string): Promise<string> => {
   try {
+    // Re-instantiate to ensure latest API Key
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-pro-preview", // Upgraded to Pro for architectural reasoning
       contents: userIdea,
       config: { systemInstruction: SYSTEM_INSTRUCTION_ADVISOR },
     });
     return response.text || "Error generating blueprint.";
-  } catch (error) {
-    return "Connection error to AI Architect.";
+  } catch (error: any) {
+    console.error("Gemini Error:", error);
+    if (error?.message?.includes("API key not valid") && (window as any).aistudio) {
+       await (window as any).aistudio.openSelectKey();
+    }
+    return "Neural synthesis link failed. Please ensure a valid API Key is selected and try again.";
   }
 };
 
 export const generateVisualDemo = async (userIdea: string): Promise<any> => {
   try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-pro-preview",
       contents: userIdea,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION_DEMO,
@@ -84,18 +89,23 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
       },
     });
     return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("Demo Generation Error:", error);
     return null;
   }
 };
 
 export const chatWithAI = async (message: string, history: { role: 'user' | 'model', text: string }[]): Promise<string> => {
-  const chat = ai.chats.create({
-    model: "gemini-3-flash-preview",
-    config: { systemInstruction: "You are the SKH.GLOBAL official AI consultant. Be professional, concise, and helpful." },
-    history: history.map(h => ({ role: h.role, parts: [{ text: h.text }] }))
-  });
-  const result = await chat.sendMessage({ message });
-  return result.text || "";
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const chat = ai.chats.create({
+      model: "gemini-3-flash-preview",
+      config: { systemInstruction: "You are the SKH.GLOBAL official AI consultant. Be professional, concise, and helpful." },
+      history: history.map(h => ({ role: h.role, parts: [{ text: h.text }] }))
+    });
+    const result = await chat.sendMessage({ message });
+    return result.text || "";
+  } catch (error) {
+    return "Communication link interrupted. Please check your credentials.";
+  }
 };
