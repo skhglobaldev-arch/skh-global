@@ -16,20 +16,21 @@ export const AIPlanner: React.FC = () => {
   const [errorState, setErrorState] = useState<'none' | 'auth' | 'overloaded'>('none');
   const [hasKey, setHasKey] = useState(true);
 
+  const checkKeyStatus = async () => {
+    if ((window as any).aistudio?.hasSelectedApiKey) {
+      const selected = await (window as any).aistudio.hasSelectedApiKey();
+      setHasKey(selected);
+    }
+  };
+
   useEffect(() => {
-    const checkKey = async () => {
-      if ((window as any).aistudio?.hasSelectedApiKey) {
-        const selected = await (window as any).aistudio.hasSelectedApiKey();
-        setHasKey(selected);
-      }
-    };
-    checkKey();
+    checkKeyStatus();
   }, []);
 
   const handleOpenKeyDialog = async () => {
     if ((window as any).aistudio?.openSelectKey) {
       await (window as any).aistudio.openSelectKey();
-      // Assume success as per guidelines to avoid race condition
+      // Assume success after trigger as per instructions to avoid race conditions
       setHasKey(true);
       setErrorState('none');
     }
@@ -58,9 +59,11 @@ export const AIPlanner: React.FC = () => {
         setActiveTab('blueprint');
       }
     } catch (err: any) {
+      console.error("Planner error:", err);
       const msg = err?.message?.toLowerCase() || "";
       if (msg.includes("auth") || msg.includes("api_key") || msg.includes("not found")) {
         setErrorState('auth');
+        setHasKey(false);
       } else if (msg.includes("503") || msg.includes("overloaded")) {
         setErrorState('overloaded');
       } else {
@@ -77,27 +80,30 @@ export const AIPlanner: React.FC = () => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  if (!hasKey) {
+  if (!hasKey || errorState === 'auth') {
     return (
-      <div className="max-w-4xl mx-auto glass-panel p-16 rounded-[4rem] text-center border border-brand-500/20 shadow-2xl animate-in zoom-in duration-500">
-        <Key className="text-brand-400 mx-auto mb-10 animate-pulse" size={64} />
-        <h3 className="text-4xl font-display font-black text-white mb-6 uppercase tracking-tighter">Authorization Required</h3>
+      <div className="max-w-4xl mx-auto glass-panel p-16 rounded-[4rem] text-center border border-brand-500/20 shadow-2xl animate-in zoom-in duration-500 bg-slate-950/80">
+        <div className="relative mb-10">
+          <div className="absolute inset-0 bg-brand-500/20 blur-3xl rounded-full"></div>
+          <Key className="text-brand-400 mx-auto relative z-10 animate-pulse" size={64} />
+        </div>
+        <h3 className="text-4xl font-display font-black text-white mb-6 uppercase tracking-tighter">Connection Link Required</h3>
         <p className="text-slate-400 text-xl mb-12 font-light leading-relaxed max-w-lg mx-auto">
-          To initialize the System Architect, you must select a valid Gemini API Key from a paid project.
+          To initialize the Lead Architect (Gemini 3.0), you must connect an API key from a paid GCP project.
         </p>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
           <button 
             onClick={handleOpenKeyDialog}
             className="px-12 py-5 bg-brand-600 text-white font-black rounded-2xl hover:bg-brand-500 transition-all flex items-center justify-center gap-3 shadow-[0_20px_60px_rgba(14,165,233,0.3)]"
           >
-            <Zap size={22} /> Connect Key
+            <RefreshCcw size={22} /> Select API Key
           </button>
           <a 
             href="https://ai.google.dev/gemini-api/docs/billing" 
             target="_blank" 
             className="px-12 py-5 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-3"
           >
-            Billing Docs <ExternalLink size={18} />
+            Billing Guide <ExternalLink size={18} />
           </a>
         </div>
       </div>
@@ -106,71 +112,63 @@ export const AIPlanner: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="glass-panel rounded-[3.5rem] p-12 border border-slate-700 shadow-2xl relative overflow-hidden max-w-5xl mx-auto w-full bg-slate-950/40">
+      <div className="glass-panel rounded-[3.5rem] p-12 border border-slate-700 shadow-2xl relative overflow-hidden max-w-5xl mx-auto w-full bg-slate-950/60">
         <div className="flex items-center gap-8 mb-10">
           <div className="w-16 h-16 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(14,165,233,0.1)]">
             <Cpu size={32} className={isLoading ? 'animate-spin' : ''} />
           </div>
           <div>
-            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">Lead Architect <span className="text-brand-400">GPT-3.0</span></h3>
-            <p className="text-slate-500 text-xs font-mono uppercase tracking-[0.3em]">Holographic Logic Engine</p>
+            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">System Architect <span className="text-brand-400">GPT-3.0</span></h3>
+            <p className="text-slate-500 text-xs font-mono uppercase tracking-[0.3em]">Neural Synthesis Engine</p>
           </div>
         </div>
 
-        {errorState === 'auth' ? (
-          <div className="p-10 rounded-3xl bg-red-500/10 border border-red-500/20 text-center animate-in fade-in zoom-in duration-500">
-            <h4 className="text-xl font-bold text-white mb-4">Neural Link Severed</h4>
-            <p className="text-slate-400 mb-8">The requested model was not found or the key is invalid. Please re-authorize.</p>
-            <button onClick={handleOpenKeyDialog} className="px-10 py-4 bg-white text-black font-black rounded-xl hover:bg-brand-50 transition-all flex items-center gap-2 mx-auto">
-               <RefreshCcw size={18} /> Re-Connect System
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <textarea
-              value={idea}
-              onChange={(e) => setIdea(e.target.value)}
-              placeholder="Input your vision (e.g., A global logistics automation hub)..."
-              className="w-full h-40 bg-slate-900/60 border-2 border-slate-800/50 rounded-[2rem] p-8 text-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500/50 outline-none transition-all text-xl mb-8 placeholder:opacity-20"
-            />
-            <button
-              type="submit"
-              disabled={isLoading || !idea.trim()}
-              className="w-full py-6 bg-brand-600 text-white rounded-2xl font-black text-xl hover:bg-brand-500 transition-all flex items-center justify-center gap-4 disabled:opacity-30 shadow-[0_20px_50px_rgba(14,165,233,0.2)]"
-            >
-              {isLoading ? <Loader2 className="animate-spin" /> : <Zap size={24} />}
-              {isLoading ? 'Processing Neural Streams...' : 'Synthesize Architecture'}
-            </button>
-          </form>
-        )}
+        <form onSubmit={handleSubmit}>
+          <textarea
+            value={idea}
+            onChange={(e) => setIdea(e.target.value)}
+            placeholder="Enter your vision (e.g., A luxury yacht rental platform with real-time GPS tracking and automated crew scheduling)..."
+            className="w-full h-40 bg-black/40 border-2 border-slate-800 rounded-[2rem] p-8 text-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500/50 outline-none transition-all text-xl mb-8 placeholder:opacity-30"
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !idea.trim()}
+            className="w-full py-6 bg-brand-600 text-white rounded-2xl font-black text-xl hover:bg-brand-500 transition-all flex items-center justify-center gap-4 disabled:opacity-30 shadow-[0_20px_50px_rgba(14,165,233,0.2)]"
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : <Zap size={24} />}
+            {isLoading ? 'Processing Neural Streams...' : 'Synthesize Architecture'}
+          </button>
+        </form>
       </div>
 
-      {(plan || isLoading) && errorState === 'none' && (
+      {(plan || isLoading) && (
         <div className="max-w-full mx-auto w-full animate-in fade-in slide-in-from-bottom-10 duration-1000">
           <div className="flex justify-center mb-10">
              <div className="flex p-1.5 bg-slate-900/90 rounded-2xl border border-white/5 backdrop-blur-xl">
-                <button onClick={() => setActiveTab('demo')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'demo' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><Layout size={14} /> UI Prototype</button>
+                <button onClick={() => setActiveTab('demo')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'demo' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><Layout size={14} /> Site Preview</button>
                 <button onClick={() => setActiveTab('blueprint')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'blueprint' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><FileText size={14} /> Logic Blueprint</button>
              </div>
           </div>
-          <div className="glass-panel rounded-[4rem] p-1 border border-white/5 min-h-[600px] relative overflow-hidden">
+          
+          <div className="glass-panel rounded-[4rem] p-1 border border-white/5 min-h-[600px] relative overflow-hidden bg-slate-950/40">
             {isLoading && (
-              <div className="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-3xl flex flex-col items-center justify-center text-center">
-                 <div className="w-16 h-16 rounded-full border-2 border-slate-800 border-t-brand-500 animate-spin mb-6"></div>
-                 <p className="text-xl font-display font-black text-white tracking-[0.2em] uppercase mb-2">Architecting...</p>
-                 <p className="text-brand-400 font-mono text-[10px] uppercase tracking-[0.4em] animate-pulse">{loadingStep}</p>
+              <div className="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-3xl flex flex-col items-center justify-center text-center p-10">
+                 <div className="w-20 h-20 rounded-full border-4 border-slate-800 border-t-brand-500 animate-spin mb-8 shadow-[0_0_50px_rgba(14,165,233,0.4)]"></div>
+                 <p className="text-2xl font-display font-black text-white tracking-[0.2em] uppercase mb-3">Architecting Your Vision</p>
+                 <p className="text-brand-400 font-mono text-sm uppercase tracking-[0.4em] animate-pulse">{loadingStep}</p>
               </div>
             )}
+            
             <div className="p-8 md:p-12">
               {activeTab === 'blueprint' ? (
                 <div className="prose prose-invert prose-lg max-w-none animate-in fade-in duration-500">
                   <div className="flex justify-end mb-8">
                     <button onClick={copyToClipboard} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-white/5 px-6 py-3 rounded-full border border-white/10 hover:bg-white/10 transition-all">
                       {isCopied ? <CheckCircle2 className="text-emerald-500" size={14}/> : <Copy size={14}/>}
-                      {isCopied ? "Copied" : "Export Assets"}
+                      {isCopied ? "Blueprint Copied" : "Export Assets"}
                     </button>
                   </div>
-                  <div className="bg-slate-950/50 p-10 rounded-[3rem] border border-white/5 shadow-inner">
+                  <div className="bg-black/30 p-10 rounded-[3rem] border border-white/5 shadow-inner">
                     <ReactMarkdown>{plan}</ReactMarkdown>
                   </div>
                 </div>
