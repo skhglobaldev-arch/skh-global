@@ -11,17 +11,55 @@ Output a structured response in MARKDOWN.
 `;
 
 const SYSTEM_INSTRUCTION_DEMO = `
-You are a World-Class Creative Director.
-Generate a JSON for a high-end, "shik" (chic), and ultra-modern landing page.
-MUST return a valid JSON object with: 
-- appName (string)
-- primaryColor (hex string)
-- fontStyle ('serif' | 'sans' | 'display')
-- layoutMode ('dark' | 'light')
-- hero (object: { title, subtitle, imageSearch })
-- navigation (array of strings)
-- sections (array of objects with type 'bento-grid' or 'pricing')
+You are a World-Class Creative Director and UI Architect.
+Task: Generate a high-end, ultra-modern "shik" JSON configuration for a landing page.
+Rules:
+- Layout: Use sophisticated spacing and "Bento" inspired components.
+- Colors: Suggest vibrant neon accents over deep luxurious dark backgrounds.
+- MUST return ONLY a valid raw JSON object. NO markdown blocks, NO backticks.
+
+Structure:
+{
+  "appName": "Brand Name",
+  "primaryColor": "#hex",
+  "fontStyle": "display",
+  "layoutMode": "dark",
+  "hero": { "title": "Headline", "subtitle": "Sub-headline", "imageSearch": "keywords" },
+  "navigation": ["Services", "Architecture", "Pricing", "Connect"],
+  "sections": [
+    {
+      "type": "bento-grid",
+      "title": "Core Ecosystem",
+      "items": [
+        { "title": "Feature 1", "desc": "Description", "size": "large" },
+        { "title": "Feature 2", "desc": "Description", "size": "small" }
+      ]
+    },
+    {
+      "type": "pricing",
+      "title": "Scale Your Vision",
+      "plans": [
+        { "name": "Basic", "price": "$1k", "features": ["F1", "F2"], "popular": false },
+        { "name": "Enterprise", "price": "$5k", "features": ["F1", "F2", "F3"], "popular": true }
+      ]
+    }
+  ]
+}
 `;
+
+function cleanJsonResponse(text: string): string {
+  // Removes potential markdown code blocks like ```json ... ```
+  let cleaned = text.trim();
+  if (cleaned.startsWith("```")) {
+    const lines = cleaned.split("\n");
+    if (lines[0].toLowerCase().includes("json")) {
+      cleaned = lines.slice(1, -1).join("\n");
+    } else {
+      cleaned = lines.slice(1, -1).join("\n");
+    }
+  }
+  return cleaned.trim();
+}
 
 async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000): Promise<any> {
   try {
@@ -53,7 +91,7 @@ export const generateProjectPlan = async (userIdea: string): Promise<string> => 
     return response.text || "Synthesis complete.";
   }).catch(error => {
     const msg = error?.message || "";
-    if (msg.includes("API_KEY_INVALID") || msg.includes("400") || msg.includes("not found")) {
+    if (msg.includes("401") || msg.includes("API_KEY_INVALID") || msg.includes("400") || msg.includes("not found")) {
       throw new Error("AUTH_REQUIRED");
     }
     throw error;
@@ -74,8 +112,24 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
         responseMimeType: "application/json",
       },
     });
-    return JSON.parse(response.text || "{}");
-  }).catch(() => null);
+    const cleaned = cleanJsonResponse(response.text || "{}");
+    return JSON.parse(cleaned);
+  }).catch(() => {
+    // Fallback static demo if generation fails but we still want to show "something"
+    return {
+      appName: "Neural Dynamics",
+      primaryColor: "#0ea5e9",
+      fontStyle: "display",
+      layoutMode: "dark",
+      hero: {
+        title: "The Architecture of Tomorrow",
+        subtitle: "Custom systems engineered for global scale.",
+        imageSearch: "cyberpunk luxury tech"
+      },
+      navigation: ["About", "Tech", "Contact"],
+      sections: []
+    };
+  });
 };
 
 export const chatWithAI = async (message: string, history: any[]): Promise<string> => {
