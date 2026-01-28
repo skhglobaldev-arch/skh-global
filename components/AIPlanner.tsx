@@ -30,7 +30,6 @@ export const AIPlanner: React.FC = () => {
   const handleOpenKeyDialog = async () => {
     if ((window as any).aistudio?.openSelectKey) {
       await (window as any).aistudio.openSelectKey();
-      // Assume success after trigger as per instructions to avoid race conditions
       setHasKey(true);
       setErrorState('none');
     }
@@ -44,13 +43,13 @@ export const AIPlanner: React.FC = () => {
     setErrorState('none');
     setPlan('');
     setDemoData(null);
-    setLoadingStep('Accessing Neural Substrate...');
+    setLoadingStep('Analyzing Business Logic...');
     
     try {
       const planResult = await generateProjectPlan(idea);
       setPlan(planResult);
 
-      setLoadingStep('Simulating Visual Interface...');
+      setLoadingStep('Rendering Visual Identity...');
       const demoResult = await generateVisualDemo(idea);
       if (demoResult) {
         setDemoData(demoResult);
@@ -59,15 +58,12 @@ export const AIPlanner: React.FC = () => {
         setActiveTab('blueprint');
       }
     } catch (err: any) {
-      console.error("Planner error:", err);
       const msg = err?.message?.toLowerCase() || "";
-      if (msg.includes("auth") || msg.includes("api_key") || msg.includes("not found")) {
+      if (msg.includes("auth") || msg.includes("not found")) {
         setErrorState('auth');
         setHasKey(false);
-      } else if (msg.includes("503") || msg.includes("overloaded")) {
-        setErrorState('overloaded');
       } else {
-        setErrorState('none');
+        setErrorState('overloaded');
       }
     } finally {
       setIsLoading(false);
@@ -83,29 +79,17 @@ export const AIPlanner: React.FC = () => {
   if (!hasKey || errorState === 'auth') {
     return (
       <div className="max-w-4xl mx-auto glass-panel p-16 rounded-[4rem] text-center border border-brand-500/20 shadow-2xl animate-in zoom-in duration-500 bg-slate-950/80">
-        <div className="relative mb-10">
-          <div className="absolute inset-0 bg-brand-500/20 blur-3xl rounded-full"></div>
-          <Key className="text-brand-400 mx-auto relative z-10 animate-pulse" size={64} />
-        </div>
-        <h3 className="text-4xl font-display font-black text-white mb-6 uppercase tracking-tighter">Connection Link Required</h3>
+        <Key className="text-brand-400 mx-auto mb-10 animate-pulse" size={64} />
+        <h3 className="text-4xl font-display font-black text-white mb-6 uppercase tracking-tighter text-3d-hero">Neural Link Required</h3>
         <p className="text-slate-400 text-xl mb-12 font-light leading-relaxed max-w-lg mx-auto">
-          To initialize the Lead Architect (Gemini 3.0), you must connect an API key from a paid GCP project.
+          Please connect your API Key to initialize the System Architect.
         </p>
-        <div className="flex flex-col sm:flex-row gap-6 justify-center">
-          <button 
-            onClick={handleOpenKeyDialog}
-            className="px-12 py-5 bg-brand-600 text-white font-black rounded-2xl hover:bg-brand-500 transition-all flex items-center justify-center gap-3 shadow-[0_20px_60px_rgba(14,165,233,0.3)]"
-          >
-            <RefreshCcw size={22} /> Select API Key
-          </button>
-          <a 
-            href="https://ai.google.dev/gemini-api/docs/billing" 
-            target="_blank" 
-            className="px-12 py-5 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-3"
-          >
-            Billing Guide <ExternalLink size={18} />
-          </a>
-        </div>
+        <button 
+          onClick={handleOpenKeyDialog}
+          className="px-12 py-5 bg-brand-600 text-white font-black rounded-2xl hover:bg-brand-500 transition-all flex items-center justify-center gap-3 shadow-[0_20px_60px_rgba(14,165,233,0.3)] mx-auto"
+        >
+          <RefreshCcw size={22} /> Connect Key
+        </button>
       </div>
     );
   }
@@ -114,11 +98,11 @@ export const AIPlanner: React.FC = () => {
     <div className="flex flex-col gap-12">
       <div className="glass-panel rounded-[3.5rem] p-12 border border-slate-700 shadow-2xl relative overflow-hidden max-w-5xl mx-auto w-full bg-slate-950/60">
         <div className="flex items-center gap-8 mb-10">
-          <div className="w-16 h-16 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(14,165,233,0.1)]">
+          <div className="w-16 h-16 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center justify-center">
             <Cpu size={32} className={isLoading ? 'animate-spin' : ''} />
           </div>
           <div>
-            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">System Architect <span className="text-brand-400">GPT-3.0</span></h3>
+            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">System Architect <span className="text-brand-400">Gemini 3.0</span></h3>
             <p className="text-slate-500 text-xs font-mono uppercase tracking-[0.3em]">Neural Synthesis Engine</p>
           </div>
         </div>
@@ -127,7 +111,7 @@ export const AIPlanner: React.FC = () => {
           <textarea
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
-            placeholder="Enter your vision (e.g., A luxury yacht rental platform with real-time GPS tracking and automated crew scheduling)..."
+            placeholder="What should we build? (e.g., A luxury watch e-commerce store...)"
             className="w-full h-40 bg-black/40 border-2 border-slate-800 rounded-[2rem] p-8 text-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500/50 outline-none transition-all text-xl mb-8 placeholder:opacity-30"
           />
           <button
@@ -161,16 +145,8 @@ export const AIPlanner: React.FC = () => {
             
             <div className="p-8 md:p-12">
               {activeTab === 'blueprint' ? (
-                <div className="prose prose-invert prose-lg max-w-none animate-in fade-in duration-500">
-                  <div className="flex justify-end mb-8">
-                    <button onClick={copyToClipboard} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-white/5 px-6 py-3 rounded-full border border-white/10 hover:bg-white/10 transition-all">
-                      {isCopied ? <CheckCircle2 className="text-emerald-500" size={14}/> : <Copy size={14}/>}
-                      {isCopied ? "Blueprint Copied" : "Export Assets"}
-                    </button>
-                  </div>
-                  <div className="bg-black/30 p-10 rounded-[3rem] border border-white/5 shadow-inner">
+                <div className="prose prose-invert prose-lg max-w-none animate-in fade-in duration-500 bg-black/30 p-10 rounded-[3rem] border border-white/5">
                     <ReactMarkdown>{plan}</ReactMarkdown>
-                  </div>
                 </div>
               ) : (
                 <div className="animate-in fade-in zoom-in-95 duration-700">

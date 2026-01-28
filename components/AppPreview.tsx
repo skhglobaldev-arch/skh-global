@@ -1,16 +1,19 @@
 
 import React from 'react';
-import { Globe, ArrowRight, Monitor, Zap, Shield, Sparkles, Settings, Terminal } from 'lucide-react';
+import { Globe, ArrowRight, Monitor, Zap, Shield, Sparkles, Terminal, ShoppingCart, CreditCard, ChevronRight } from 'lucide-react';
 
 interface AppPreviewProps {
   data: {
+    siteType?: 'e-commerce' | 'saas' | 'luxury' | 'dashboard';
     appName?: string;
     primaryColor?: string;
+    secondaryColor?: string;
     fontStyle?: 'serif' | 'sans' | 'display';
     layoutMode?: 'dark' | 'light';
     hero?: {
       title?: string;
       subtitle?: string;
+      cta?: string;
       imageSearch?: string;
     };
     sections?: any[];
@@ -21,127 +24,125 @@ interface AppPreviewProps {
 export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
   if (!data || Object.keys(data).length === 0) return (
     <div className="p-32 text-center text-slate-600 font-mono text-xs uppercase tracking-[0.5em] animate-pulse">
-      Initialing System Visualization...
+      Synthesizing System Visuals...
     </div>
   );
 
-  const appName = String(data.appName || 'Neural Link');
-  const primaryColor = String(data.primaryColor || '#0ea5e9');
-  const fontStyle = data.fontStyle || 'display';
-  const isDark = data.layoutMode !== 'light';
-  const hero = data.hero || {
-    title: 'The Future of Scale',
-    subtitle: 'Automated infrastructure for high-growth ventures.',
-    imageSearch: 'modern technology architecture'
-  };
-  const sections = data.sections || [];
-  const navigation = data.navigation || ['Home', 'About', 'Systems'];
+  const {
+    siteType = 'saas',
+    appName = 'Neural System',
+    primaryColor = '#0ea5e9',
+    secondaryColor = '#6366f1',
+    fontStyle = 'display',
+    layoutMode = 'dark',
+    hero = {
+      title: 'Next Gen Architecture',
+      subtitle: 'Bespoke systems for global scale.',
+      cta: 'Explore System',
+      imageSearch: 'modern abstract architecture'
+    },
+    sections = [],
+    navigation = ['Home', 'Docs', 'Scale']
+  } = data;
 
+  const isDark = layoutMode !== 'light';
   const fontClass = fontStyle === 'serif' ? 'font-serif' : fontStyle === 'display' ? 'font-display' : 'font-sans';
-  const urlSafeName = appName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const urlSafeName = appName.toLowerCase().replace(/\s+/g, '-');
 
   return (
-    <div className={`w-full max-w-6xl mx-auto rounded-[4rem] overflow-hidden shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] border border-white/5 ${isDark ? 'bg-[#010413] text-white' : 'bg-white text-slate-950'} ${fontClass} animate-in fade-in zoom-in-95 duration-1000 group/browser relative`}>
+    <div className={`w-full max-w-6xl mx-auto rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border border-white/5 ${isDark ? 'bg-[#050505] text-white' : 'bg-slate-50 text-slate-900'} ${fontClass} animate-in fade-in zoom-in-95 duration-1000 group/browser relative`}>
       
-      {/* Dynamic Ambient Background */}
-      <div className="absolute top-0 right-0 w-2/3 h-1/2 bg-brand-500/5 blur-[150px] pointer-events-none -z-10 animate-pulse-slow"></div>
-
-      {/* Ultra-Thin Glass Browser Shell */}
-      <div className={`${isDark ? 'bg-slate-900/40 border-white/5' : 'bg-slate-50 border-slate-200'} border-b px-10 py-4 flex items-center justify-between backdrop-blur-xl`}>
-        <div className="flex gap-2.5">
-          <div className="w-3 h-3 rounded-full bg-red-500/30"></div>
-          <div className="w-3 h-3 rounded-full bg-amber-500/30"></div>
-          <div className="w-3 h-3 rounded-full bg-emerald-500/30"></div>
+      {/* Browser Shell */}
+      <div className={`${isDark ? 'bg-zinc-900/80 border-white/5' : 'bg-slate-200/80 border-slate-300'} border-b px-8 py-3 flex items-center justify-between backdrop-blur-xl`}>
+        <div className="flex gap-2">
+          <div className="w-3 h-3 rounded-full bg-red-500/40"></div>
+          <div className="w-3 h-3 rounded-full bg-amber-500/40"></div>
+          <div className="w-3 h-3 rounded-full bg-emerald-500/40"></div>
         </div>
-        <div className={`flex items-center gap-3 ${isDark ? 'bg-black/60 text-slate-500' : 'bg-white text-slate-400 shadow-sm'} border border-white/5 px-12 py-2 rounded-full text-[9px] font-mono w-1/3 justify-center shadow-inner tracking-[0.2em]`}>
-          <Globe size={10} className="opacity-30" /> {urlSafeName || 'skh'}.global-link.dev
+        <div className={`flex items-center gap-2 ${isDark ? 'bg-black/40 text-slate-500' : 'bg-white/80 text-slate-400'} px-10 py-1.5 rounded-full text-[10px] font-mono border border-white/5`}>
+          <Globe size={10} /> {urlSafeName}.skh.dev
         </div>
-        <div className="flex gap-5 opacity-20">
-           <Terminal size={12} />
-           <Monitor size={12} />
+        <div className="flex gap-4 opacity-20">
+           <Terminal size={14} />
+           <Monitor size={14} />
         </div>
       </div>
 
-      {/* High-Impact Navigation */}
-      <header className={`px-14 py-10 flex items-center justify-between sticky top-0 z-50 transition-all ${isDark ? 'bg-[#010413]/80 backdrop-blur-2xl' : 'bg-white/80 backdrop-blur-2xl'}`}>
-        <div className="flex items-center gap-4 group cursor-pointer">
-           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-2xl transition-all group-hover:rotate-12 group-hover:scale-110" style={{ backgroundColor: primaryColor }}>
+      {/* Navigation */}
+      <header className={`px-10 py-6 flex items-center justify-between sticky top-0 z-50 ${isDark ? 'bg-black/60 backdrop-blur-xl' : 'bg-white/60 backdrop-blur-xl'}`}>
+        <div className="flex items-center gap-3">
+           <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-black text-xs" style={{ backgroundColor: primaryColor }}>
               {appName[0]}
            </div>
-           <span className="font-black text-lg tracking-tighter uppercase">{appName}</span>
+           <span className="font-black text-sm tracking-tighter uppercase">{appName}</span>
         </div>
-        <nav className="hidden lg:flex gap-14 text-[10px] font-black uppercase tracking-[0.4em] opacity-40">
+        <nav className="hidden lg:flex gap-10 text-[10px] font-black uppercase tracking-widest opacity-40">
           {navigation.map((item, i) => (
-            <a key={i} href="#" className="hover:opacity-100 transition-all relative group py-2">
-              {item}
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 rounded-full transition-all duration-300 group-hover:w-4" style={{ backgroundColor: primaryColor }}></span>
-            </a>
+            <a key={i} href="#" className="hover:opacity-100 transition-all">{item}</a>
           ))}
         </nav>
-        <button className="px-10 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-white shadow-2xl transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-3" style={{ backgroundColor: primaryColor }}>
-          Sync <ArrowRight size={14} />
-        </button>
+        <div className="flex items-center gap-4">
+          {siteType === 'e-commerce' && <ShoppingCart size={18} className="opacity-40" />}
+          <button className="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-white shadow-xl" style={{ backgroundColor: primaryColor }}>
+            {siteType === 'e-commerce' ? 'Shop' : 'Connect'}
+          </button>
+        </div>
       </header>
 
-      {/* Cinematic Hero */}
-      <div className="relative h-[800px] overflow-hidden group">
-        <div className="absolute inset-0 bg-slate-950">
+      {/* Hero Section */}
+      <div className="relative min-h-[650px] flex items-center overflow-hidden">
+        <div className="absolute inset-0 -z-10">
           <img 
-            src={`https://images.unsplash.com/photo-1550745679-33d0c6321278?auto=format&fit=crop&q=80&w=1600&h=1000&sig=${Math.random()}`} 
-            className="w-full h-full object-cover opacity-30 transition-transform duration-[20s] group-hover:scale-110 grayscale hover:grayscale-0" 
-            alt="Hero Visual" 
+            src={`https://source.unsplash.com/1600x900/?${encodeURIComponent(hero.imageSearch || 'modern tech')}`} 
+            className="w-full h-full object-cover opacity-20 grayscale" 
+            alt="Hero" 
           />
+          <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? 'from-[#050505] via-transparent to-[#050505]/40' : 'from-slate-50 via-transparent to-slate-50/40'}`}></div>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#010413] via-[#010413]/40 to-transparent"></div>
-        <div className="absolute inset-0 flex flex-col justify-center px-16 md:px-24">
-          <div className="max-w-4xl space-y-12">
-            <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-white/5 bg-white/5 backdrop-blur-3xl">
-               <Sparkles size={14} style={{ color: primaryColor }} className="animate-pulse" />
-               <span className="text-[9px] font-black uppercase tracking-[0.4em] opacity-40">Operational Protocol 8.2</span>
-            </div>
-            <h1 className="text-7xl md:text-9xl font-black leading-[0.85] tracking-tighter animate-in slide-in-from-bottom-10 duration-1000">
-              {hero.title || 'Nexus Synthesis'}
-            </h1>
-            <p className="text-2xl md:text-3xl font-light leading-relaxed max-w-2xl opacity-50">
-              {hero.subtitle || 'Engineered for rapid deployment and indefinite global scalability.'}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-8 pt-8">
-              <button className="px-14 py-7 rounded-2xl text-xl font-black text-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] transition-all hover:-translate-y-2 flex items-center justify-center gap-4" style={{ backgroundColor: primaryColor }}>
-                Execute <Zap size={24} />
+
+        <div className="px-12 md:px-20 max-w-4xl space-y-8">
+           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-3xl">
+              <Sparkles size={12} style={{ color: primaryColor }} />
+              <span className="text-[9px] font-black uppercase tracking-[0.3em] opacity-40">Verified Architecture</span>
+           </div>
+           <h1 className="text-6xl md:text-8xl font-black leading-none tracking-tighter uppercase">
+              {hero.title}
+           </h1>
+           <p className="text-xl md:text-2xl font-light opacity-50 max-w-xl">
+              {hero.subtitle}
+           </p>
+           <div className="flex flex-wrap gap-6 pt-6">
+              <button className="px-10 py-5 rounded-2xl text-sm font-black text-white shadow-2xl transition-all hover:scale-105 flex items-center gap-3" style={{ backgroundColor: primaryColor }}>
+                {hero.cta || 'Get Started'} <ArrowRight size={18} />
               </button>
-              <button className="px-14 py-7 rounded-2xl text-xl font-black border border-white/5 bg-white/5 backdrop-blur-3xl hover:bg-white/10 transition-all text-white">
-                Blueprint
-              </button>
-            </div>
-          </div>
+              {siteType === 'e-commerce' && (
+                <button className="px-10 py-5 rounded-2xl text-sm font-black border border-white/10 bg-white/5 backdrop-blur-3xl text-white">
+                  View Catalog
+                </button>
+              )}
+           </div>
         </div>
       </div>
 
-      {/* Content Stream */}
-      <div className={isDark ? 'bg-[#010413]' : 'bg-slate-50'}>
+      {/* Content Sections */}
+      <div className="px-12 md:px-20 py-24 space-y-32">
         {sections.map((section, idx) => {
-          if (section.type === 'bento-grid') {
+          // Store Layout: Grid of Cards
+          if (section.type === 'products') {
             return (
-              <div key={idx} className="py-48 px-16 md:px-24">
-                <div className="mb-32 flex flex-col md:flex-row md:items-end justify-between gap-12">
-                  <div className="max-w-2xl">
-                    <span className="text-[10px] font-black uppercase tracking-[0.6em] opacity-20 block mb-10">Infrastructure_Map</span>
-                    <h2 className="text-6xl md:text-7xl font-black tracking-tighter leading-none uppercase">{section.title || 'Core Ecosystem'}</h2>
-                  </div>
-                  <div className="h-px w-32 bg-white/10 hidden md:block"></div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-10 auto-rows-[350px]">
-                  {(section.items || []).map((item: any, i: number) => (
-                    <div 
-                      key={i} 
-                      className={`relative rounded-[4rem] overflow-hidden group/card shadow-[0_40px_80px_rgba(0,0,0,0.5)] border border-white/5 transition-all hover:border-white/20 ${item.size === 'large' ? 'md:col-span-2 md:row-span-2' : 'md:col-span-2'}`}
-                    >
-                      <img src={`https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800&h=600&sig=${i+42}`} className="absolute inset-0 w-full h-full object-cover opacity-20 transition-transform duration-1000 group-hover/card:scale-105" alt="Node" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#010413] via-transparent to-transparent p-16 flex flex-col justify-end">
-                        <h4 className="text-4xl font-black text-white mb-6 tracking-tight leading-none uppercase">{item.title}</h4>
-                        <p className="text-lg text-slate-500 font-medium leading-relaxed opacity-0 group-hover/card:opacity-100 transition-all duration-500 translate-y-4 group-hover/card:translate-y-0">{item.desc}</p>
+              <div key={idx}>
+                <h2 className="text-4xl font-black mb-12 tracking-tighter uppercase">{section.title}</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {section.items.map((item: any, i: number) => (
+                    <div key={i} className="group cursor-pointer">
+                      <div className="aspect-[3/4] rounded-3xl bg-zinc-900 overflow-hidden mb-6 relative border border-white/5">
+                         <img src={`https://source.unsplash.com/800x1200/?${encodeURIComponent(item.title)}`} className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700" alt={item.title} />
+                         <div className="absolute top-4 right-4 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-xl text-[10px] font-black text-white border border-white/10">
+                           {item.price || '$299'}
+                         </div>
                       </div>
+                      <h4 className="font-black uppercase tracking-tight text-lg mb-1">{item.title}</h4>
+                      <p className="text-sm opacity-40">{item.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -149,31 +150,77 @@ export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
             );
           }
 
+          // SaaS/Tech Layout: Bento Grid
+          if (section.type === 'bento-grid' || section.type === 'features') {
+            return (
+              <div key={idx}>
+                 <div className="max-w-xl mb-16">
+                    <h2 className="text-4xl font-black mb-4 tracking-tighter uppercase">{section.title}</h2>
+                    <div className="h-1 w-20" style={{ backgroundColor: primaryColor }}></div>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
+                    {section.items.map((item: any, i: number) => (
+                      <div key={i} className={`p-10 rounded-[2.5rem] border border-white/5 bg-zinc-900/40 backdrop-blur-2xl flex flex-col justify-end group hover:bg-zinc-900 transition-all ${item.size === 'large' ? 'md:col-span-2' : ''}`}>
+                         <Zap size={24} style={{ color: primaryColor }} className="mb-auto opacity-40 group-hover:opacity-100 transition-all" />
+                         <h4 className="text-2xl font-black mb-2 tracking-tight uppercase">{item.title}</h4>
+                         <p className="text-sm opacity-40 leading-relaxed">{item.desc}</p>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+            );
+          }
+
+          // Dashboard Preview
+          if (section.type === 'dashboard-preview') {
+            return (
+              <div key={idx} className="bg-zinc-900/40 border border-white/5 rounded-[3rem] p-12 overflow-hidden relative">
+                 <div className="flex items-center justify-between mb-12">
+                   <h2 className="text-3xl font-black tracking-tighter uppercase">{section.title}</h2>
+                   <div className="flex gap-4">
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10"></div>
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10"></div>
+                   </div>
+                 </div>
+                 <div className="grid md:grid-cols-4 gap-8 mb-12">
+                   {[1,2,3,4].map(i => (
+                     <div key={i} className="p-8 rounded-3xl bg-black/40 border border-white/5">
+                        <p className="text-[10px] font-black opacity-30 uppercase mb-4">Metric_{i}</p>
+                        <div className="text-3xl font-black">+{Math.floor(Math.random() * 90)}%</div>
+                     </div>
+                   ))}
+                 </div>
+                 <div className="h-64 bg-black/60 rounded-[2rem] border border-white/5 flex items-end p-8 gap-4">
+                    {[20, 60, 40, 80, 50, 90, 70].map((h, i) => (
+                      <div key={i} className="flex-1 rounded-full transition-all duration-1000" style={{ height: `${h}%`, backgroundColor: primaryColor, opacity: 0.3 + (i * 0.1) }}></div>
+                    ))}
+                 </div>
+              </div>
+            );
+          }
+
+          // Pricing
           if (section.type === 'pricing') {
             return (
-              <div key={idx} className="py-48 px-16 bg-white/5 relative">
-                 <div className="text-center mb-32">
-                   <h2 className="text-7xl md:text-8xl font-black tracking-tighter mb-10 uppercase">{section.title || 'Engagement'}</h2>
-                   <p className="text-2xl opacity-30 font-light tracking-wide italic">Secure your development slot.</p>
-                 </div>
-                 <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-                    {(section.plans || []).map((plan: any, i: number) => (
-                      <div key={i} className={`p-20 rounded-[4.5rem] border-2 transition-all hover:scale-[1.03] ${plan.popular ? 'bg-white text-slate-950 border-white shadow-2xl' : 'bg-slate-900/60 text-white border-white/5 backdrop-blur-3xl'}`}>
-                        {plan.popular && <span className="inline-block px-8 py-3 bg-brand-500 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full mb-12 shadow-xl">Most Optimized</span>}
-                        <h3 className="text-4xl font-black mb-6 tracking-tight uppercase">{plan.name}</h3>
-                        <div className="text-8xl font-black mb-16 tracking-tighter">{plan.price}</div>
-                        <ul className="space-y-8 mb-20">
-                          {(plan.features || []).map((f: string) => (
-                            <li key={f} className="flex items-center gap-5 text-xl font-bold opacity-70">
-                              <Shield size={24} className={plan.popular ? 'text-brand-500' : 'text-slate-600'} /> {f}
+              <div key={idx} className="py-20 text-center">
+                 <h2 className="text-5xl font-black mb-16 tracking-tighter uppercase">{section.title}</h2>
+                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                   {section.plans.map((plan: any, i: number) => (
+                     <div key={i} className={`p-16 rounded-[3rem] border-2 transition-all hover:scale-105 ${plan.popular ? 'border-white bg-white text-black' : 'border-white/5 bg-zinc-900/40 text-white'}`}>
+                        <h3 className="text-2xl font-black mb-4 uppercase">{plan.name}</h3>
+                        <div className="text-6xl font-black mb-12">{plan.price}</div>
+                        <ul className="space-y-6 mb-12 text-left">
+                          {plan.features.map((f: string) => (
+                            <li key={f} className="flex items-center gap-3 font-bold opacity-70">
+                               <ChevronRight size={16} /> {f}
                             </li>
                           ))}
                         </ul>
-                        <button className={`w-full py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-[13px] transition-all shadow-2xl ${plan.popular ? 'bg-slate-950 text-white hover:bg-black' : 'bg-white text-slate-950 hover:bg-slate-100'}`}>
-                          Initialize Project
+                        <button className={`w-full py-6 rounded-2xl font-black uppercase text-xs tracking-widest ${plan.popular ? 'bg-black text-white' : 'bg-white text-black'}`}>
+                          Select Plan
                         </button>
-                      </div>
-                    ))}
+                     </div>
+                   ))}
                  </div>
               </div>
             );
@@ -182,22 +229,22 @@ export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
         })}
       </div>
 
-      {/* Terminal Footer */}
-      <footer className={`${isDark ? 'bg-black/40' : 'bg-slate-100'} py-40 px-24 border-t border-white/5`}>
-        <div className="flex flex-col lg:flex-row justify-between items-center gap-24">
-           <div className="space-y-8 text-center lg:text-left">
-              <div className="flex items-center justify-center lg:justify-start gap-6">
-                 <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center font-black text-2xl border border-white/10">
+      {/* Footer */}
+      <footer className="px-12 py-32 border-t border-white/5 bg-black/40">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-12">
+           <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                 <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center font-black">
                     {appName[0]}
                  </div>
-                 <span className="font-black text-4xl tracking-tighter uppercase">{appName}</span>
+                 <span className="font-black text-2xl tracking-tighter uppercase">{appName}</span>
               </div>
-              <p className="text-lg opacity-20 font-mono tracking-widest uppercase">Built on SKH.Global Core-v8</p>
+              <p className="text-xs opacity-20 font-mono tracking-widest uppercase">© {new Date().getFullYear()} SKH Core Synthesis</p>
            </div>
-           <div className="flex flex-wrap justify-center gap-16 text-[10px] font-black uppercase tracking-[0.4em] opacity-40">
-             <a href="#" className="hover:opacity-100 transition-all">Nexus_Terminal</a>
-             <a href="#" className="hover:opacity-100 transition-all">Privacy_Protocol</a>
-             <a href="#" className="hover:opacity-100 transition-all">System_Status</a>
+           <div className="flex flex-wrap justify-center gap-12 text-[10px] font-black uppercase tracking-widest opacity-30">
+             <a href="#" className="hover:opacity-100">Terms</a>
+             <a href="#" className="hover:opacity-100">Privacy</a>
+             <a href="#" className="hover:opacity-100">Status</a>
            </div>
         </div>
       </footer>

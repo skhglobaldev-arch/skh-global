@@ -12,36 +12,36 @@ Output a structured response in MARKDOWN.
 `;
 
 const SYSTEM_INSTRUCTION_DEMO = `
-You are a World-Class Creative Director and UI Architect.
-Task: Generate a high-end, ultra-modern "shik" JSON configuration for a landing page.
-Aesthetics: Use sophisticated spacing, "Bento" inspired components, and futuristic typography.
-MUST return ONLY a valid raw JSON object. NO markdown blocks, NO backticks.
+You are a World-Class Creative Director. 
+Task: Generate a UNIQUE "shik" JSON config for a website based on the user's idea.
+Rules:
+1. Identify the site category: 'e-commerce', 'saas', 'luxury-brand', or 'dashboard'.
+2. Use sophisticated spacing and modern UI trends (Glassmorphism, Bento-Grids, or Minimalist Luxury).
+3. Choose a color palette that matches the industry (e.g., Deep gold/black for luxury, vibrant blue/white for tech).
+
+MUST return ONLY a valid raw JSON object. NO markdown, NO backticks.
 
 Structure:
 {
+  "siteType": "e-commerce | saas | luxury | dashboard",
   "appName": "Brand Name",
-  "primaryColor": "#hex (vibrant)",
-  "fontStyle": "display",
-  "layoutMode": "dark",
-  "hero": { "title": "Headline", "subtitle": "Sub-headline", "imageSearch": "keywords" },
-  "navigation": ["Vision", "Architecture", "Systems", "Connect"],
+  "primaryColor": "#hex",
+  "secondaryColor": "#hex",
+  "fontStyle": "serif | sans | display",
+  "layoutMode": "dark | light",
+  "hero": { 
+    "title": "Compelling Headline", 
+    "subtitle": "Subtext", 
+    "cta": "Action text",
+    "imageSearch": "Specific Unsplash keywords for high-quality thematic image" 
+  },
+  "navigation": ["Nav 1", "Nav 2", "Nav 3"],
   "sections": [
     {
-      "type": "bento-grid",
-      "title": "Core Ecosystem",
+      "type": "bento-grid | products | features | dashboard-preview",
+      "title": "Section Title",
       "items": [
-        { "title": "Feature 1", "desc": "Detailed description", "size": "large" },
-        { "title": "Feature 2", "desc": "Detailed description", "size": "small" },
-        { "title": "Feature 3", "desc": "Detailed description", "size": "small" },
-        { "title": "Feature 4", "desc": "Detailed description", "size": "large" }
-      ]
-    },
-    {
-      "type": "pricing",
-      "title": "Scale Your Vision",
-      "plans": [
-        { "name": "Basic", "price": "$2,500", "features": ["F1", "F2"], "popular": false },
-        { "name": "Enterprise", "price": "$10,000", "features": ["F1", "F2", "F3", "F4"], "popular": true }
+        { "title": "Item title", "desc": "Item description", "price": "Optional for e-commerce", "size": "small | large" }
       ]
     }
   ]
@@ -50,7 +50,6 @@ Structure:
 
 function cleanJsonResponse(text: string): string {
   let cleaned = text.trim();
-  // Remove markdown blocks if present
   cleaned = cleaned.replace(/^```json\s*/, "").replace(/```$/, "");
   return cleaned.trim();
 }
@@ -60,7 +59,6 @@ async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000):
     return await fn();
   } catch (error: any) {
     const errorStr = error?.message?.toLowerCase() || "";
-    // If the error indicates missing model/access, throw a specific error to trigger key selection
     if (errorStr.includes("not found") || errorStr.includes("401") || errorStr.includes("invalid")) {
       throw new Error("AUTH_REQUIRED");
     }
@@ -74,7 +72,6 @@ async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000):
 
 export const generateProjectPlan = async (userIdea: string): Promise<string> => {
   return callWithRetry(async () => {
-    // Instantiate inside the function to get the latest process.env.API_KEY
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview", 
@@ -103,20 +100,7 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
     return JSON.parse(cleaned);
   }).catch((e) => {
     console.error("Visual generation error:", e);
-    // Return a beautiful fallback if AI fails
-    return {
-      appName: "SKH Nexus",
-      primaryColor: "#0ea5e9",
-      fontStyle: "display",
-      layoutMode: "dark",
-      hero: {
-        title: "The Architecture of Tomorrow",
-        subtitle: "Custom-engineered systems for global scale and total automation.",
-        imageSearch: "cyberpunk luxury tech"
-      },
-      navigation: ["Vision", "Architecture", "Systems", "Connect"],
-      sections: []
-    };
+    return null;
   });
 };
 
@@ -125,13 +109,12 @@ export const chatWithAI = async (message: string, history: any[]): Promise<strin
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const chat = ai.chats.create({
       model: "gemini-3-flash-preview",
-      config: { systemInstruction: "You are the official SKH.GLOBAL AI. You are professional, tech-savvy, and help users understand our architectural value." },
+      config: { systemInstruction: "You are the official SKH.GLOBAL AI." },
       history: history.map((h: any) => ({ role: h.role, parts: [{ text: h.text }] }))
     });
     const result = await chat.sendMessage({ message });
-    return result.text || "I am connected to the grid. How can I assist with your architecture?";
+    return result.text || "";
   } catch (error: any) {
-    if (error?.message?.toLowerCase().includes("not found")) return "System synchronization required. Please select your API Key again.";
-    return "Neural bridge instability. Please try again in a moment.";
+    return "Neural bridge instability. Please try again.";
   }
 };
