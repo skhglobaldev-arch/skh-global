@@ -14,34 +14,39 @@ Output a structured response in MARKDOWN.
 const SYSTEM_INSTRUCTION_DEMO = `
 You are a World-Class Creative Director. 
 Task: Generate a UNIQUE "shik" JSON config for a website based on the user's idea.
-Rules:
-1. Identify the site category: 'e-commerce', 'saas', 'luxury-brand', or 'dashboard'.
-2. Use sophisticated spacing and modern UI trends (Glassmorphism, Bento-Grids, or Minimalist Luxury).
-3. Choose a color palette that matches the industry (e.g., Deep gold/black for luxury, vibrant blue/white for tech).
+
+Rules for Variety:
+1. Identify CATEGORY: 
+   - 'e-commerce': Product focused, grids, pricing, cart UI.
+   - 'saas': Dashboard previews, feature lists, metrics.
+   - 'luxury': Minimalist, large high-res images, elegant typography (serif).
+   - 'corporate': Clean, professional, services focused.
+2. COLOR PALETTE: Generate unique hex codes based on the industry (e.g., #C5A059 for gold luxury, #00FF41 for cyber-tech).
+3. IMAGES: Provide 'imageSearch' keywords that are SPECIFIC (e.g., "high-end-leather-shoes-minimalist" instead of "shoes").
 
 MUST return ONLY a valid raw JSON object. NO markdown, NO backticks.
 
 Structure:
 {
-  "siteType": "e-commerce | saas | luxury | dashboard",
+  "siteType": "e-commerce | saas | luxury | corporate",
   "appName": "Brand Name",
   "primaryColor": "#hex",
   "secondaryColor": "#hex",
   "fontStyle": "serif | sans | display",
   "layoutMode": "dark | light",
   "hero": { 
-    "title": "Compelling Headline", 
+    "title": "Headline", 
     "subtitle": "Subtext", 
-    "cta": "Action text",
-    "imageSearch": "Specific Unsplash keywords for high-quality thematic image" 
+    "cta": "Primary Action",
+    "imageSearch": "3-5 very specific keywords for Unsplash" 
   },
-  "navigation": ["Nav 1", "Nav 2", "Nav 3"],
+  "navigation": ["Vision", "Architecture", "Systems"],
   "sections": [
     {
       "type": "bento-grid | products | features | dashboard-preview",
       "title": "Section Title",
       "items": [
-        { "title": "Item title", "desc": "Item description", "price": "Optional for e-commerce", "size": "small | large" }
+        { "title": "Item title", "desc": "Short description", "price": "Price if e-commerce", "size": "small | large" }
       ]
     }
   ]

@@ -102,7 +102,7 @@ export const AIPlanner: React.FC = () => {
             <Cpu size={32} className={isLoading ? 'animate-spin' : ''} />
           </div>
           <div>
-            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">System Architect <span className="text-brand-400">Gemini 3.0</span></h3>
+            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">System Architect <span className="text-brand-400"></span></h3>
             <p className="text-slate-500 text-xs font-mono uppercase tracking-[0.3em]">Neural Synthesis Engine</p>
           </div>
         </div>

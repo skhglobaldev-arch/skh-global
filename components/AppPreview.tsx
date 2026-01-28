@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { Globe, ArrowRight, Monitor, Zap, Shield, Sparkles, Terminal, ShoppingCart, CreditCard, ChevronRight } from 'lucide-react';
+import { Globe, ArrowRight, Monitor, Zap, Shield, Sparkles, Terminal, ShoppingCart, CreditCard, ChevronRight, Star } from 'lucide-react';
 
 interface AppPreviewProps {
   data: {
-    siteType?: 'e-commerce' | 'saas' | 'luxury' | 'dashboard';
+    siteType?: 'e-commerce' | 'saas' | 'luxury' | 'corporate' | 'dashboard';
     appName?: string;
     primaryColor?: string;
     secondaryColor?: string;
@@ -39,15 +39,21 @@ export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
       title: 'Next Gen Architecture',
       subtitle: 'Bespoke systems for global scale.',
       cta: 'Explore System',
-      imageSearch: 'modern abstract architecture'
+      imageSearch: 'modern tech'
     },
     sections = [],
-    navigation = ['Home', 'Docs', 'Scale']
+    navigation = ['Vision', 'Architecture', 'Systems']
   } = data;
 
   const isDark = layoutMode !== 'light';
   const fontClass = fontStyle === 'serif' ? 'font-serif' : fontStyle === 'display' ? 'font-display' : 'font-sans';
   const urlSafeName = appName.toLowerCase().replace(/\s+/g, '-');
+
+  // Image Helper for more reliable loading
+  const getImageUrl = (keywords: string, width = 1600, height = 900) => {
+    const encoded = encodeURIComponent(keywords.replace(/\s+/g, ','));
+    return `https://source.unsplash.com/featured/${width}x${height}/?${encoded}`;
+  };
 
   return (
     <div className={`w-full max-w-6xl mx-auto rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border border-white/5 ${isDark ? 'bg-[#050505] text-white' : 'bg-slate-50 text-slate-900'} ${fontClass} animate-in fade-in zoom-in-95 duration-1000 group/browser relative`}>
@@ -84,65 +90,80 @@ export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
         <div className="flex items-center gap-4">
           {siteType === 'e-commerce' && <ShoppingCart size={18} className="opacity-40" />}
           <button className="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-white shadow-xl" style={{ backgroundColor: primaryColor }}>
-            {siteType === 'e-commerce' ? 'Shop' : 'Connect'}
+            {siteType === 'e-commerce' ? 'Store' : 'Contact'}
           </button>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <div className="relative min-h-[650px] flex items-center overflow-hidden">
+      {/* Hero Section - Different styles per category */}
+      <div className={`relative ${siteType === 'luxury' ? 'min-h-[850px]' : 'min-h-[650px]'} flex items-center overflow-hidden`}>
         <div className="absolute inset-0 -z-10">
           <img 
-            src={`https://source.unsplash.com/1600x900/?${encodeURIComponent(hero.imageSearch || 'modern tech')}`} 
-            className="w-full h-full object-cover opacity-20 grayscale" 
+            key={hero.imageSearch}
+            src={getImageUrl(hero.imageSearch || appName)} 
+            className={`w-full h-full object-cover ${siteType === 'luxury' ? 'opacity-50' : 'opacity-20 grayscale'}`} 
             alt="Hero" 
           />
           <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? 'from-[#050505] via-transparent to-[#050505]/40' : 'from-slate-50 via-transparent to-slate-50/40'}`}></div>
         </div>
 
-        <div className="px-12 md:px-20 max-w-4xl space-y-8">
-           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-3xl">
+        <div className={`px-12 md:px-20 ${siteType === 'luxury' ? 'max-w-5xl mx-auto text-center' : 'max-w-4xl'} space-y-8`}>
+           <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${isDark ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'} backdrop-blur-3xl mx-auto`}>
               <Sparkles size={12} style={{ color: primaryColor }} />
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] opacity-40">Verified Architecture</span>
+              <span className="text-[9px] font-black uppercase tracking-[0.3em] opacity-40">Premium Identity</span>
            </div>
-           <h1 className="text-6xl md:text-8xl font-black leading-none tracking-tighter uppercase">
+           <h1 className={`${siteType === 'luxury' ? 'text-7xl md:text-9xl' : 'text-6xl md:text-8xl'} font-black leading-none tracking-tighter uppercase drop-shadow-2xl`}>
               {hero.title}
            </h1>
-           <p className="text-xl md:text-2xl font-light opacity-50 max-w-xl">
+           <p className={`text-xl md:text-2xl font-light opacity-60 ${siteType === 'luxury' ? 'mx-auto max-w-2xl' : 'max-w-xl'}`}>
               {hero.subtitle}
            </p>
-           <div className="flex flex-wrap gap-6 pt-6">
+           <div className={`flex flex-wrap gap-6 pt-6 ${siteType === 'luxury' ? 'justify-center' : ''}`}>
               <button className="px-10 py-5 rounded-2xl text-sm font-black text-white shadow-2xl transition-all hover:scale-105 flex items-center gap-3" style={{ backgroundColor: primaryColor }}>
                 {hero.cta || 'Get Started'} <ArrowRight size={18} />
               </button>
-              {siteType === 'e-commerce' && (
-                <button className="px-10 py-5 rounded-2xl text-sm font-black border border-white/10 bg-white/5 backdrop-blur-3xl text-white">
-                  View Catalog
-                </button>
-              )}
            </div>
         </div>
       </div>
 
-      {/* Content Sections */}
+      {/* Dynamic Content Sections */}
       <div className="px-12 md:px-20 py-24 space-y-32">
         {sections.map((section, idx) => {
-          // Store Layout: Grid of Cards
-          if (section.type === 'products') {
+          
+          // Layout for E-Commerce: Product Grid
+          if (siteType === 'e-commerce' || section.type === 'products') {
             return (
-              <div key={idx}>
-                <h2 className="text-4xl font-black mb-12 tracking-tighter uppercase">{section.title}</h2>
+              <div key={idx} className="animate-in fade-in duration-700">
+                <div className="flex items-end justify-between mb-16">
+                  <div>
+                    <h2 className="text-4xl font-black tracking-tighter uppercase">{section.title}</h2>
+                    <div className="h-1 w-12 mt-4" style={{ backgroundColor: primaryColor }}></div>
+                  </div>
+                  <button className="text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 flex items-center gap-2">View Collection <ChevronRight size={14} /></button>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                   {section.items.map((item: any, i: number) => (
                     <div key={i} className="group cursor-pointer">
                       <div className="aspect-[3/4] rounded-3xl bg-zinc-900 overflow-hidden mb-6 relative border border-white/5">
-                         <img src={`https://source.unsplash.com/800x1200/?${encodeURIComponent(item.title)}`} className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700" alt={item.title} />
-                         <div className="absolute top-4 right-4 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-xl text-[10px] font-black text-white border border-white/10">
-                           {item.price || '$299'}
+                         <img src={getImageUrl(item.title + ' product', 800, 1200)} className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700" alt={item.title} />
+                         <div className="absolute top-4 right-4 px-4 py-1.5 rounded-full bg-black/80 backdrop-blur-xl text-[10px] font-black text-white border border-white/10 shadow-xl">
+                           {item.price || '$395.00'}
+                         </div>
+                         <div className="absolute bottom-4 left-4 right-4 translate-y-full group-hover:translate-y-0 transition-transform">
+                            <button className="w-full py-3 bg-white text-black rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl">Add to Cart</button>
                          </div>
                       </div>
-                      <h4 className="font-black uppercase tracking-tight text-lg mb-1">{item.title}</h4>
-                      <p className="text-sm opacity-40">{item.desc}</p>
+                      <div className="flex justify-between items-start">
+                         <div>
+                            <h4 className="font-black uppercase tracking-tight text-lg mb-1">{item.title}</h4>
+                            <p className="text-xs opacity-40 uppercase tracking-widest">Premium Selection</p>
+                         </div>
+                         <div className="flex gap-1 text-amber-500">
+                            <Star size={10} fill="currentColor" />
+                            <Star size={10} fill="currentColor" />
+                            <Star size={10} fill="currentColor" />
+                         </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -150,82 +171,24 @@ export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
             );
           }
 
-          // SaaS/Tech Layout: Bento Grid
-          if (section.type === 'bento-grid' || section.type === 'features') {
-            return (
-              <div key={idx}>
-                 <div className="max-w-xl mb-16">
-                    <h2 className="text-4xl font-black mb-4 tracking-tighter uppercase">{section.title}</h2>
-                    <div className="h-1 w-20" style={{ backgroundColor: primaryColor }}></div>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
-                    {section.items.map((item: any, i: number) => (
-                      <div key={i} className={`p-10 rounded-[2.5rem] border border-white/5 bg-zinc-900/40 backdrop-blur-2xl flex flex-col justify-end group hover:bg-zinc-900 transition-all ${item.size === 'large' ? 'md:col-span-2' : ''}`}>
-                         <Zap size={24} style={{ color: primaryColor }} className="mb-auto opacity-40 group-hover:opacity-100 transition-all" />
-                         <h4 className="text-2xl font-black mb-2 tracking-tight uppercase">{item.title}</h4>
-                         <p className="text-sm opacity-40 leading-relaxed">{item.desc}</p>
-                      </div>
-                    ))}
-                 </div>
-              </div>
-            );
-          }
-
-          // Dashboard Preview
-          if (section.type === 'dashboard-preview') {
-            return (
-              <div key={idx} className="bg-zinc-900/40 border border-white/5 rounded-[3rem] p-12 overflow-hidden relative">
-                 <div className="flex items-center justify-between mb-12">
-                   <h2 className="text-3xl font-black tracking-tighter uppercase">{section.title}</h2>
-                   <div className="flex gap-4">
-                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10"></div>
-                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10"></div>
-                   </div>
-                 </div>
-                 <div className="grid md:grid-cols-4 gap-8 mb-12">
-                   {[1,2,3,4].map(i => (
-                     <div key={i} className="p-8 rounded-3xl bg-black/40 border border-white/5">
-                        <p className="text-[10px] font-black opacity-30 uppercase mb-4">Metric_{i}</p>
-                        <div className="text-3xl font-black">+{Math.floor(Math.random() * 90)}%</div>
-                     </div>
-                   ))}
-                 </div>
-                 <div className="h-64 bg-black/60 rounded-[2rem] border border-white/5 flex items-end p-8 gap-4">
-                    {[20, 60, 40, 80, 50, 90, 70].map((h, i) => (
-                      <div key={i} className="flex-1 rounded-full transition-all duration-1000" style={{ height: `${h}%`, backgroundColor: primaryColor, opacity: 0.3 + (i * 0.1) }}></div>
-                    ))}
-                 </div>
-              </div>
-            );
-          }
-
-          // Pricing
-          if (section.type === 'pricing') {
-            return (
-              <div key={idx} className="py-20 text-center">
-                 <h2 className="text-5xl font-black mb-16 tracking-tighter uppercase">{section.title}</h2>
-                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                   {section.plans.map((plan: any, i: number) => (
-                     <div key={i} className={`p-16 rounded-[3rem] border-2 transition-all hover:scale-105 ${plan.popular ? 'border-white bg-white text-black' : 'border-white/5 bg-zinc-900/40 text-white'}`}>
-                        <h3 className="text-2xl font-black mb-4 uppercase">{plan.name}</h3>
-                        <div className="text-6xl font-black mb-12">{plan.price}</div>
-                        <ul className="space-y-6 mb-12 text-left">
-                          {plan.features.map((f: string) => (
-                            <li key={f} className="flex items-center gap-3 font-bold opacity-70">
-                               <ChevronRight size={16} /> {f}
-                            </li>
-                          ))}
-                        </ul>
-                        <button className={`w-full py-6 rounded-2xl font-black uppercase text-xs tracking-widest ${plan.popular ? 'bg-black text-white' : 'bg-white text-black'}`}>
-                          Select Plan
-                        </button>
-                     </div>
-                   ))}
-                 </div>
-              </div>
-            );
-          }
-          return null;
+          // Default Layout: Bento Features
+          return (
+            <div key={idx} className="animate-in slide-in-from-bottom-12 duration-1000">
+               <div className="max-w-xl mb-16">
+                  <h2 className="text-4xl font-black mb-4 tracking-tighter uppercase">{section.title}</h2>
+                  <div className="h-1 w-20" style={{ backgroundColor: primaryColor }}></div>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
+                  {section.items.map((item: any, i: number) => (
+                    <div key={i} className={`p-10 rounded-[2.5rem] border border-white/5 bg-zinc-900/40 backdrop-blur-2xl flex flex-col justify-end group hover:bg-zinc-900 transition-all ${item.size === 'large' ? 'md:col-span-2' : ''}`}>
+                       <Zap size={24} style={{ color: primaryColor }} className="mb-auto opacity-40 group-hover:opacity-100 transition-all" />
+                       <h4 className="text-2xl font-black mb-2 tracking-tight uppercase">{item.title}</h4>
+                       <p className="text-sm opacity-40 leading-relaxed font-light">{item.desc}</p>
+                    </div>
+                  ))}
+               </div>
+            </div>
+          );
         })}
       </div>
 
@@ -239,12 +202,12 @@ export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
                  </div>
                  <span className="font-black text-2xl tracking-tighter uppercase">{appName}</span>
               </div>
-              <p className="text-xs opacity-20 font-mono tracking-widest uppercase">© {new Date().getFullYear()} SKH Core Synthesis</p>
+              <p className="text-[10px] opacity-20 font-mono tracking-[0.4em] uppercase">© {new Date().getFullYear()} CORE SYSTEMS / SKH SYNTHESIS</p>
            </div>
            <div className="flex flex-wrap justify-center gap-12 text-[10px] font-black uppercase tracking-widest opacity-30">
-             <a href="#" className="hover:opacity-100">Terms</a>
-             <a href="#" className="hover:opacity-100">Privacy</a>
-             <a href="#" className="hover:opacity-100">Status</a>
+             <a href="#" className="hover:opacity-100 transition-colors">Vision</a>
+             <a href="#" className="hover:opacity-100 transition-colors">Privacy</a>
+             <a href="#" className="hover:opacity-100 transition-colors">Architecture</a>
            </div>
         </div>
       </footer>
