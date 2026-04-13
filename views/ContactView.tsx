@@ -32,7 +32,7 @@ export const ContactView: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Email Us</div>
-                        <div className="font-medium text-white text-lg">hello@skh.global</div>
+                        <div className="font-medium text-white text-lg">skhglobal.dev@gmail.com</div>
                         <p className="text-xs text-slate-500 mt-1">24h Response Time</p>
                       </div>
                     </div>

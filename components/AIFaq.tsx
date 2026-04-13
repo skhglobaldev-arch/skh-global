@@ -61,7 +61,7 @@ export const AIFaq: React.FC = () => {
           <div className="bg-slate-900/95 p-5 border-b border-slate-800 flex justify-between items-center backdrop-blur-md">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center p-1.5 shadow-inner">
-                 <img src="https://files.catbox.moe/rx7p0x.jpg" alt="SKH" className="w-full h-full object-cover rounded-lg brightness-110" />
+                 <img src="https://files.catbox.moe/n3xbja.png" alt="SKH" className="w-full h-full object-cover rounded-lg brightness-110" />
               </div>
               <div>
                  <h3 className="text-white font-black text-sm font-display tracking-tight uppercase">SKH Assistant</h3>

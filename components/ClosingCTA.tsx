@@ -18,7 +18,7 @@ export const ClosingCTA: React.FC<ClosingCTAProps> = ({ navigateTo }) => {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-indigo-400 to-brand-500">Automate?</span>
               </h2>
               <p className="text-xl text-slate-400 max-w-md font-light leading-relaxed">
-                Join the ranks of high-performance businesses running on SKH.GLOBAL architecture.
+                Join the ranks of high-performance businesses running on SKH architecture.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button

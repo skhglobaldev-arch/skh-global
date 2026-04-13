@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { NavBar } from './components/NavBar';
 import { Footer } from './components/Footer';
 import { AIFaq } from './components/AIFaq';
@@ -11,15 +11,32 @@ import { ServicesView } from './views/ServicesView';
 import { ProcessView } from './views/ProcessView';
 import { AboutView } from './views/AboutView';
 import { ContactView } from './views/ContactView';
+import { PrivacyView } from './views/PrivacyView';
+import { TermsView } from './views/TermsView';
+import { OffersView } from './views/OffersView';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // Immediate scroll reset whenever activePage changes
+  useLayoutEffect(() => {
+    const resetScroll = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    
+    resetScroll();
+    // Small delay as backup for dynamic content loading
+    const timer = setTimeout(resetScroll, 10);
+    return () => clearTimeout(timer);
+  }, [activePage]);
+
   const handlePageChange = (page: string) => {
     if (page === activePage) return;
     setIsTransitioning(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     setTimeout(() => {
       setActivePage(page);
       setIsTransitioning(false);
@@ -40,7 +57,10 @@ export default function App() {
           {activePage === 'services' && <ServicesView />}
           {activePage === 'process' && <ProcessView />}
           {activePage === 'about' && <AboutView />}
+          {activePage === 'offers' && <OffersView />}
           {activePage === 'contact' && <ContactView />}
+          {activePage === 'privacy' && <PrivacyView />}
+          {activePage === 'terms' && <TermsView />}
           {activePage === 'home' && (
             <HomeView 
               navigateTo={handlePageChange} 
@@ -49,7 +69,6 @@ export default function App() {
         </main>
 
         <Footer navigateTo={handlePageChange} />
-        <AIFaq />
       </div>
     </div>
   );

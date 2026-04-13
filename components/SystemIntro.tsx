@@ -43,7 +43,7 @@ export const SystemIntro: React.FC<SystemIntroProps> = ({ onComplete }) => {
   const mountedRef = useRef(true);
 
   const videoUrl = "https://dl.dropboxusercontent.com/scl/fi/ryxm1c2utu1zu0fwmmpew/grok-video-4de00c75-f0d7-4b70-9048-0b9124eccd31-1.mp4?rlkey=b3fuw8m0gqj8izz4cccrrtvrl&raw=1";
-  const welcomeMessage = "Welcome to SKH Global. The connection is stable. Initializing neural bridge. We are ready to architect your future.";
+  const welcomeMessage = "Welcome to SKH. The connection is stable. Initializing neural bridge. We are ready to architect your future.";
 
   useEffect(() => {
     mountedRef.current = true;

@@ -2,7 +2,6 @@
 import React from 'react';
 import { Hero } from '../components/Hero';
 import { ProblemSolution } from '../components/ProblemSolution';
-import { AIPlanner } from '../components/AIPlanner';
 import { Reveal } from '../components/Reveal';
 import { Carousel3D } from '../components/Carousel3D';
 import { CapabilitiesGrid } from '../components/CapabilitiesGrid';
@@ -23,7 +22,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
 
   return (
     <div className="bg-transparent animate-in fade-in duration-1000">
-      <Hero />
+      <Hero navigateTo={navigateTo} />
       
       <div className="opacity-100 translate-y-0 transition-all duration-1000">
         <div className="bg-slate-950/40 backdrop-blur-sm">
@@ -78,26 +77,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
               </button>
             </div>
           </div>
-        </section>
-
-        {/* AI Planner Section */}
-        <section id="ai-planner" className="py-32 bg-slate-900/20 relative overflow-hidden border-t border-slate-800/50">
-           <div className="max-w-7xl mx-auto px-4 relative z-10">
-              <Reveal>
-                <div className="text-center mb-16">
-                  <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-slate-700 bg-slate-800/60 mb-6 backdrop-blur-md">
-                    <span className="text-brand-400 text-xs font-mono font-bold uppercase tracking-widest">AI Consultant</span>
-                  </div>
-                  <h2 className="text-4xl md:text-5xl font-display font-extrabold text-white mb-6">
-                    Architect Your System
-                  </h2>
-                  <p className="text-slate-300 max-w-2xl mx-auto text-lg font-light leading-relaxed">
-                    Describe your idea. Our team's AI agent will generate a technical blueprint, timeline, and strategy in seconds.
-                  </p>
-                </div>
-              </Reveal>
-              <AIPlanner />
-           </div>
         </section>
 
         <ClosingCTA navigateTo={navigateTo} />

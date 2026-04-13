@@ -16,7 +16,7 @@ export const ContactCTA: React.FC = () => {
              System Inquiry
            </h2>
            <p className="text-lg text-slate-400 mb-12 font-light max-w-2xl mx-auto">
-             Partner with SKH.GLOBAL. Our team will architect a custom platform that scales with your growth.
+             Partner with SKH. Our team will architect a custom platform that scales with your growth.
            </p>
          </Reveal>
          
