@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Github, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { Github, Instagram } from 'lucide-react';
 
 interface FooterProps {
   navigateTo: (page: string) => void;
@@ -27,8 +27,6 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
               </p>
               <div className="flex gap-4">
                 <a href="https://instagram.com/skh.global" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all"><Instagram size={20} /></a>
-                <a href="#" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all"><Twitter size={20} /></a>
-                <a href="#" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all"><Linkedin size={20} /></a>
               </div>
             </div>
 
