@@ -1,8 +1,8 @@
 
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useLayoutEffect, useEffect } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { NavBar } from './components/NavBar';
 import { Footer } from './components/Footer';
-import { AIFaq } from './components/AIFaq';
 import { DigitalRainBackground } from './components/DigitalRainBackground';
 
 // Page Views
@@ -16,10 +16,24 @@ import { TermsView } from './views/TermsView';
 import { OffersView } from './views/OffersView';
 
 export default function App() {
-  const [activePage, setActivePage] = useState('home');
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isTransitioning, setIsTransitioning] = React.useState(false);
+  const [displayLocation, setDisplayLocation] = React.useState(location);
 
-  // Immediate scroll reset whenever activePage changes
+  // Handle page transitions
+  useEffect(() => {
+    if (location.pathname !== displayLocation.pathname) {
+      setIsTransitioning(true);
+      const timer = setTimeout(() => {
+        setDisplayLocation(location);
+        setIsTransitioning(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location, displayLocation]);
+
+  // Immediate scroll reset whenever location changes
   useLayoutEffect(() => {
     const resetScroll = () => {
       window.scrollTo(0, 0);
@@ -28,19 +42,18 @@ export default function App() {
     };
     
     resetScroll();
-    // Small delay as backup for dynamic content loading
     const timer = setTimeout(resetScroll, 10);
     return () => clearTimeout(timer);
-  }, [activePage]);
+  }, [location.pathname]);
 
   const handlePageChange = (page: string) => {
-    if (page === activePage) return;
-    setIsTransitioning(true);
-    
-    setTimeout(() => {
-      setActivePage(page);
-      setIsTransitioning(false);
-    }, 300);
+    const path = page === 'home' ? '/' : `/${page}`;
+    navigate(path);
+  };
+
+  const getActivePageId = () => {
+    const path = displayLocation.pathname.substring(1);
+    return path === '' ? 'home' : path;
   };
 
   return (
@@ -51,21 +64,21 @@ export default function App() {
       
       {/* 2. Content Layer - Visible immediately */}
       <div className="relative z-10 opacity-100 transition-opacity duration-1000">
-        <NavBar activePage={activePage} setActivePage={handlePageChange} />
+        <NavBar activePage={getActivePageId()} setActivePage={handlePageChange} />
         
         <main className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-          {activePage === 'services' && <ServicesView />}
-          {activePage === 'process' && <ProcessView />}
-          {activePage === 'about' && <AboutView />}
-          {activePage === 'offers' && <OffersView />}
-          {activePage === 'contact' && <ContactView />}
-          {activePage === 'privacy' && <PrivacyView />}
-          {activePage === 'terms' && <TermsView />}
-          {activePage === 'home' && (
-            <HomeView 
-              navigateTo={handlePageChange} 
-            />
-          )}
+          <Routes location={displayLocation}>
+            <Route path="/" element={<HomeView navigateTo={handlePageChange} />} />
+            <Route path="/services" element={<ServicesView />} />
+            <Route path="/process" element={<ProcessView />} />
+            <Route path="/about" element={<AboutView />} />
+            <Route path="/offers" element={<OffersView />} />
+            <Route path="/contact" element={<ContactView />} />
+            <Route path="/privacy" element={<PrivacyView />} />
+            <Route path="/terms" element={<TermsView />} />
+            {/* Fallback to home */}
+            <Route path="*" element={<HomeView navigateTo={handlePageChange} />} />
+          </Routes>
         </main>
 
         <Footer navigateTo={handlePageChange} />
