@@ -74,12 +74,12 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
             {/* Right Action Module */}
             <div className="pointer-events-auto flex items-center gap-4">
                <button 
-                  onClick={() => setActivePage('contact')}
+                  onClick={() => setActivePage('audit')}
                   className="hidden md:flex group relative items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-sm transition-all shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] overflow-hidden"
                >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                   <Mail size={16} />
-                  <span>Start Project</span>
+                  <span>Audit Protocol</span>
                </button>
 
                {/* Mobile Toggle */}
@@ -116,10 +116,10 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
          <div className="w-16 h-1 bg-slate-800 rounded-full"></div>
 
          <button 
-            onClick={() => { setActivePage('contact'); setMobileMenuOpen(false); }}
+            onClick={() => { setActivePage('audit'); setMobileMenuOpen(false); }}
             className="px-8 py-4 bg-white text-slate-950 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.3)]"
          >
-            Start Your Project
+            Free Revenue Audit
          </button>
       </div>
     </>

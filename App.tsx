@@ -14,6 +14,7 @@ import { ContactView } from './views/ContactView';
 import { PrivacyView } from './views/PrivacyView';
 import { TermsView } from './views/TermsView';
 import { OffersView } from './views/OffersView';
+import { AuditView } from './views/AuditView';
 
 export default function App() {
   const location = useLocation();
@@ -74,6 +75,7 @@ export default function App() {
             <Route path="/about" element={<AboutView />} />
             <Route path="/offers" element={<OffersView />} />
             <Route path="/contact" element={<ContactView />} />
+            <Route path="/audit" element={<AuditView />} />
             <Route path="/privacy" element={<PrivacyView />} />
             <Route path="/terms" element={<TermsView />} />
             {/* Fallback to home */}

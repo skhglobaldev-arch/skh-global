@@ -33,7 +33,7 @@ export const ProcessView: React.FC = () => {
               { icon: PenTool, title: "Discovery & Strategy", week: "Week 1", desc: "We deep dive into your business logic, audit current systems, and architect the database schema." },
               { icon: Terminal, title: "Design & Prototype", week: "Week 2", desc: "High-fidelity UI/UX designs. We build the skeleton so you can visualize the user journey." },
               { icon: GitMerge, title: "Core Development", week: "Weeks 3-5", desc: "Heavy lifting. API development, frontend implementation, and database connectivity." },
-              { icon: Cpu, title: "Automation Integration", week: "Week 6", desc: "Connecting the plumbing. Make.com workflows, Stripe payments, and email triggers." },
+              { icon: Cpu, title: "Automation Integration", week: "Week 6", desc: "Connecting the nervous system. Custom workflow engines, payment pipelines, and intelligent event triggers." },
               { icon: CheckCircle2, title: "Testing & Launch", week: "Week 7", desc: "Security auditing, load testing, and final deployment to production." }
             ].map((item, i) => (
               <Reveal key={i} delay={i * 100}>
@@ -58,14 +58,34 @@ export const ProcessView: React.FC = () => {
           </div>
        </div>
 
-       {/* Tools We Use */}
-       <div className="py-24 bg-slate-900/50 border-t border-slate-900">
-          <div className="max-w-7xl mx-auto px-4 text-center">
+       {/* Technical Arsenal */}
+       <div className="py-32 bg-slate-900/50 border-t border-slate-900 border-b relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-5"></div>
+          <div className="max-w-7xl mx-auto px-4 relative z-10">
             <Reveal>
-              <h3 className="text-2xl font-bold text-white mb-12">Powered By Best-In-Class Tools</h3>
-              <div className="flex flex-wrap justify-center gap-6 md:gap-12 opacity-60">
-                 {['Figma', 'VS Code', 'GitHub', 'Vercel', 'Postman', 'Docker'].map((tool) => (
-                   <span key={tool} className="text-xl font-mono text-slate-400 border border-slate-700 px-6 py-3 rounded-lg bg-slate-950">{tool}</span>
+              <div className="text-center mb-16">
+                <h3 className="text-3xl md:text-5xl font-display font-black text-white mb-6 uppercase tracking-tighter">Technical Arsenal</h3>
+                <p className="text-slate-400 max-w-2xl mx-auto font-light">We only use enterprise-grade technologies that guarantee long-term scalability and security.</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                 {[
+                   { name: 'TypeScript', category: 'Language' },
+                   { name: 'React 18', category: 'Frontend' },
+                   { name: 'Node.js', category: 'Runtime' },
+                   { name: 'PostgreSQL', category: 'Database' },
+                   { name: 'Redis', category: 'Caching' },
+                   { name: 'Google Cloud', category: 'Infrastructure' },
+                   { name: 'Gemini AI', category: 'Intelligence' },
+                   { name: 'PyTorch', category: 'Machine Learning' },
+                   { name: 'Docker', category: 'DevOps' },
+                   { name: 'Tailwind CSS', category: 'Styling' },
+                   { name: 'Framer Motion', category: 'Animation' },
+                   { name: 'Stripe API', category: 'Economy' }
+                 ].map((tech, i) => (
+                   <div key={i} className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-center group hover:border-brand-500/50 transition-all duration-300">
+                      <span className="text-white font-bold text-sm mb-1 group-hover:text-brand-400 transition-colors">{tech.name}</span>
+                      <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">{tech.category}</span>
+                   </div>
                  ))}
               </div>
             </Reveal>

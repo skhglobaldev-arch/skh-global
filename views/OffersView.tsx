@@ -3,6 +3,8 @@ import React from 'react';
 import { Check, Star, Zap, Shield, Rocket } from 'lucide-react';
 import { Reveal } from '../components/Reveal';
 
+import { ROICalculator } from '../components/ROICalculator';
+
 export const OffersView: React.FC = () => {
   return (
     <div className="bg-[#020617] min-h-screen pt-32 pb-20 relative overflow-hidden">
@@ -59,10 +61,10 @@ export const OffersView: React.FC = () => {
           <Reveal>
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-display font-black text-white uppercase tracking-tighter mb-4">
-                3 Simple Packages
+                Scalable Solutions
               </h2>
-              <p className="text-xl md:text-2xl text-brand-400 font-light tracking-widest uppercase">
-                Choose what fits your business
+              <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 font-light tracking-wide">
+                We don't just build websites. We build <span className="text-brand-400 font-bold">Revenue Engines</span> powered by AI. Choose the level of authority your business needs.
               </p>
             </div>
           </Reveal>
@@ -70,95 +72,130 @@ export const OffersView: React.FC = () => {
           <div className="grid lg:grid-cols-3 gap-8 items-stretch">
             {/* Package 1 */}
             <Reveal delay={100}>
-              <div className="h-full glass-panel p-10 rounded-[2.5rem] border border-slate-800 bg-slate-950/40 flex flex-col">
+              <div className="h-full glass-panel p-10 rounded-[2.5rem] border border-slate-800 bg-slate-950/40 flex flex-col group hover:border-brand-500/30 transition-colors">
                 <div className="flex justify-between items-start mb-8">
                   <div>
                     <h3 className="text-2xl font-black text-white uppercase leading-tight tracking-tighter">
-                      Booking <br />
-                      <span className="text-brand-400">Shield</span>
+                      AI <br />
+                      <span className="text-brand-400">Launchpad</span>
                     </h3>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2">Digital Authority</p>
                   </div>
-                  <div className="text-3xl font-black text-white">£899</div>
+                  <div className="text-3xl font-black text-white tracking-tighter">£1,499</div>
                 </div>
-                <ul className="space-y-6 mb-12 flex-grow">
+                
+                <div className="mb-8 p-4 rounded-2xl bg-brand-500/5 border border-brand-500/10">
+                  <p className="text-xs text-brand-400 font-medium leading-relaxed italic">
+                    "Perfect for established professionals moving away from generic templates to a custom-coded identity."
+                  </p>
+                </div>
+
+                <ul className="space-y-4 mb-12 flex-grow">
                   {[
-                    "Website + contact form",
-                    "Basic chatbot",
-                    "Domain + setup",
-                    "30 days support"
+                    "Bespoke High-Conversion Design",
+                    "AI Copywriting & Tone Sync",
+                    "Ultra-Fast Load Speeds (100 Score)",
+                    "SEO Fundamental Hardening",
+                    "Domain & Secure Hosting Setup",
+                    "30 Days of Elite Support"
                   ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-slate-300">
-                      <div className="w-1.5 h-1.5 rounded-full bg-brand-500"></div>
-                      <span className="text-lg font-light">{item}</span>
+                    <li key={i} className="flex items-start gap-3 text-slate-300">
+                      <Check className="w-5 h-5 text-brand-500 shrink-0 mt-0.5" />
+                      <span className="text-base font-light">{item}</span>
                     </li>
                   ))}
                 </ul>
+                <button className="w-full py-4 rounded-2xl bg-slate-900 border border-slate-800 text-white font-bold uppercase tracking-widest text-xs hover:bg-slate-800 transition-all">Get Started</button>
               </div>
             </Reveal>
 
             {/* Package 2 - Featured */}
             <Reveal delay={200}>
               <div className="h-full relative group">
-                <div className="absolute -inset-1 bg-gradient-to-b from-brand-400 to-brand-600 rounded-[2.5rem] blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative h-full glass-panel p-10 rounded-[2.5rem] border-2 border-brand-500/50 bg-slate-900/60 shadow-[0_0_50px_rgba(14,165,233,0.2)] flex flex-col">
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-1.5 bg-brand-500 text-slate-950 text-xs font-black uppercase tracking-[0.2em] rounded-full shadow-[0_0_20px_rgba(14,165,233,0.5)]">
-                    Most Popular
+                <div className="absolute -inset-1 bg-gradient-to-b from-brand-400 to-brand-600 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                <div className="relative h-full glass-panel p-10 rounded-[2.5rem] border-2 border-brand-500/50 bg-slate-900/60 shadow-[0_0_50px_rgba(14,165,233,0.1)] flex flex-col">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-1.5 bg-brand-500 text-slate-950 text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-[0_0_20px_rgba(14,165,233,0.5)]">
+                    Revenue Accelerator
                   </div>
                   <div className="flex justify-between items-start mb-8">
                     <div>
                       <h3 className="text-2xl font-black text-white uppercase leading-tight tracking-tighter">
-                        Smart <br />
-                        <span className="text-brand-400">Booking Bundle</span>
+                        AI Growth <br />
+                        <span className="text-brand-400">Engine</span>
                       </h3>
+                      <p className="text-[10px] text-brand-400 font-bold uppercase tracking-widest mt-2">Maximum ROI</p>
                     </div>
-                    <div className="text-3xl font-black text-white">£2,199</div>
+                    <div className="text-3xl font-black text-white tracking-tighter">£3,499</div>
                   </div>
-                  <ul className="space-y-6 mb-12 flex-grow">
+
+                  <div className="mb-8 p-4 rounded-2xl bg-brand-500/10 border border-brand-500/20">
+                    <p className="text-xs text-white font-medium leading-relaxed italic">
+                      "For businesses that handle high traffic and need automated systems to convert leads 24/7."
+                    </p>
+                  </div>
+
+                  <ul className="space-y-4 mb-12 flex-grow">
                     {[
-                      "Full booking system + calendar",
-                      "Customer dashboard + deposits",
-                      "Admin panel",
-                      "2 months support"
+                      "Advanced AI Lead Concierge",
+                      "Full Booking & Payment Pipeline",
+                      "Automated Email/SMS Nurturing",
+                      "Staff/Resource Management",
+                      "Conversion-Optimized Landing Pages",
+                      "2 Months Post-Launch Audit"
                     ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-white">
-                        <div className="w-1.5 h-1.5 rounded-full bg-brand-400 shadow-[0_0_8px_rgba(14,165,233,0.8)]"></div>
-                        <span className="text-lg font-medium">{item}</span>
+                      <li key={i} className="flex items-start gap-3 text-white">
+                        <Zap className="w-5 h-5 text-brand-400 shrink-0 mt-0.5 fill-brand-400/20" />
+                        <span className="text-base font-medium">{item}</span>
                       </li>
                     ))}
                   </ul>
+                  <button className="w-full py-4 rounded-2xl bg-brand-500 text-slate-950 font-black uppercase tracking-widest text-xs hover:bg-brand-400 transition-all shadow-[0_0_15px_rgba(14,165,233,0.3)]">Establish Authority</button>
                 </div>
               </div>
             </Reveal>
 
             {/* Package 3 */}
             <Reveal delay={300}>
-              <div className="h-full glass-panel p-10 rounded-[2.5rem] border border-slate-800 bg-slate-950/40 flex flex-col">
+              <div className="h-full glass-panel p-10 rounded-[2.5rem] border border-slate-800 bg-slate-950/40 flex flex-col group hover:border-brand-500/30 transition-colors">
                 <div className="flex justify-between items-start mb-8">
                   <div>
                     <h3 className="text-2xl font-black text-white uppercase leading-tight tracking-tighter">
-                      Pro <br />
-                      <span className="text-brand-400">Booking System</span>
+                      Custom <br />
+                      <span className="text-brand-400">Core</span>
                     </h3>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2">Enterprise Scale</p>
                   </div>
-                  <div className="text-3xl font-black text-white">£3,999</div>
+                  <div className="text-3xl font-black text-white tracking-tighter">£7,499+</div>
                 </div>
-                <ul className="space-y-6 mb-12 flex-grow">
+
+                <div className="mb-8 p-4 rounded-2xl bg-brand-500/5 border border-brand-500/10">
+                  <p className="text-xs text-brand-400 font-medium leading-relaxed italic">
+                    "Complete digital transformation. We build the architecture that runs your entire operation."
+                  </p>
+                </div>
+
+                <ul className="space-y-4 mb-12 flex-grow">
                   {[
-                    "Advanced automation",
-                    "Multi-staff calendar",
-                    "Full customization",
-                    "3 months support"
+                    "Internal Business Dashboards",
+                    "Custom Staff & Client Portals",
+                    "Complex Database Architecture",
+                    "Third-Party API Integrations",
+                    "Military-Grade Security Protocol",
+                    "Priority 24/7 Dedicated Support"
                   ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-slate-300">
-                      <div className="w-1.5 h-1.5 rounded-full bg-brand-500"></div>
-                      <span className="text-lg font-light">{item}</span>
+                    <li key={i} className="flex items-start gap-3 text-slate-300">
+                      <Rocket className="w-5 h-5 text-brand-500 shrink-0 mt-0.5" />
+                      <span className="text-base font-light">{item}</span>
                     </li>
                   ))}
                 </ul>
+                <button className="w-full py-4 rounded-2xl bg-slate-900 border border-slate-800 text-white font-bold uppercase tracking-widest text-xs hover:bg-slate-800 transition-all">Request Audit</button>
               </div>
             </Reveal>
           </div>
         </div>
+
+        <ROICalculator />
 
         {/* Closing HUD Element */}
         <Reveal delay={500}>

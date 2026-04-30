@@ -12,6 +12,8 @@ interface HomeViewProps {
   navigateTo: (page: string) => void;
 }
 
+import { ROICalculator } from '../components/ROICalculator';
+
 export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
   const demoItems = [
     { icon: Stethoscope, title: "MediCare Pro", description: "Clinic management system with patient portals, appointment scheduling, and automated reminders." },
@@ -79,6 +81,46 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
           </div>
         </section>
 
+        {/* Pricing / Packages Quick View */}
+        <section className="py-32 relative bg-slate-900/10 border-y border-slate-800">
+          <div className="max-w-7xl mx-auto px-4 relative z-10">
+            <Reveal>
+              <div className="text-center mb-20">
+                <h2 className="text-4xl md:text-5xl font-display font-extrabold text-white mb-6">
+                  Select Your <span className="text-brand-500">Investment</span>
+                </h2>
+                <p className="text-slate-400 text-lg max-w-2xl mx-auto font-light">
+                  We offer three clear tiers of digital dominance. No hourly bills. Just pure, results-driven engineering.
+                </p>
+              </div>
+            </Reveal>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { name: "AI Launchpad", price: "£1,499", desc: "For professionals needing an elite identity." },
+                { name: "Growth Engine", price: "£3,499", desc: "The automated system that prints revenue." },
+                { name: "Custom Core", price: "£7,499+", desc: "The entire nervous system for your enterprise." }
+              ].map((pkg, i) => (
+                <Reveal key={i} delay={i * 100}>
+                  <div className="p-8 rounded-[2rem] bg-slate-950/50 border border-slate-800 flex flex-col items-center text-center group hover:border-brand-500/50 transition-all duration-500">
+                    <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">{pkg.name}</h3>
+                    <div className="text-2xl font-black text-brand-400 mb-4">{pkg.price}</div>
+                    <p className="text-slate-500 text-sm font-light mb-8 italic">"{pkg.desc}"</p>
+                    <button 
+                      onClick={() => navigateTo('offers')}
+                      className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 group-hover:text-brand-400 transition-colors"
+                    >
+                      View Package Details →
+                    </button>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <ROICalculator />
+        
         <ClosingCTA navigateTo={navigateTo} />
       </div>
     </div>

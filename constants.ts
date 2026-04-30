@@ -28,32 +28,32 @@ export const NAV_ITEMS: NavItem[] = [
 export const SERVICES: ServiceItem[] = [
   {
     title: 'Advanced Real-Time Dashboards',
-    description: 'We build admin & client portals with Firebase onSnapshot for instant data syncing. Track sales, bookings, and user activity live without refreshing.',
+    description: 'We build admin & client portals with enterprise-grade syncing. Track sales, bookings, and user activity live without refreshing. No more waiting for reports.',
     icon: Monitor
   },
   {
     title: 'Business Workflow Automation',
-    description: 'We replace manual data entry with Make.com & Node.js. Connect your forms to CRMs, automate emails, and trigger PDF generation automatically.',
+    description: 'We replace manual chaos with bespoke automation engines. Connect your forms to CRMs, automate complex logistics, and trigger intelligent event logic.',
     icon: Workflow
   },
   {
     title: 'Complex Booking & Payments',
-    description: 'Multi-step booking flows with branch logic, Stripe integration, voucher systems, and automated availability blocking.',
+    description: 'Multi-step booking flows with intelligent branch logic, multi-currency support, and automated availability protocols across your entire team.',
     icon: CalendarCheck
   },
   {
-    title: 'Influencer & Referral Growth',
-    description: 'Built-in growth engines: referral code generation, cookie-based tracking, and commission calculation dashboards for your partners.',
+    title: 'Growth & Tracking Hubs',
+    description: 'Built-in growth engines: referral architectures, cookie-based attribution, and custom commission dashboards for your strategic partners.',
     icon: Users
   },
   {
-    title: 'Enterprise Security & Auth',
-    description: 'RBAC (Role-Based Access Control) for Admins, Editors, and Viewers. Secure API keys, OAuth integration, and protected route logic.',
+    title: 'Military-Grade Security',
+    description: 'Strict RBAC (Role-Based Access Control), zero-trust architecture, and secure API integration ensuring your data sovereignty remains absolute.',
     icon: ShieldCheck
   },
   {
-    title: 'AI Architecture Consulting',
-    description: 'We analyze your business model to design a scalable, monetization-ready architecture, not just a static website.',
+    title: 'AI Product Engineering',
+    description: 'We don\'t just add a chatbot. We analyze your model to engineer a scalable, AI-orchestrated architecture that delivers real business edge.',
     icon: BrainCircuit
   }
 ];
@@ -110,26 +110,26 @@ export const STEPS: StepItem[] = [
 export const PAIN_POINTS: PainPoint[] = [
   {
     question: "Do you really own a business, or just a website?",
-    pain: "Most Sites are static brochures that don't do any real work.",
-    solution: "We build revenue-ready systems with booking, payments, and dashboards that run your business 24/7.",
+    pain: "Most sites are static brochures that don't do any real work, leaving you to handle the heavy lifting manually.",
+    solution: "We build revenue-ready systems with booking, payments, and dashboards that automate your operations 24/7.",
     icon: Rocket
   },
   {
-    question: "Drowning in manual spreadsheets?",
-    pain: "Managing reservations, emails, and invoices manually kills your growth.",
-    solution: "Our Make.com automations handle everything. From form submission to CRM entry and invoicing—zero clicks required.",
+    question: "Drowning in manual processes?",
+    pain: "Managing reservations, emails, and syncs between different tools manually is a bottleneck that kills growth.",
+    solution: "Our custom automation layers handle everything. From form submission to CRM integration and reporting—zero manual intervention.",
     icon: Zap
   },
   {
     question: "Are you flying blind?",
-    pain: "Without data, you can't make decisions. Old admin panels are clunky and slow.",
-    solution: "Get custom Real-Time Dashboards. See live sales, active users, and booking slots instantly.",
+    pain: "Without real-time data, you can't make strategic decisions. Static admin panels are outdated and slow.",
+    solution: "Get custom Live Dashboards. See sales, active users, and resource availability the second it happens.",
     icon: Monitor
   },
   {
-    question: "Is security keeping you up at night?",
-    pain: "Generic plugins leave you vulnerable to hacks and data leaks.",
-    solution: "We implement Bank-Grade Security: Role-based access, encrypted data, and secure payment gateways.",
+    question: "Is security a recurring anxiety?",
+    pain: "Generic plugins and third-party boxes leave your business vulnerable to leaks and data loss.",
+    solution: "We implement custom Hardened Security: Zero-trust access, encrypted channels, and secure payment pipelines.",
     icon: ShieldCheck
   }
 ];

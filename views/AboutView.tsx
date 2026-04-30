@@ -19,6 +19,46 @@ export const AboutView: React.FC = () => {
         <About />
       </div>
 
+      {/* Philosophy Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 border-t border-slate-800/50">
+        <div className="grid md:grid-cols-2 gap-24 items-center">
+          <Reveal>
+             <div className="relative">
+               <div className="absolute -left-12 -top-12 text-[20rem] font-black text-white/[0.02] select-none">"</div>
+               <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-10 leading-tight">
+                 Our <span className="text-brand-500 underline decoration-brand-500/30 underline-offset-8">Code-First</span> <br/>Philosophy
+               </h2>
+               <div className="space-y-8 text-slate-400 text-lg font-light leading-relaxed">
+                 <p>
+                   We believe the modern web is suffering from "Template Fatigue." Businesses are choosing the fastest route to launch, often sacrificing security, speed, and long-term sovereignty.
+                 </p>
+                 <p>
+                   At <span className="text-white font-bold">SKH.GLOBAL</span>, we take the path of engineering excellence. We don't use page builders or generic frameworks that bloat your system. We write original, optimized TypeScript that you own forever.
+                 </p>
+                 <div className="p-6 rounded-2xl bg-brand-500/5 border border-brand-500/20 italic text-brand-400">
+                   "If you are looking for the cheapest option, we aren't it. If you are looking for the most reliable, we are the only choice."
+                 </div>
+               </div>
+             </div>
+          </Reveal>
+          
+          <Reveal delay={200}>
+            <div className="grid gap-6">
+              {[
+                { title: "Sovereignty First", desc: "You own every single line of code. No vendor lock-ins or mandatory monthly fees." },
+                { title: "No-Bloat Architecture", desc: "We aim for 100/100 performance scores. Speed is a feature, not an afterthought." },
+                { title: "AI At the Core", desc: "We integrate Gemini and other LLMs directly into your processes for real automation." }
+              ].map((item, i) => (
+                <div key={i} className="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 hover:border-brand-500/30 transition-all group">
+                   <h4 className="text-white font-bold text-xl mb-3 font-display group-hover:text-brand-400 transition-colors">{item.title}</h4>
+                   <p className="text-slate-400 font-light leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </div>
+
       {/* Stats Section */}
       <div className="py-24 bg-slate-900/50 relative overflow-hidden border-y border-slate-800">
          <div className="absolute inset-0 bg-grid opacity-5"></div>

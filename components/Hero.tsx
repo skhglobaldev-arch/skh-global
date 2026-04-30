@@ -42,22 +42,22 @@ export const Hero: React.FC<HeroProps> = ({ navigateTo }) => {
 
         <div className="mt-16 flex flex-col sm:flex-row gap-8 w-full sm:w-auto relative z-20">
           <button 
-            onClick={() => navigateTo('contact')}
+            onClick={() => navigateTo('audit')}
             className="group relative inline-flex items-center justify-center px-12 py-5 text-xl font-bold text-white transition-all duration-500 bg-brand-600 rounded-2xl hover:bg-brand-500 hover:-translate-y-2 shadow-[0_20px_50px_rgba(14,165,233,0.4)] hover:shadow-[0_25px_70px_rgba(14,165,233,0.7)] overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-300 to-brand-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity"></div>
             <span className="relative z-10 flex items-center gap-3">
-              Start Project
+              Free Revenue Audit
               <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform duration-300" />
             </span>
           </button>
           
-          <a 
-            href="#demos"
+          <button 
+            onClick={() => navigateTo('process')}
             className="inline-flex items-center justify-center px-12 py-5 text-xl font-bold text-slate-100 transition-all duration-500 bg-slate-900/40 border border-slate-700/50 rounded-2xl hover:text-white hover:bg-slate-800/60 hover:border-brand-400/60 backdrop-blur-xl group shadow-2xl"
           >
-            Live Showcase <ChevronRight size={22} className="ml-2 group-hover:translate-x-1 transition-transform" />
-          </a>
+            Our Architecture <ChevronRight size={22} className="ml-2 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       </div>
     </div>

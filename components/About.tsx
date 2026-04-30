@@ -31,16 +31,16 @@ export const About: React.FC = () => {
               </div>
               
               <h2 className="text-4xl md:text-6xl font-display font-extrabold text-white mb-8 leading-[1.1]">
-                More Than Developers. <br/>
-                <span className="text-slate-500">We Are System Architects.</span>
+                System Architecture <br/>
+                <span className="text-brand-500">Built for Scale.</span>
               </h2>
               
               <div className="prose prose-lg prose-invert text-slate-300 mb-10 font-light">
                 <p className="mb-4">
-                  SKH is a premier development agency specializing in full-stack architecture and business automation. We don't just deliver code; we build revenue-ready platforms designed to scale.
+                  SKH isn't just a development team; we are your strategic engineering partners. We specialize in AI Orchestration and Custom Backend Architectures that turn business ideas into automated revenue streams.
                 </p>
                 <p>
-                  Our team replaces manual chaos with intelligent systems, ensuring your business runs securely, efficiently, and automatically.
+                  While others sell "websites", we deliver hardened digital infrastructure designed to dominate markets, protect data, and eliminate manual overhead.
                 </p>
               </div>
 

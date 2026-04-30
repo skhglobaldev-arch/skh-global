@@ -9,9 +9,9 @@ export const ContactView: React.FC = () => {
     <div className="pb-0">
       
       <PageHero 
-        badge="Start Your Project"
-        title={<>Let's Build Something <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Extraordinary</span></>}
-        subtitle="Ready to automate your business and scale? We are accepting new projects for Q4. Secure your development slot today."
+        badge="Inquiry Protocol"
+        title={<>Request Your <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Revenue Audit</span></>}
+        subtitle="We aren't just developers. We are strategic partners. If you have an established business and are ready to automate your growth with AI, let's talk."
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-20">
@@ -21,8 +21,8 @@ export const ContactView: React.FC = () => {
              <Reveal>
                <div className="space-y-10">
                   <div>
-                    <h3 className="text-2xl font-display font-bold text-white mb-4">Contact Information</h3>
-                    <p className="text-slate-400">Direct channels to our architectural team.</p>
+                    <h3 className="text-2xl font-display font-bold text-white mb-4">Boarding Office</h3>
+                    <p className="text-slate-400">Direct channels for high-priority architectural discussions.</p>
                   </div>
 
                   <div className="space-y-6">

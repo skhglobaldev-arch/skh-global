@@ -46,6 +46,7 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
             <div>
               <h4 className="text-white font-black uppercase tracking-[0.2em] text-xs mb-8 opacity-50">Inquiries</h4>
               <ul className="space-y-5 text-slate-400 font-medium">
+                <li><button onClick={() => navigateTo('audit')} className="hover:text-brand-400 transition-colors">Free Revenue Audit</button></li>
                 <li><button onClick={() => navigateTo('contact')} className="hover:text-brand-400 transition-colors">Start Project</button></li>
                 <li><a href="mailto:skhglobal.dev@gmail.com" className="hover:text-brand-400 transition-colors">skhglobal.dev@gmail.com</a></li>
                 <li className="pt-4">
