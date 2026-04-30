@@ -45,12 +45,18 @@ export const AuditView: React.FC = () => {
   const totalSteps = 6;
   const formRef = useRef<HTMLFormElement>(null);
 
-  const nextStep = () => setStep(s => Math.min(s + 1, totalSteps));
-  const prevStep = () => setStep(s => Math.max(s - 1, 1));
+  const nextStep = () => {
+    setStep(s => Math.min(s + 1, totalSteps));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const prevStep = () => {
+    setStep(s => Math.max(s - 1, 1));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleRadioChange = (name: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
-    setTimeout(nextStep, 600); // Smoother auto-advance
+    setTimeout(nextStep, 500); 
   };
 
   const handleCheckboxChange = (value: string) => {
@@ -70,6 +76,8 @@ export const AuditView: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Safety check: if not on last step, just go to next
     if (step < totalSteps) {
       nextStep();
       return;
@@ -77,22 +85,27 @@ export const AuditView: React.FC = () => {
 
     setLoading(true);
     
-    // Netlify Form Submission logic
     try {
+      const body = encode({ 
+        "form-name": "revenue-audit", 
+        ...formData,
+        channels: formData.channels.join(', ')
+      });
+
       await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode({ 
-          "form-name": "revenue-audit", 
-          ...formData,
-          channels: formData.channels.join(', ')
-        })
+        body: body
       });
+      
+      // We set submitted to true immediately after the attempt
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error("Submission error:", error);
-      // Fallback for development where Netlify isn't active
+      // Fallback: show success anyway so user experience isn't broken
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
     }
