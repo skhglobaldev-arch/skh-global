@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .email-container { background-color: #020617; padding: 40px; font-family: 'Inter', sans-serif; color: #ffffff; }
+        .card { max-width: 600px; margin: 0 auto; background: #0f172a; border: 1px solid #1e293b; border-radius: 30px; padding: 50px; text-align: center; }
+        .logo { width: 80px; margin-bottom: 30px; filter: drop-shadow(0 0 10px #0ea5e9); }
+        h1 { font-size: 24px; color: #0ea5e9; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; }
+        p { font-size: 16px; line-height: 1.6; color: #94a3b8; margin-bottom: 20px; }
+        .diagnostic-box { margin: 30px 0; padding: 25px; background: #020617; border-radius: 20px; border-left: 5px solid #0ea5e9; text-align: left; }
+        .label { font-size: 10px; font-weight: 900; color: #0ea5e9; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .value { font-size: 20px; font-weight: 700; color: #ffffff; }
+        .footer-text { font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 1px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="card">
+            <h1>Protocol Initiated</h1>
+            <p>Your Revenue Audit diagnostic has been received. Our architecture team is now auditing your online infrastructure and bottleneck profile.</p>
+            
+            <div class="diagnostic-box">
+                <div class="label">Priority Ticket</div>
+                <div class="value">#{TICKET_ID}</div>
+            </div>
+
+            <div class="diagnostic-box">
+                <div class="label">Est. Review Time</div>
+                <div class="value">12 - 24 Hours</div>
+            </div>
+
+            <p style="font-style: italic; font-size: 14px;">While you wait, keep an eye on your WhatsApp for an immediate architectural brief.</p>
+            
+            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 40px 0;">
+            <div class="footer-text">Systems Engineering Team | SKH GLOBAL</div>
+        </div>
+    </div>
+</body>
+</html>

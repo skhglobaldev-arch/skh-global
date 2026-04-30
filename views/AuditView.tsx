@@ -42,13 +42,17 @@ export const AuditView: React.FC = () => {
     instagram: ''
   });
 
+  const [errors, setErrors] = useState<string[]>([]);
+
   const totalSteps = 6;
   const formRef = useRef<HTMLFormElement>(null);
 
   const nextStep = () => {
+    setErrors([]);
     setStep(s => Math.min(s + 1, totalSteps));
   };
   const prevStep = () => {
+    setErrors([]);
     setStep(s => Math.max(s - 1, 1));
   };
 
@@ -62,11 +66,13 @@ export const AuditView: React.FC = () => {
   }, [step, submitted]);
 
   const handleRadioChange = (name: keyof FormData, value: string) => {
+    setErrors([]);
     setFormData(prev => ({ ...prev, [name]: value }));
     setTimeout(nextStep, 400); 
   };
 
   const handleCheckboxChange = (value: string) => {
+    setErrors([]);
     setFormData(prev => {
       const channels = prev.channels.includes(value)
         ? prev.channels.filter(c => c !== value)
@@ -83,9 +89,24 @@ export const AuditView: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors([]);
     
     if (step < totalSteps) {
+      if (step === 5 && !formData.businessName) {
+        setErrors(['businessName']);
+        return;
+      }
       nextStep();
+      return;
+    }
+
+    // Final Validation
+    const newErrors = [];
+    if (!formData.email) newErrors.push('email');
+    if (!formData.phone || formData.phone.length < 8) newErrors.push('phone');
+    
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -344,14 +365,18 @@ export const AuditView: React.FC = () => {
                 </div>
                 <div className="grid gap-8 max-w-xl mx-auto">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 font-mono ml-2">Business Name</label>
+                    <label className={`text-[10px] font-black uppercase tracking-[0.3em] font-mono ml-2 transition-colors ${errors.includes('businessName') ? 'text-red-500' : 'text-slate-500'}`}>
+                      {errors.includes('businessName') ? 'Business Name Required' : 'Business Name'}
+                    </label>
                     <input 
                       required 
                       type="text" 
                       placeholder="e.g. Aura Aesthetics" 
                       value={formData.businessName}
                       onChange={(e) => setFormData({...formData, businessName: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-3xl px-8 py-6 text-white text-lg focus:border-brand-500 outline-none transition-all placeholder:text-slate-800 font-medium"
+                      className={`w-full bg-slate-950 border rounded-3xl px-8 py-6 text-white text-lg outline-none transition-all placeholder:text-slate-800 font-medium ${
+                        errors.includes('businessName') ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse' : 'border-slate-800 focus:border-brand-500'
+                      }`}
                     />
                   </div>
                   <div className="space-y-3">
@@ -396,8 +421,10 @@ export const AuditView: React.FC = () => {
                 
                 <div className="grid gap-8 max-w-xl mx-auto">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 font-mono ml-2">Mobile Number (WhatsApp Enabled)</label>
-                    <div className="custom-phone-input">
+                    <label className={`text-[10px] font-black uppercase tracking-[0.3em] font-mono ml-2 transition-colors ${errors.includes('phone') ? 'text-red-500' : 'text-slate-500'}`}>
+                      {errors.includes('phone') ? 'Valid Phone Required' : 'Mobile Number (WhatsApp Enabled)'}
+                    </label>
+                    <div className={`custom-phone-input border rounded-[24px] overflow-hidden transition-all ${errors.includes('phone') ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-transparent'}`}>
                       <PhoneInput
                         country={'ae'}
                         value={formData.phone}
@@ -425,20 +452,26 @@ export const AuditView: React.FC = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 font-mono ml-2">Business Email</label>
+                    <label className={`text-[10px] font-black uppercase tracking-[0.3em] font-mono ml-2 transition-colors ${errors.includes('email') ? 'text-red-500' : 'text-slate-500'}`}>
+                      {errors.includes('email') ? 'Valid Email Required' : 'Business Email'}
+                    </label>
                     <input 
                       required 
                       type="email" 
                       placeholder="name@company.com" 
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-3xl px-8 py-6 text-white text-lg focus:border-brand-500 outline-none transition-all placeholder:text-slate-800 font-medium"
+                      className={`w-full bg-slate-950 border rounded-3xl px-8 py-6 text-white text-lg outline-none transition-all placeholder:text-slate-800 font-medium ${
+                        errors.includes('email') ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse' : 'border-slate-800 focus:border-brand-500'
+                      }`}
                     />
                   </div>
 
-                  <button 
+                  <motion.button 
+                    animate={errors.length > 0 ? { x: [0, -10, 10, -10, 10, 0] } : {}}
+                    transition={{ duration: 0.4 }}
                     type="submit"
-                    disabled={loading || !formData.email || !formData.phone}
+                    disabled={loading}
                     className="w-full bg-brand-500 text-slate-950 font-black uppercase tracking-widest py-8 rounded-[2.5rem] hover:bg-brand-400 transition-all flex items-center justify-center gap-4 shadow-[0_0_60px_rgba(14,165,233,0.4)] relative overflow-hidden group"
                   >
                     {loading ? (
@@ -449,7 +482,7 @@ export const AuditView: React.FC = () => {
                         <Send size={24} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                       </>
                     )}
-                  </button>
+                  </motion.button>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-10 text-slate-600 mt-12 border-t border-slate-900 pt-10">
