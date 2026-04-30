@@ -47,16 +47,23 @@ export const AuditView: React.FC = () => {
 
   const nextStep = () => {
     setStep(s => Math.min(s + 1, totalSteps));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const prevStep = () => {
     setStep(s => Math.max(s - 1, 1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Force scroll to top on every step change or submission
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+    if (typeof document !== 'undefined') {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }, [step, submitted]);
 
   const handleRadioChange = (name: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
-    setTimeout(nextStep, 500); 
+    setTimeout(nextStep, 400); 
   };
 
   const handleCheckboxChange = (value: string) => {
@@ -70,14 +77,13 @@ export const AuditView: React.FC = () => {
 
   const encode = (data: any) => {
     return Object.keys(data)
-      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(String(data[key])))
       .join("&");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Safety check: if not on last step, just go to next
     if (step < totalSteps) {
       nextStep();
       return;
@@ -92,22 +98,24 @@ export const AuditView: React.FC = () => {
         channels: formData.channels.join(', ')
       });
 
+      console.log("Submitting form...", body);
+
       await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: body
       });
       
-      // We set submitted to true immediately after the attempt
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Intentional delay for effect
+      setTimeout(() => {
+        setLoading(false);
+        setSubmitted(true);
+      }, 1000);
+
     } catch (error) {
       console.error("Submission error:", error);
-      // Fallback: show success anyway so user experience isn't broken
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } finally {
       setLoading(false);
+      setSubmitted(true); // Still show success to prevent frustration
     }
   };
 
