@@ -1,6 +1,5 @@
 import React from 'react';
-import { Github } from 'lucide-react';
-import { Instagram } from 'lucide-react';
+import { GithubIcon, InstagramIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface FooterProps {
@@ -30,10 +29,10 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
               </p>
               <div className="flex gap-4">
                 <a href="https://instagram.com/skh.global" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all">
-                  <Instagram size={20} />
+                  <InstagramIcon size={20} />
                 </a>
                 <a href="https://github.com/skh-global" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all">
-                  <Github size={20} />
+                  <GithubIcon size={20} />
                 </a>
               </div>
             </div>
