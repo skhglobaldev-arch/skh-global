@@ -39,7 +39,10 @@ export const ContactCTA: React.FC = () => {
 
       // Send to custom backend for AI processing and email
       try {
-        await fetch("/api/contact", {
+        const contactUrl = "/api/contact";
+        console.log(`[CONTACT] Submitting to: ${window.location.origin}${contactUrl}`);
+        
+        await fetch(contactUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 

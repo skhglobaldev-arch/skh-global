@@ -122,7 +122,10 @@ export const AuditView: React.FC = () => {
     setLoading(true);
     
     try {
-      const response = await fetch("/api/audit", {
+      const apiUrl = "/api/audit";
+      console.log(`[AUDIT] Submitting to: ${window.location.origin}${apiUrl}`);
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
