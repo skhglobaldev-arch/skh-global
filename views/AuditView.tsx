@@ -119,12 +119,9 @@ export const AuditView: React.FC = () => {
       channels: formData.channels.join(', ')
     };
 
-    console.log("Submitting form:", body);
-
     setLoading(true);
     
     try {
-      // Send to custom backend for AI processing and email
       const response = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -199,9 +196,6 @@ export const AuditView: React.FC = () => {
 
         <form 
           ref={formRef}
-          name="revenue-audit" 
-          method="POST" 
-          data-netlify="true"
           onSubmit={handleSubmit}
           className="relative"
         >
