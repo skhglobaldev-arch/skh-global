@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { HomeView } from './views/HomeView';
 import { ServicesView } from './views/ServicesView';
 import { ProcessView } from './views/ProcessView';
-import { AboutView } from './views/AboutView';
+import { About as AboutView } from './components/About';
 import { ContactView } from './views/ContactView';
 import { PrivacyView } from './views/PrivacyView';
 import { TermsView } from './views/TermsView';

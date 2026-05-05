@@ -4,7 +4,7 @@ import { Reveal } from './Reveal';
 import { useTranslation } from 'react-i18next';
 
 export const ContactCTA: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [submitted, setSubmitted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [ticketNumber] = React.useState(() => Math.random().toString(36).substr(2, 6).toUpperCase());
@@ -33,7 +33,8 @@ export const ContactCTA: React.FC = () => {
         body: encode({ 
           "form-name": "contact-inquiry", 
           ...formData,
-          ticketNumber 
+          ticketNumber,
+          currentLanguage: i18n.language
         })
       });
 
@@ -47,7 +48,8 @@ export const ContactCTA: React.FC = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
             ...formData,
-            ticketNumber 
+            ticketNumber,
+            currentLanguage: i18n.language
           })
         });
       } catch (backendError) {

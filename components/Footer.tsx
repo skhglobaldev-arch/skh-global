@@ -1,5 +1,5 @@
 import React from 'react';
-import { GithubIcon, InstagramIcon } from 'lucide-react';
+import { GithubIcon, InstagramIcon, Hexagon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface FooterProps {
@@ -19,8 +19,8 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
             {/* Brand Column */}
             <div className="col-span-1 md:col-span-2 space-y-8">
               <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigateTo('home')}>
-                <div className="relative">
-                  <img src="https://files.catbox.moe/n3xbja.png" alt="Logo" className="w-14 h-14 object-cover brightness-110 transition-transform group-hover:scale-110" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110 group-hover:border-brand-500/50">
+                  <Hexagon size={24} className="text-brand-500 fill-brand-500/20" />
                 </div>
                 <span className="font-display font-black text-3xl text-white tracking-tighter uppercase">SKH<span className="text-brand-500">.GLOBAL</span></span>
               </div>

@@ -50,7 +50,7 @@ export const Hero: React.FC<HeroProps> = ({ navigateTo }) => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-300 to-brand-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity"></div>
             <span className="relative z-10 flex items-center gap-3">
-              {t('audit_btn', 'Free Revenue Audit')}
+              {t('audit_btn', 'Get My Growth Analysis')}
               <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform duration-300" />
             </span>
           </button>

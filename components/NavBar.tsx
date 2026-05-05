@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Menu, X, Globe, ChevronDown } from 'lucide-react';
+import { Mail, Menu, X, Globe, ChevronDown, Hexagon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface NavBarProps {
@@ -21,6 +21,7 @@ const languages = [
   { code: 'ru', label: 'Русский', flag: '🇷🇺' },
   { code: 'zh', label: '中文', flag: '🇨🇳' },
   { code: 'ko', label: '한국어', flag: '🇰🇷' },
+  { code: 'ja', label: '日本語', flag: '🇯🇵' },
   { code: 'hi', label: 'हिन्दी', flag: '🇮🇳' },
 ];
 
@@ -170,7 +171,7 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
             onClick={() => { setActivePage('audit'); setMobileMenuOpen(false); }}
             className="px-8 py-4 bg-white text-slate-950 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.3)]"
          >
-            {t('audit_btn', 'Free Revenue Audit')}
+            {t('audit_btn', 'Get My Growth Analysis')}
          </button>
       </div>
     </>

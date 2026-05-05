@@ -29,7 +29,7 @@ interface FormData {
 }
 
 export const AuditView: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,6 +49,41 @@ export const AuditView: React.FC = () => {
 
   const totalSteps = 6;
   const formRef = useRef<HTMLFormElement>(null);
+
+  const industryOptions = [
+    { label: t('audit_opt_beauty', 'Beauty & Wellness'), value: 'Beauty & Wellness' },
+    { label: t('audit_opt_clinic', 'Medical & Clinic'), value: 'Medical & Clinic' },
+    { label: t('audit_opt_restaurant', 'Restaurant & Catering'), value: 'Restaurant & Catering' },
+    { label: t('audit_opt_store', 'E-Commerce & Store'), value: 'E-Commerce & Store' },
+    { label: t('audit_opt_property', 'Property & Real Estate'), value: 'Property & Real Estate' },
+    { label: t('audit_opt_service', 'Consultancy & Service'), value: 'Consultancy & Service' },
+    { label: t('audit_opt_other', 'Other Business'), value: 'Other Business' }
+  ];
+
+  const channelOptions = [
+    { label: t('audit_chan_insta', 'Instagram / Social'), value: 'Instagram / Social' },
+    { label: t('audit_chan_whatsapp', 'WhatsApp'), value: 'WhatsApp' },
+    { label: t('audit_chan_phone', 'Phone Calls'), value: 'Phone Calls' },
+    { label: t('audit_chan_web', 'Existing Website'), value: 'Existing Website' },
+    { label: t('audit_chan_referral', 'Referrals / Word of Mouth'), value: 'Referrals / Word of Mouth' },
+    { label: t('audit_chan_ads', 'Paid Advertising'), value: 'Paid Advertising' }
+  ];
+
+  const painOptions = [
+    { value: 'Manual booking and follow-up', label: t('audit_prob_manual', "Too much manual work"), desc: t('audit_prob_manual_desc', "You are losing time in DMs, calls, and repeated follow-up.") },
+    { value: 'Traffic does not convert', label: t('audit_prob_conversion', "Traffic doesn't convert"), desc: t('audit_prob_conversion_desc', "People visit or message, but too few become paying clients.") },
+    { value: 'Old website or weak technical system', label: t('audit_prob_tech', "Old website or weak system"), desc: t('audit_prob_tech_desc', "Your current setup feels slow, outdated, or difficult to manage.") },
+    { value: 'Ready to scale without a proper system', label: t('audit_prob_growth', "Ready to scale, no system"), desc: t('audit_prob_growth_desc', "Demand exists, but operations are not structured enough to grow.") }
+  ];
+
+  const volumeOptions = [
+    { label: t('audit_vol_1', '< 50 Clients'), value: '< 50 Clients' },
+    { label: t('audit_vol_2', '50 - 200 Clients'), value: '50 - 200 Clients' },
+    { label: t('audit_vol_3', '200+ Clients'), value: '200+ Clients' }
+  ];
+
+  const findLabel = (options: { label: string; value: string }[], value: string) =>
+    options.find((option) => option.value === value)?.label || value;
 
   const nextStep = () => {
     setErrors([]);
@@ -115,8 +150,13 @@ export const AuditView: React.FC = () => {
 
     const body = { 
       ...formData,
+      businessTypeLabel: findLabel(industryOptions, formData.businessType),
+      channelsLabel: formData.channels.map((channel) => findLabel(channelOptions, channel)).join(', '),
+      painPointLabel: findLabel(painOptions, formData.painPoint),
+      volumeLabel: findLabel(volumeOptions, formData.volume),
       ticketNumber: ticketNumber,
-      channels: formData.channels.join(', ')
+      channels: formData.channels.join(', '),
+      currentLanguage: i18n.language
     };
 
     setLoading(true);
@@ -225,14 +265,7 @@ export const AuditView: React.FC = () => {
                 </h2>
                 <p className="text-slate-400 text-lg font-light mb-12">{t('audit_step_1_desc', 'Select your business type to begin the diagnostic.')}</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {[
-                    { label: t('audit_opt_beauty', 'Beauty & Wellness'), value: 'Beauty & Wellness' },
-                    { label: t('audit_opt_clinic', 'Medical Clinic'), value: 'Medical Clinic' },
-                    { label: t('audit_opt_restaurant', 'Restaurant'), value: 'Restaurant' },
-                    { label: t('audit_opt_store', 'E-commerce'), value: 'E-commerce' },
-                    { label: t('audit_opt_property', 'Real Estate'), value: 'Real Estate' },
-                    { label: t('audit_opt_other', 'Other'), value: 'Other' }
-                  ].map((opt) => (
+                  {industryOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
@@ -264,14 +297,7 @@ export const AuditView: React.FC = () => {
                 </h2>
                 <p className="text-slate-400 text-lg font-light mb-12">{t('audit_step_2_desc', 'Select all channels you currently use for bookings.')}</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-left">
-                  {[
-                    { label: t('audit_chan_insta', 'Instagram / DM'), value: 'Instagram / DM' },
-                    { label: t('audit_chan_whatsapp', 'WhatsApp'), value: 'WhatsApp' },
-                    { label: t('audit_chan_phone', 'Phone Calls'), value: 'Phone Calls' },
-                    { label: t('audit_chan_web', 'Website'), value: 'Website' },
-                    { label: t('audit_chan_walkin', 'Walk-ins'), value: 'Walk-ins' },
-                    { label: t('audit_chan_market', 'Marketplaces'), value: 'Marketplaces' }
-                  ].map((opt) => (
+                  {channelOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
@@ -310,18 +336,13 @@ export const AuditView: React.FC = () => {
                   {t('audit_step_3_title', 'What stops your Growth?')}
                 </h2>
                 <div className="grid gap-4 max-w-xl mx-auto">
-                  {[
-                    { key: 'pain_manual', label: t('audit_prob_manual', "Manual Booking Chaos"), desc: t('audit_prob_manual_desc', "Drowning in DMs and phone tag.") },
-                    { key: 'pain_no_show', label: t('audit_prob_conversion', "High No-Show Rate"), desc: t('audit_prob_conversion_desc', "No deposits or automated reminders.") },
-                    { key: 'pain_google', label: t('audit_prob_tech', "Invisible on Google"), desc: t('audit_prob_tech_desc', "Customers can't find me organically.") },
-                    { key: 'pain_clunky', label: t('audit_prob_growth', "Clunky/Slow Systems"), desc: t('audit_prob_growth_desc', "My current platform is a bottleneck.") }
-                  ].map((item) => (
+                  {painOptions.map((item) => (
                     <button
-                      key={item.key}
+                      key={item.value}
                       type="button"
-                      onClick={() => handleRadioChange('painPoint', item.label)}
+                      onClick={() => handleRadioChange('painPoint', item.value)}
                       className={`p-6 rounded-3xl border transition-all text-left flex items-center justify-between group ${
-                        formData.painPoint === item.label
+                        formData.painPoint === item.value
                         ? 'border-brand-500 bg-brand-500/10 text-white shadow-[0_0_20px_rgba(14,165,233,0.1)]' 
                         : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
                       }`}
@@ -330,7 +351,7 @@ export const AuditView: React.FC = () => {
                         <div className="font-bold uppercase tracking-widest text-xs mb-1 text-white">{item.label}</div>
                         <div className="text-[11px] opacity-60 font-light">{item.desc}</div>
                       </div>
-                      <ArrowRight size={20} className={`transition-transform group-hover:translate-x-1 ${formData.painPoint === item.label ? 'text-brand-500' : 'text-slate-700'}`} />
+                      <ArrowRight size={20} className={`transition-transform group-hover:translate-x-1 ${formData.painPoint === item.value ? 'text-brand-500' : 'text-slate-700'}`} />
                     </button>
                   ))}
                 </div>
@@ -350,11 +371,7 @@ export const AuditView: React.FC = () => {
                   {t('audit_step_4_title', 'Client Volume')}
                 </h2>
                 <div className="grid md:grid-cols-3 gap-6">
-                  {[
-                    { label: t('audit_vol_1', '< 50 Clients'), value: '< 50 Clients' },
-                    { label: t('audit_vol_2', '50 - 200 Clients'), value: '50 - 200 Clients' },
-                    { label: t('audit_vol_3', '200+ Clients'), value: '200+ Clients' }
-                  ].map((v) => (
+                  {volumeOptions.map((v) => (
                     <button
                       key={v.value}
                       type="button"
