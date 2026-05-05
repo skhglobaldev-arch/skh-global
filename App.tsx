@@ -4,6 +4,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { NavBar } from './components/NavBar';
 import { Footer } from './components/Footer';
 import { DigitalRainBackground } from './components/DigitalRainBackground';
+import { useTranslation } from 'react-i18next';
 
 // Page Views
 import { HomeView } from './views/HomeView';
@@ -17,10 +18,16 @@ import { OffersView } from './views/OffersView';
 import { AuditView } from './views/AuditView';
 
 export default function App() {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [isTransitioning, setIsTransitioning] = React.useState(false);
   const [displayLocation, setDisplayLocation] = React.useState(location);
+
+  // Update dynamic document title based on language
+  useEffect(() => {
+    document.title = t('site_title', 'SKH.GLOBAL | Premium AI Systems & Web Architecture');
+  }, [i18n.language, t]);
 
   // Handle page transitions
   useEffect(() => {

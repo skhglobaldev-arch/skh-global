@@ -7,6 +7,7 @@ import { Carousel3D } from '../components/Carousel3D';
 import { CapabilitiesGrid } from '../components/CapabilitiesGrid';
 import { ClosingCTA } from '../components/ClosingCTA';
 import { ArrowRight, Stethoscope, ShoppingBag, Home as HomeIcon, Scissors } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface HomeViewProps {
   navigateTo: (page: string) => void;
@@ -15,11 +16,13 @@ interface HomeViewProps {
 import { ROICalculator } from '../components/ROICalculator';
 
 export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
+  const { t } = useTranslation();
+  
   const demoItems = [
-    { icon: Stethoscope, title: "MediCare Pro", description: "Clinic management system with patient portals, appointment scheduling, and automated reminders." },
-    { icon: Scissors, title: "Luxe Glow", description: "Beauty salon booking engine with stylist selection, deposit handling, and inventory tracking." },
-    { icon: HomeIcon, title: "Urban Estates", description: "Real estate CRM with interactive property maps, automated lead follow-ups, and document signing." },
-    { icon: ShoppingBag, title: "Vogue Cart", description: "Fashion e-commerce platform with live inventory, size recommenders, and influencer referral tracking." },
+    { icon: Stethoscope, title: t('demo_1_title', "MediCare Pro"), description: t('demo_1_desc', "Clinic management system with patient portals, appointment scheduling, and automated reminders.") },
+    { icon: Scissors, title: t('demo_2_title', "Luxe Glow"), description: t('demo_2_desc', "Beauty salon booking engine with stylist selection, deposit handling, and inventory tracking.") },
+    { icon: HomeIcon, title: t('demo_3_title', "Urban Estates"), description: t('demo_3_desc', "Real estate CRM with interactive property maps, automated lead follow-ups, and document signing.") },
+    { icon: ShoppingBag, title: t('demo_4_title', "Vogue Cart"), description: t('demo_4_desc', "Fashion e-commerce platform with live inventory, size recommenders, and influencer referral tracking.") },
   ];
 
   return (
@@ -39,13 +42,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
             <Reveal>
                <div className="text-center mb-12">
                    <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-slate-800 bg-slate-900/60 mb-6 backdrop-blur-md">
-                     <span className="text-brand-400 text-xs font-mono font-bold uppercase tracking-widest">Live Showcase</span>
+                     <span className="text-brand-400 text-xs font-mono font-bold uppercase tracking-widest">{t('live_showcase', 'Live Showcase')}</span>
                    </div>
                    <h2 className="text-4xl md:text-6xl font-display font-extrabold text-white mb-6">
-                     Industry-Specific <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-500">Solutions</span>
+                     {t('industry_solutions_title', 'Industry-Specific')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-500">{t('solutions_accent', 'Solutions')}</span>
                    </h2>
                    <p className="text-slate-300 text-lg max-w-2xl mx-auto font-light">
-                     Drag to rotate our pre-engineered systems. These are production-ready architectural bases we customize for your specific business logic.
+                     {t('industry_solutions_desc', 'Drag to rotate our pre-engineered systems. These are production-ready architectural bases we customize for your specific business logic.')}
                    </p>
                </div>
             </Reveal>
@@ -60,10 +63,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
             <Reveal>
                <div className="text-center mb-16">
                    <h2 className="text-4xl md:text-5xl font-display font-extrabold text-white mb-6">
-                     Technical Capabilities
+                     {t('technical_capabilities_title', 'Technical Capabilities')}
                    </h2>
                    <p className="text-slate-300 text-lg max-w-2xl mx-auto font-light leading-relaxed">
-                     We engineer every system with performance, scalability, and bank-grade security as the primary foundation.
+                     {t('technical_capabilities_desc', 'We engineer every system with performance, scalability, and bank-grade security as the primary foundation.')}
                    </p>
                </div>
             </Reveal>
@@ -75,7 +78,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
                 onClick={() => navigateTo('services')}
                 className="inline-flex items-center gap-2 text-brand-400 font-bold hover:text-white transition-all group uppercase tracking-[0.3em] text-xs"
               >
-                Explore Full Technical Services <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                {t('explore_technical_services', 'Explore Full Technical Services')} <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
@@ -87,19 +90,19 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
             <Reveal>
               <div className="text-center mb-20">
                 <h2 className="text-4xl md:text-5xl font-display font-extrabold text-white mb-6">
-                  Select Your <span className="text-brand-500">Investment</span>
+                  {t('select_investment_title', 'Select Your')} <span className="text-brand-500">{t('investment_accent', 'Investment')}</span>
                 </h2>
                 <p className="text-slate-400 text-lg max-w-2xl mx-auto font-light">
-                  We offer three clear tiers of digital dominance. No hourly bills. Just pure, results-driven engineering.
+                  {t('investment_desc', 'We offer three clear tiers of digital dominance. No hourly bills. Just pure, results-driven engineering.')}
                 </p>
               </div>
             </Reveal>
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { name: "AI Launchpad", price: "£1,499", desc: "For professionals needing an elite identity." },
-                { name: "Growth Engine", price: "£3,499", desc: "The automated system that prints revenue." },
-                { name: "Custom Core", price: "£7,499+", desc: "The entire nervous system for your enterprise." }
+                { name: t('pkg_1_name', "AI Launchpad"), price: t('pkg_1_price', "£1,499"), desc: t('pkg_1_desc', "For professionals needing an elite identity.") },
+                { name: t('pkg_2_name', "Growth Engine"), price: t('pkg_2_price', "£3,499"), desc: t('pkg_2_desc', "The automated system that prints revenue.") },
+                { name: t('pkg_3_name', "Custom Core"), price: t('pkg_3_price', "£7,499+"), desc: t('pkg_3_desc', "The entire nervous system for your enterprise.") }
               ].map((pkg, i) => (
                 <Reveal key={i} delay={i * 100}>
                   <div className="p-8 rounded-[2rem] bg-slate-950/50 border border-slate-800 flex flex-col items-center text-center group hover:border-brand-500/50 transition-all duration-500">
@@ -110,7 +113,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ navigateTo }) => {
                       onClick={() => navigateTo('offers')}
                       className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 group-hover:text-brand-400 transition-colors"
                     >
-                      View Package Details →
+                      {t('view_package_details', 'View Package Details')} →
                     </button>
                   </div>
                 </Reveal>

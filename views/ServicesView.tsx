@@ -3,16 +3,26 @@ import React from 'react';
 import { Services } from '../components/Services';
 import { Reveal } from '../components/Reveal';
 import { PageHero } from '../components/PageHero';
-import { Code, Database, Lock, Zap, Server, Globe, Laptop, Brain, BarChart3, Target, ShieldCheck } from 'lucide-react';
+import { Code, Database, Lock, Zap, Server, Brain, BarChart3, Target, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const ServicesView: React.FC = () => {
+  const { t } = useTranslation();
+
+  const outcomes = [
+    { icon: Brain, title: t('outcome_1_title', "AI Intelligence"), desc: t('outcome_1_desc', "Custom LLM integrations that automate complex decision making.") },
+    { icon: Target, title: t('outcome_2_title', "Conversion Engine"), desc: t('outcome_2_desc', "Design psychology applied to every pixel to drive sales.") },
+    { icon: BarChart3, title: t('outcome_3_title', "Data Integrity"), desc: t('outcome_3_desc', "Advanced tracking architectures to monitor every user move.") },
+    { icon: Server, title: t('outcome_4_title', "Infrastructure"), desc: t('outcome_4_desc', "Military-grade hosting with 99.9% uptime and zero latency.") }
+  ];
+
   return (
     <div className="pb-24 bg-transparent">
       
       <PageHero 
-        badge="SYSTEM_ARCHITECTURE_V3.0"
-        title={<>Beyond Code. <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-cyan-300 to-white glow-text">Revenue Architectures.</span></>}
-        subtitle="Stop renting templates. Own the architecture that runs your business. We engineer custom-coded AI ecosystems that convert traffic into predictable growth."
+        badge={t('services_page_badge', "SYSTEM_ARCHITECTURE_V3.0")}
+        title={<>{t('services_page_title', "Beyond Code.")} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-cyan-300 to-white glow-text">{t('services_page_title_accent', "Revenue Architectures.")}</span></>}
+        subtitle={t('services_page_subtitle', "Stop renting templates. Own the architecture that runs your business. We engineer custom-coded AI ecosystems that convert traffic into predictable growth.")}
       />
 
       {/* The Immersive 3D Section */}
@@ -27,17 +37,17 @@ export const ServicesView: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12 mb-32 items-center">
             <div>
               <h2 className="text-3xl md:text-5xl font-display font-black text-white leading-tight mb-8">
-                The Problem With <span className="text-brand-500">Generic Platforms</span>
+                {t('problem_generic_title', "The Problem With")} <span className="text-brand-500">{t('problem_generic_accent', "Generic Platforms")}</span>
               </h2>
               <p className="text-slate-400 text-lg font-light leading-relaxed mb-6">
-                Standard subscription-based platforms are designed for the masses, which means they are built to keep your business in a "box". You pay monthly fees for features you don't own, and your growth is capped by their technical limitations.
+                {t('problem_generic_desc', 'Standard subscription-based platforms are designed for the masses, which means they are built to keep your business in a "box". You pay monthly fees for features you don\'t own, and your growth is capped by their technical limitations.')}
               </p>
               <div className="space-y-4">
                 {[
-                  "No 'app-tax' or monthly subscription fees",
-                  "Absolute 100/100 performance scores",
-                  "AI integration that actually understands your data",
-                  "100% IP ownership — you own the source code."
+                  t('benefit_1', "No 'app-tax' or monthly subscription fees"),
+                  t('benefit_2', "Absolute 100/100 performance scores"),
+                  t('benefit_3', "AI integration that actually understands your data"),
+                  t('benefit_4', "100% IP ownership — you own the source code.")
                 ].map((text, i) => (
                   <div key={i} className="flex items-center gap-3 text-slate-300">
                     <ShieldCheck size={18} className="text-brand-500" />
@@ -48,9 +58,9 @@ export const ServicesView: React.FC = () => {
             </div>
             <div className="p-1 bg-gradient-to-br from-brand-500/20 to-transparent rounded-[3rem]">
               <div className="bg-slate-950 p-10 rounded-[2.8rem] border border-slate-800">
-                <h4 className="text-brand-400 font-mono text-xs uppercase tracking-[0.3em] mb-4">Investment Logic</h4>
+                <h4 className="text-brand-400 font-mono text-xs uppercase tracking-[0.3em] mb-4">{t('investment_logic_tag', 'Investment Logic')}</h4>
                 <p className="text-white text-2xl font-light leading-snug">
-                  "A £1,500 custom system that <span className="text-brand-500 font-bold">converts at 5%</span> is cheaper than a free template that <span className="text-slate-400 italic">converts at 1%</span>."
+                  {t('investment_logic_quote', '"A £1,500 custom system that converts at 5% is cheaper than a free template that converts at 1%."')}
                 </p>
               </div>
             </div>
@@ -63,16 +73,16 @@ export const ServicesView: React.FC = () => {
              <div className="absolute inset-0 bg-gradient-to-br from-brand-900/10 via-black to-indigo-900/10"></div>
              <div className="relative z-10 grid md:grid-cols-2 gap-16 items-center">
                 <div>
-                   <h3 className="text-4xl font-display font-black text-white mb-6">Our Deep Tech Stack</h3>
+                   <h3 className="text-4xl font-display font-black text-white mb-6">{t('deep_tech_title', 'Our Deep Tech Stack')}</h3>
                    <p className="text-slate-400 mb-10 text-lg leading-relaxed font-light">
-                     We leverage low-latency cloud infrastructure and modern ES6+ standards to build systems that aren't just fast—they're indestructible.
+                     {t('deep_tech_desc', "We leverage low-latency cloud infrastructure and modern ES6+ standards to build systems that aren't just fast—they're indestructible.")}
                    </p>
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {[
-                        { icon: Code, label: "React & TypeScript", sub: "Modular frontends" },
-                        { icon: Database, label: "Real-time DB", sub: "Firebase & SQL" },
-                        { icon: Lock, label: "Advanced Auth", sub: "RBAC Systems" },
-                        { icon: Zap, label: "AI Workflows", sub: "Gemini & Automations" }
+                        { icon: Code, label: t('tech_1', "React & TypeScript"), sub: t('tech_1_sub', "Modular frontends") },
+                        { icon: Database, label: t('tech_2', "Real-time DB"), sub: t('tech_2_sub', "Firebase & SQL") },
+                        { icon: Lock, label: t('tech_3', "Advanced Auth"), sub: t('tech_3_sub', "RBAC Systems") },
+                        { icon: Zap, label: t('tech_4', "AI Workflows"), sub: t('tech_4_sub', "Gemini & Automations") }
                       ].map((item, i) => (
                         <div key={i} className="flex flex-col gap-2 p-5 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-brand-500/50 transition-all group">
                            <div className="flex items-center gap-3">
@@ -110,20 +120,15 @@ export const ServicesView: React.FC = () => {
         <div className="mb-32">
            <Reveal>
              <div className="text-center mb-20">
-               <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-6">The High-Value Outcomes</h2>
+               <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-6">{t('outcomes_title', 'The High-Value Outcomes')}</h2>
                <p className="text-slate-400 text-lg max-w-2xl mx-auto font-light">
-                 Your investment results in a fully-owned, documentation-heavy, and production-ready business asset.
+                 {t('outcomes_desc', 'Your investment results in a fully-owned, documentation-heavy, and production-ready business asset.')}
                </p>
              </div>
            </Reveal>
            
            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { icon: Brain, title: "AI Intelligence", desc: "Custom LLM integrations that automate complex decision making." },
-                { icon: Target, title: "Conversion Engine", desc: "Design psychology applied to every pixel to drive sales." },
-                { icon: BarChart3, title: "Data Integrity", desc: "Advanced tracking architectures to monitor every user move." },
-                { icon: Server, title: "Infrastructure", desc: "Military-grade hosting with 99.9% uptime and zero latency." }
-              ].map((item, i) => (
+              {outcomes.map((item, i) => (
                 <Reveal key={i} delay={i*100}>
                   <div className="group text-center p-10 rounded-[2.5rem] bg-slate-900/20 border border-slate-800 hover:border-brand-500/30 hover:bg-slate-900/40 transition-all duration-500 shadow-xl">
                     <div className="w-16 h-16 mx-auto rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-brand-500/10 group-hover:border-brand-500/50 transition-all">
@@ -145,13 +150,13 @@ export const ServicesView: React.FC = () => {
            <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto">
               <Reveal>
                  <h2 className="text-4xl md:text-6xl font-display font-black text-white mb-8 tracking-tight">
-                    Request a <span className="text-brand-400">Revenue Audit</span>
+                    {t('audit_cta_title', 'Request a')} <span className="text-brand-400">{t('audit_cta_title_accent', 'Revenue Audit')}</span>
                  </h2>
                  <p className="text-slate-400 text-xl font-light mb-12 leading-relaxed">
-                   We don't take every project. We only work with businesses where our AI systems can provide at least a 10x ROI.
+                   {t('audit_cta_desc', "We don't take every project. We only work with businesses where our AI systems can provide at least a 10x ROI.")}
                  </p>
                  <button className="px-12 py-5 bg-white text-slate-950 font-black rounded-2xl text-lg hover:scale-105 hover:bg-brand-50 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)]">
-                    Connect With Lead Architect
+                    {t('connect_architect_btn', 'Connect With Lead Architect')}
                  </button>
               </Reveal>
            </div>

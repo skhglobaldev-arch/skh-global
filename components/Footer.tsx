@@ -1,12 +1,15 @@
-
 import React from 'react';
-import { Github, Instagram } from 'lucide-react';
+import { Github } from 'lucide-react';
+import { Instagram } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface FooterProps {
   navigateTo: (page: string) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
+  const { t } = useTranslation();
+  
   return (
     <footer className="relative bg-black pt-24 pb-12 border-t border-slate-900 overflow-hidden shrink-0">
       {/* Grounding Gradient */}
@@ -23,58 +26,47 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
                 <span className="font-display font-black text-3xl text-white tracking-tighter uppercase">SKH<span className="text-brand-500">.GLOBAL</span></span>
               </div>
               <p className="text-slate-500 text-lg max-w-sm leading-relaxed font-light">
-                Engineering intelligent digital systems for the next generation of business. We bridge the gap between complex ideas and automated reality.
+                {t('footer_desc', 'Engineering intelligent digital systems for the next generation of business. We bridge the gap between complex ideas and automated reality.')}
               </p>
               <div className="flex gap-4">
-                <a href="https://instagram.com/skh.global" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all"><Instagram size={20} /></a>
+                <a href="https://instagram.com/skh.global" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all">
+                  <Instagram size={20} />
+                </a>
+                <a href="https://github.com/skh-global" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 hover:text-brand-400 hover:border-brand-500/50 transition-all">
+                  <Github size={20} />
+                </a>
               </div>
             </div>
 
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-white font-black uppercase tracking-[0.2em] text-xs mb-8 opacity-50">Navigation</h4>
-              <ul className="space-y-5 text-slate-400 font-medium">
-                <li><button onClick={() => navigateTo('home')} className="hover:text-brand-400 transition-colors">Home</button></li>
-                <li><button onClick={() => navigateTo('services')} className="hover:text-brand-400 transition-colors">Services</button></li>
-                <li><button onClick={() => navigateTo('process')} className="hover:text-brand-400 transition-colors">Methodology</button></li>
-                <li><button onClick={() => navigateTo('offers')} className="hover:text-brand-400 transition-colors">Offers</button></li>
-                <li><button onClick={() => navigateTo('about')} className="hover:text-brand-400 transition-colors">About Us</button></li>
+            {/* Links Columns */}
+            <div className="space-y-8">
+              <h4 className="text-white font-bold uppercase tracking-widest text-xs">{t('navigation_title', 'Navigation')}</h4>
+              <ul className="space-y-4">
+                <li><button onClick={() => navigateTo('home')} className="text-slate-500 hover:text-white transition-colors uppercase tracking-widest text-xs">{t('nav_home', 'Home')}</button></li>
+                <li><button onClick={() => navigateTo('services')} className="text-slate-500 hover:text-white transition-colors uppercase tracking-widest text-xs">{t('nav_services', 'Services')}</button></li>
+                <li><button onClick={() => navigateTo('process')} className="text-slate-500 hover:text-white transition-colors uppercase tracking-widest text-xs">{t('nav_process', 'Process')}</button></li>
+                <li><button onClick={() => navigateTo('offers')} className="text-slate-500 hover:text-white transition-colors uppercase tracking-widest text-xs">{t('nav_offers', 'Offers')}</button></li>
               </ul>
             </div>
 
-            {/* Support */}
-            <div>
-              <h4 className="text-white font-black uppercase tracking-[0.2em] text-xs mb-8 opacity-50">Inquiries</h4>
-              <ul className="space-y-5 text-slate-400 font-medium">
-                <li><button onClick={() => navigateTo('audit')} className="hover:text-brand-400 transition-colors">Free Revenue Audit</button></li>
-                <li><button onClick={() => navigateTo('contact')} className="hover:text-brand-400 transition-colors">Start Project</button></li>
-                <li><a href="mailto:skhglobal.dev@gmail.com" className="hover:text-brand-400 transition-colors">skhglobal.dev@gmail.com</a></li>
-                <li className="pt-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-900/20 border border-brand-500/20 rounded-xl text-[10px] text-brand-400 uppercase tracking-widest font-black">
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
-                    Q4 Slots Open
-                  </div>
-                </li>
+            <div className="space-y-8">
+              <h4 className="text-white font-bold uppercase tracking-widest text-xs">{t('legal_title', 'Legal')}</h4>
+              <ul className="space-y-4">
+                <li><button onClick={() => navigateTo('privacy')} className="text-slate-500 hover:text-white transition-colors uppercase tracking-widest text-xs font-mono">{t('nav_privacy', 'Privacy')}</button></li>
+                <li><button onClick={() => navigateTo('terms')} className="text-slate-500 hover:text-white transition-colors uppercase tracking-widest text-xs font-mono">{t('nav_terms', 'Terms')}</button></li>
+                <li><button onClick={() => navigateTo('contact')} className="text-brand-500 hover:text-brand-400 transition-colors uppercase tracking-widest text-xs font-bold">{t('nav_contact', 'Connect')}</button></li>
               </ul>
             </div>
         </div>
-        
-        <div className="pt-12 border-t border-slate-900/50 flex flex-col md:flex-row justify-between items-center text-sm text-slate-600 font-mono">
-           <p>© {new Date().getFullYear()} SKH.GLOBAL</p>
-           <div className="flex gap-8 mt-6 md:mt-0 uppercase tracking-widest text-[10px]">
-             <button 
-               onClick={() => navigateTo('privacy')} 
-               className="hover:text-slate-400 transition-colors cursor-pointer hover:underline underline-offset-4"
-             >
-               Privacy_Protocol
-             </button>
-             <button 
-               onClick={() => navigateTo('terms')} 
-               className="hover:text-slate-400 transition-colors cursor-pointer hover:underline underline-offset-4"
-             >
-               Terms_of_Service
-             </button>
-           </div>
+
+        <div className="pt-12 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-slate-700 text-sm font-medium tracking-tight">
+            {t('footer_copy', '© 2026 SKH GLOBAL. Built for digital sovereignty.')}
+          </p>
+          <div className="flex gap-8">
+            <span className="text-[10px] font-mono text-slate-800 uppercase tracking-[0.3em]">System_v2.0_Online</span>
+            <span className="text-[10px] font-mono text-slate-800 uppercase tracking-[0.3em]">London_Node</span>
+          </div>
         </div>
       </div>
     </footer>

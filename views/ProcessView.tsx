@@ -4,15 +4,26 @@ import { HowItWorks } from '../components/HowItWorks';
 import { Reveal } from '../components/Reveal';
 import { PageHero } from '../components/PageHero';
 import { CheckCircle2, GitMerge, Terminal, Cpu, PenTool } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const ProcessView: React.FC = () => {
+  const { t } = useTranslation();
+
+  const roadmapItems = [
+    { icon: PenTool, title: t('roadmap_step_1_title', "Discovery & Strategy"), week: t('roadmap_step_1_week', "Week 1"), desc: t('roadmap_step_1_desc', "We deep dive into your business logic, audit current systems, and architect the database schema.") },
+    { icon: Terminal, title: t('roadmap_step_2_title', "Design & Prototype"), week: t('roadmap_step_2_week', "Week 2"), desc: t('roadmap_step_2_desc', "High-fidelity UI/UX designs. We build the skeleton so you can visualize the user journey.") },
+    { icon: GitMerge, title: t('roadmap_step_3_title', "Core Development"), week: t('roadmap_step_3_week', "Weeks 3-5"), desc: t('roadmap_step_3_desc', "Heavy lifting. API development, frontend implementation, and database connectivity.") },
+    { icon: Cpu, title: t('roadmap_step_4_title', "Automation Integration"), week: t('roadmap_step_4_week', "Week 6"), desc: t('roadmap_step_4_desc', "Connecting the nervous system. Custom workflow engines, payment pipelines, and intelligent event triggers.") },
+    { icon: CheckCircle2, title: t('roadmap_step_5_title', "Testing & Launch"), week: t('roadmap_step_5_week', "Week 7"), desc: t('roadmap_step_5_desc', "Security auditing, load testing, and final deployment to production.") }
+  ];
+
   return (
     <div className="pb-24">
        
        <PageHero 
-         badge="STRATEGIC_LIFECYCLE_ACTIVE"
-         title={<>Concept to <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-400 glow-text">Automated Cash Flow</span></>}
-         subtitle="We've refined a systematic approach to building digital products. No guessing, no delays—just a predictable path to launch."
+         badge={t('process_page_badge', "STRATEGIC_LIFECYCLE_ACTIVE")}
+         title={<>{t('process_page_title', "Concept to")} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-400 glow-text">{t('process_page_title_accent', "Automated Cash Flow")}</span></>}
+         subtitle={t('process_page_subtitle', "We've refined a systematic approach to building digital products. No guessing, no delays—just a predictable path to launch.")}
        />
 
        <div className="-mt-20 relative z-20">
@@ -23,19 +34,13 @@ export const ProcessView: React.FC = () => {
        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
           <Reveal>
              <div className="text-center mb-16">
-               <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">Development Roadmap</h2>
-               <p className="text-slate-400 max-w-2xl mx-auto">A transparent look at how we spend every week of your project.</p>
+               <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">{t('roadmap_title', 'Development Roadmap')}</h2>
+               <p className="text-slate-400 max-w-2xl mx-auto">{t('roadmap_desc', 'A transparent look at how we spend every week of your project.')}</p>
              </div>
           </Reveal>
           
           <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
-            {[
-              { icon: PenTool, title: "Discovery & Strategy", week: "Week 1", desc: "We deep dive into your business logic, audit current systems, and architect the database schema." },
-              { icon: Terminal, title: "Design & Prototype", week: "Week 2", desc: "High-fidelity UI/UX designs. We build the skeleton so you can visualize the user journey." },
-              { icon: GitMerge, title: "Core Development", week: "Weeks 3-5", desc: "Heavy lifting. API development, frontend implementation, and database connectivity." },
-              { icon: Cpu, title: "Automation Integration", week: "Week 6", desc: "Connecting the nervous system. Custom workflow engines, payment pipelines, and intelligent event triggers." },
-              { icon: CheckCircle2, title: "Testing & Launch", week: "Week 7", desc: "Security auditing, load testing, and final deployment to production." }
-            ].map((item, i) => (
+            {roadmapItems.map((item, i) => (
               <Reveal key={i} delay={i * 100}>
                 <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
                   
@@ -64,8 +69,8 @@ export const ProcessView: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 relative z-10">
             <Reveal>
               <div className="text-center mb-16">
-                <h3 className="text-3xl md:text-5xl font-display font-black text-white mb-6 uppercase tracking-tighter">Technical Arsenal</h3>
-                <p className="text-slate-400 max-w-2xl mx-auto font-light">We only use enterprise-grade technologies that guarantee long-term scalability and security.</p>
+                <h3 className="text-3xl md:text-5xl font-display font-black text-white mb-6 uppercase tracking-tighter">{t('tech_arsenal_title', 'Technical Arsenal')}</h3>
+                <p className="text-slate-400 max-w-2xl mx-auto font-light">{t('tech_arsenal_desc', 'We only use enterprise-grade technologies that guarantee long-term scalability and security.')}</p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                  {[
@@ -82,10 +87,10 @@ export const ProcessView: React.FC = () => {
                    { name: 'Framer Motion', category: 'Animation' },
                    { name: 'Stripe API', category: 'Economy' }
                  ].map((tech, i) => (
-                   <div key={i} className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-center group hover:border-brand-500/50 transition-all duration-300">
-                      <span className="text-white font-bold text-sm mb-1 group-hover:text-brand-400 transition-colors">{tech.name}</span>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">{tech.category}</span>
-                   </div>
+                    <div key={i} className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-center group hover:border-brand-500/50 transition-all duration-300">
+                       <span className="text-white font-bold text-sm mb-1 group-hover:text-brand-400 transition-colors">{tech.name}</span>
+                       <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">{tech.category}</span>
+                    </div>
                  ))}
               </div>
             </Reveal>

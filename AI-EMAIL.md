@@ -35,14 +35,29 @@ Please provide the following variables for the client:
 
 ---
 
-### **EXAMPLE OUTPUT (How it should sound in Farsi)**
-"سلام [نام صاحب بیزینس] عزیز،
-بررسی اولیه تیم فنی ما روی بیزینس [Business Name] تمام شد.
+### **ENGLISH VERSION (Copy for non-Persian speaking clients)**
 
-رک بگویم؛ سیستم فعلی شما که متکی به [Instagram/WhatsApp] است، در واقع یک «تله‌ی زمانی» است. وقتی شما با حجم [Volume] در ماه سر و کار دارید، هر دقیقه تأخیر در پاسخگویی یعنی از دست دادن مشتری. شما از پلتفرم‌های دیگر «اجاره» گرفتید، در حالی که باید «مالک» زیرساخت خودتان باشید.
+**GPT PROMPT TEMPLATE (English):**
+"Based on the client data provided, write a structured response email/message in English that follows this structure:
 
-پیشنهاد من این است که از مدل سنتی رزرو دستی فاصله بگیرید و وارد فاز «Revenue Engine» شوید. سیستمی که ما برای شما دیزاین می‌کنیم، تمام مراحل رزرو، دریافت بیعانه و یادآوری را اتوماتیک می‌کند.
+1. **The Hook:** Acknowledge their business name and the fact that we've analyzed their [CHANNELS] presence.
+2. **The Diagnostic:** Explain why [PAIN POINT] is a symptom of 'Digital Rental'. Explain that by relying on manual DMs/WhatsApp, they are losing at least 20-30% of potential bookings due to human delay.
+3. **The Architectural Solution:** Describe the 'Growth Engine' we build—automated scheduling, deposit collection, and CRM integration. Use the term 'Revenue Architecture'.
+4. **The ROI Focus:** Mention that for a business of their size ([VOLUME]), our system pays for itself in efficiency alone within the first 60 days.
+5. **The Next Step (Soft Close):** Do not ask for a sale. Ask for a 10-minute strategy call to 'Review the full Blueprint'."
 
-بر اساس نرخ رشد فعلی بازار [Business Type]، این تغییر زیرساختی می‌تواند حداقل ۳۰٪ ظرفیت خالی شما را بدون صرف یک دقیقه وقت اضافی پر کند.
+**EXAMPLE OUTPUT (English):**
+"Hi [Owner Name],
+Our technical team just finished the initial architectural audit for **[Business Name]**.
 
-اگر مایل هستید، یک تماس ۱۰ دقیقه‌ای داشته باشیم تا نقشه راه (Blueprint) اختصاصی شما را بررسی کنیم؟"
+To be direct: your current reliance on **[Channels]** is a time-trap. For a business handling **[Volume]**, every minute of delay in manual responses is a leak in your revenue engine. You are currently 'renting' your digital space, when you should be the **Sovereign Owner** of your infrastructure.
+
+We specialize in building **Revenue Architectures**—automated systems that handle scheduling, deposit collection, and client reminders without you lifting a finger. 
+
+Based on industry benchmarks for **[Business Type]**, this system pays for itself in reclaimed 'Ghost Labor' within the first 60 days.
+
+Are you open to a 10-minute strategy call this week to review the full Blueprint we've mapped out for you?
+
+Best,
+[Your Name]
+SKH Global Architecture Unit"

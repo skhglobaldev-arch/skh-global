@@ -2,15 +2,18 @@
 import React from 'react';
 import { Monitor, Cpu, Layers, ShieldCheck, Zap, Globe } from 'lucide-react';
 import { Reveal } from './Reveal';
+import { useTranslation } from 'react-i18next';
 
 export const CapabilitiesGrid: React.FC = () => {
+  const { t } = useTranslation();
+  
   const capabilities = [
-    { icon: Monitor, title: "Real-Time UI", description: "Interfaces that react instantly to data changes without page reloads using Firebase." },
-    { icon: Cpu, title: "AI Integration", description: "Smart workflows powered by Gemini LLMs and Make.com automation." },
-    { icon: Layers, title: "Scalable Backend", description: "Cloud infrastructure on Google Cloud & Node.js that grows with you." },
-    { icon: ShieldCheck, title: "Bank-Grade Auth", description: "Secure Role-Based Access Control ensuring data integrity." },
-    { icon: Zap, title: "Instant Automation", description: "Zero-touch workflows that handle invoicing and emails." },
-    { icon: Globe, title: "3D WebGL", description: "Immersive 3D experiences using Three.js and modern CSS." },
+    { icon: Monitor, title: t('cap_1_t', "Real-Time UI"), description: t('cap_1_d', "Interfaces that react instantly to data changes without page reloads using Firebase.") },
+    { icon: Cpu, title: t('cap_2_t', "AI Integration"), description: t('cap_2_d', "Smart workflows powered by Gemini LLMs and Make.com automation.") },
+    { icon: Layers, title: t('cap_3_t', "Scalable Backend"), description: t('cap_3_d', "Cloud infrastructure on Google Cloud & Node.js that grows with you.") },
+    { icon: ShieldCheck, title: t('cap_4_t', "Bank-Grade Auth"), description: t('cap_4_d', "Secure Role-Based Access Control ensuring data integrity.") },
+    { icon: Zap, title: t('cap_5_t', "Instant Automation"), description: t('cap_5_d', "Zero-touch workflows that handle invoicing and emails.") },
+    { icon: Globe, title: t('cap_6_t', "3D WebGL"), description: t('cap_6_d', "Immersive 3D experiences using Three.js and modern CSS.") },
   ];
 
   return (

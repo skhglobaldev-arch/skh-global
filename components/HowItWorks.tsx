@@ -1,17 +1,27 @@
 import React from 'react';
 import { STEPS } from '../constants';
 import { Reveal } from './Reveal';
+import { useTranslation } from 'react-i18next';
 
 export const HowItWorks: React.FC = () => {
+  const { t } = useTranslation();
+
+  // Derived translated steps
+  const translatedSteps = STEPS.map((step, index) => ({
+    ...step,
+    title: t(`process_${index + 1}_title`, step.title),
+    description: t(`process_${index + 1}_desc`, step.description)
+  }));
+
   return (
     <div className="py-32 bg-transparent border-t border-slate-900/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
           <div className="text-center mb-20">
              <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-slate-800 bg-slate-900/50 mb-6">
-               <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">Our Methodology</span>
+                <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">{t('our_methodology_tag', 'Our Methodology')}</span>
             </div>
-            <h3 className="text-4xl md:text-5xl font-display font-bold text-white">How We Build Your System</h3>
+            <h3 className="text-4xl md:text-5xl font-display font-bold text-white">{t('how_it_works_title', 'How We Build Your System')}</h3>
           </div>
         </Reveal>
 
@@ -20,7 +30,7 @@ export const HowItWorks: React.FC = () => {
           <div className="hidden lg:block absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-slate-800 to-transparent z-0"></div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-12 lg:gap-8">
-            {STEPS.map((step, index) => (
+            {translatedSteps.map((step, index) => (
               <Reveal key={index} delay={index * 150} className="relative z-10 flex flex-col items-center text-center group">
                 <div>
                   <div className="w-24 h-24 rounded-full bg-slate-900/80 border-4 border-slate-800 flex items-center justify-center mb-8 shadow-2xl group-hover:border-brand-500 transition-colors duration-500 relative backdrop-blur-md">
@@ -38,7 +48,7 @@ export const HowItWorks: React.FC = () => {
                   </div>
 
                   {/* Mobile Connector */}
-                  {index < STEPS.length - 1 && (
+                  {index < translatedSteps.length - 1 && (
                     <div className="lg:hidden w-0.5 h-12 bg-slate-800 my-6 mx-auto"></div>
                   )}
                 </div>

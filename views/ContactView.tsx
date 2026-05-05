@@ -2,16 +2,19 @@ import React from 'react';
 import { ContactCTA } from '../components/ContactCTA';
 import { Reveal } from '../components/Reveal';
 import { PageHero } from '../components/PageHero';
-import { Mail, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { Mail, MapPin, Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const ContactView: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="pb-0">
       
       <PageHero 
-        badge="Inquiry Protocol"
-        title={<>Request Your <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Revenue Audit</span></>}
-        subtitle="We aren't just developers. We are strategic partners. If you have an established business and are ready to automate your growth with AI, let's talk."
+        badge={t('contact_page_badge', 'Inquiry Protocol')}
+        title={<>{t('contact_page_title', 'Request Your')} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">{t('contact_page_title_accent', 'Revenue Audit')}</span></>}
+        subtitle={t('contact_page_subtitle', "We aren't just developers. We are strategic partners. If you have an established business and are ready to automate your growth with AI, let's talk.")}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-20">
@@ -21,8 +24,8 @@ export const ContactView: React.FC = () => {
              <Reveal>
                <div className="space-y-10">
                   <div>
-                    <h3 className="text-2xl font-display font-bold text-white mb-4">Boarding Office</h3>
-                    <p className="text-slate-400">Direct channels for high-priority architectural discussions.</p>
+                    <h3 className="text-2xl font-display font-bold text-white mb-4">{t('boarding_office_title', 'Boarding Office')}</h3>
+                    <p className="text-slate-400">{t('boarding_office_desc', 'Direct channels for high-priority architectural discussions.')}</p>
                   </div>
 
                   <div className="space-y-6">
@@ -31,9 +34,9 @@ export const ContactView: React.FC = () => {
                         <Mail className="text-brand-400" />
                       </div>
                       <div>
-                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Email Us</div>
+                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t('email_us', 'Email Us')}</div>
                         <div className="font-medium text-white text-lg">skhglobal.dev@gmail.com</div>
-                        <p className="text-xs text-slate-500 mt-1">24h Response Time</p>
+                        <p className="text-xs text-slate-500 mt-1">{t('response_time', '24h Response Time')}</p>
                       </div>
                     </div>
                     
@@ -42,9 +45,9 @@ export const ContactView: React.FC = () => {
                         <MapPin className="text-brand-400" />
                       </div>
                       <div>
-                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Global HQ</div>
-                        <div className="font-medium text-white text-lg">Digital Systems / Remote First</div>
-                        <p className="text-xs text-slate-500 mt-1">Operating Worldwide</p>
+                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t('global_hq', 'Global HQ')}</div>
+                        <div className="font-medium text-white text-lg">{t('remote_first', 'Digital Systems / Remote First')}</div>
+                        <p className="text-xs text-slate-500 mt-1">{t('operating_worldwide', 'Operating Worldwide')}</p>
                       </div>
                     </div>
 
@@ -53,8 +56,8 @@ export const ContactView: React.FC = () => {
                         <Clock className="text-brand-400" />
                       </div>
                       <div>
-                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Working Hours</div>
-                        <div className="font-medium text-white text-lg">Mon - Fri, 09:00 - 18:00 EST</div>
+                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t('working_hours_title', 'Working Hours')}</div>
+                        <div className="font-medium text-white text-lg">{t('working_hours_val', 'Mon - Fri, 09:00 - 18:00 EST')}</div>
                       </div>
                     </div>
                   </div>

@@ -1,12 +1,15 @@
 import React from 'react';
 import { ArrowRight, MessageSquare } from 'lucide-react';
 import { Reveal } from './Reveal';
+import { useTranslation } from 'react-i18next';
 
 interface ClosingCTAProps {
   navigateTo: (page: string) => void;
 }
 
 export const ClosingCTA: React.FC<ClosingCTAProps> = ({ navigateTo }) => {
+  const { t } = useTranslation();
+
   return (
     <section className="relative pt-32 pb-20 overflow-hidden bg-black border-t border-slate-900 shrink-0">
       <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -14,27 +17,27 @@ export const ClosingCTA: React.FC<ClosingCTAProps> = ({ navigateTo }) => {
           <Reveal>
             <div className="space-y-8">
               <h2 className="text-5xl md:text-7xl font-display font-black text-white leading-tight">
-                Ready to <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-indigo-400 to-brand-500">Automate?</span>
+                {t('closing_title_p1', 'Ready to')} <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-indigo-400 to-brand-500">{t('closing_title_p2', 'Automate?')}</span>
               </h2>
               <p className="text-xl text-slate-400 max-w-md font-light leading-relaxed">
-                Join the ranks of high-performance businesses running on SKH architecture.
+                {t('closing_desc', "Join the ranks of high-performance businesses running on SKH architecture.")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigateTo('contact')}
                   className="px-8 py-5 bg-white text-slate-950 rounded-2xl font-bold hover:bg-brand-50 transition-all flex items-center justify-center gap-3 group shadow-2xl"
                 >
-                  Start Your Journey
+                  {t('start_journey_btn', 'Start Your Journey')}
                   <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <div className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-slate-900/50 border border-slate-800">
                   <div className="flex -space-x-3">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="w-9 h-9 rounded-full border-2 border-slate-950 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-400">JD</div>
+                      <div key={i} className="w-9 h-9 rounded-full border-2 border-slate-950 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-400">SKH</div>
                     ))}
                   </div>
-                  <span className="text-sm text-slate-400 font-medium">+50 Systems Deployed</span>
+                  <span className="text-sm text-slate-400 font-medium">{t('systems_deployed', '+50 Systems Deployed')}</span>
                 </div>
               </div>
             </div>
@@ -48,13 +51,13 @@ export const ClosingCTA: React.FC<ClosingCTAProps> = ({ navigateTo }) => {
                   <div className="p-3.5 rounded-xl bg-brand-500/10 text-brand-400">
                     <MessageSquare size={26} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white font-display">Live Consultation</h3>
+                  <h3 className="text-2xl font-bold text-white font-display">{t('live_consult_title', 'Live Consultation')}</h3>
                 </div>
                 <p className="text-slate-400 mb-10 leading-relaxed text-lg font-light">
-                  Schedule a 15-minute discovery call with our Lead Architect to vet your technical requirements.
+                  {t('live_consult_desc', 'Schedule a 15-minute discovery call with our Lead Architect to vet your technical requirements.')}
                 </p>
                 <button onClick={() => navigateTo('contact')} className="w-full py-4 rounded-xl border border-slate-700 text-white font-bold hover:bg-slate-800 hover:border-slate-500 transition-all text-lg shadow-inner">
-                  Check Availability
+                  {t('check_avail_btn', 'Check Availability')}
                 </button>
               </div>
             </div>

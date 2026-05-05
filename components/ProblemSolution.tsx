@@ -3,17 +3,27 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react';
 import { PAIN_POINTS } from '../constants';
 import { Reveal } from './Reveal';
+import { useTranslation } from 'react-i18next';
 
 export const ProblemSolution: React.FC = () => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
+  // Derived translated items
+  const translatedPainPoints = PAIN_POINTS.map((item, idx) => ({
+    ...item,
+    question: t(`pain_${idx + 1}_question`, item.question),
+    pain: t(`pain_${idx + 1}_pain`, item.pain),
+    solution: t(`pain_${idx + 1}_solution`, item.solution),
+  }));
+
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % PAIN_POINTS.length);
+    setCurrentIndex((prev) => (prev + 1) % translatedPainPoints.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + PAIN_POINTS.length) % PAIN_POINTS.length);
+    setCurrentIndex((prev) => (prev - 1 + translatedPainPoints.length) % translatedPainPoints.length);
   };
 
   useEffect(() => {
@@ -26,7 +36,7 @@ export const ProblemSolution: React.FC = () => {
     return () => clearInterval(interval);
   }, [currentIndex, isAutoPlaying]);
 
-  const currentItem = PAIN_POINTS[currentIndex];
+  const currentItem = translatedPainPoints[currentIndex];
 
   return (
     <div className="py-24 md:py-32 bg-slate-950/60 backdrop-blur-sm relative overflow-hidden">
@@ -39,13 +49,13 @@ export const ProblemSolution: React.FC = () => {
         <Reveal>
           <div className="text-center mb-16">
             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-brand-500/30 bg-slate-900/80 mb-6 backdrop-blur-sm">
-              <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">Why Choose SKH?</span>
+              <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">{t('problem_tag', 'Why Choose SKH?')}</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
-              We Solve Real Business Problems
+              {t('problem_title', 'We Solve Real Business Problems')}
             </h2>
             <p className="text-slate-300 text-lg max-w-2xl mx-auto font-light">
-              We don't just write code. We identify your bottlenecks and architect automated solutions.
+              {t('problem_subtitle', "We don't just write code. We identify your bottlenecks and architect automated solutions.")}
             </p>
           </div>
         </Reveal>
@@ -61,7 +71,7 @@ export const ProblemSolution: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center border border-red-500/40 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                     <currentItem.icon className="text-red-400" size={24} />
                   </div>
-                  <span className="text-red-400 font-bold tracking-widest uppercase text-xs">The Problem</span>
+                  <span className="text-red-400 font-bold tracking-widest uppercase text-xs">{t('problem_label', 'The Problem')}</span>
                 </div>
                 
                 <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-4 leading-tight">
@@ -81,7 +91,7 @@ export const ProblemSolution: React.FC = () => {
                       <div className="w-12 h-12 rounded-xl bg-brand-500/30 flex items-center justify-center border border-brand-400/50 shadow-[0_0_20px_rgba(56,189,248,0.3)]">
                         <CheckCircle2 className="text-white" size={24} />
                       </div>
-                      <span className="text-white font-bold tracking-widest uppercase text-xs">The SKH Solution</span>
+                      <span className="text-white font-bold tracking-widest uppercase text-xs">{t('solution_label', 'The SKH Solution')}</span>
                     </div>
 
                     <p className="text-xl md:text-2xl text-white font-bold leading-relaxed mb-8 drop-shadow-lg">
@@ -89,7 +99,7 @@ export const ProblemSolution: React.FC = () => {
                     </p>
 
                     <button className="text-brand-100 font-bold flex items-center gap-2 group hover:text-white transition-colors py-2 px-4 rounded-lg bg-brand-500/20 border border-brand-500/30">
-                      Start this transformation <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform"/>
+                      {t('transformation_cta', 'Start this transformation')} <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform"/>
                     </button>
                  </div>
               </div>
@@ -100,7 +110,7 @@ export const ProblemSolution: React.FC = () => {
           {/* Controls */}
           <div className="flex justify-between items-center mt-8 px-4">
              <div className="flex gap-2">
-               {PAIN_POINTS.map((_, idx) => (
+               {translatedPainPoints.map((_, idx) => (
                  <button
                    key={idx}
                    onClick={() => {

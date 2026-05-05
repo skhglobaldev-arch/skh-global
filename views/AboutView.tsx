@@ -1,122 +1,108 @@
 import React from 'react';
-import { About } from '../components/About';
 import { Reveal } from '../components/Reveal';
-import { PageHero } from '../components/PageHero';
-import { TESTIMONIALS } from '../constants';
-import { Star, Trophy, Users, Globe, Code2 } from 'lucide-react';
+import { Shield, Target, Zap, TrendingUp, Users, Award } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const AboutView: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
-    <div className="pb-24">
-      
-      <PageHero 
-        badge="Company Profile"
-        title={<>Architects of the <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 to-white">New Web</span></>}
-        subtitle="We build the digital infrastructure that powers modern businesses. No templates, no shortcuts—just pure engineering excellence."
-      />
+    <div className="bg-[#020617] min-h-screen pt-32 pb-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 relative">
+        {/* Abstract Background Elements */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-900/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
 
-      <div className="-mt-20 relative z-20">
-        <About />
-      </div>
-
-      {/* Philosophy Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 border-t border-slate-800/50">
-        <div className="grid md:grid-cols-2 gap-24 items-center">
+        <div className="relative z-10">
           <Reveal>
-             <div className="relative">
-               <div className="absolute -left-12 -top-12 text-[20rem] font-black text-white/[0.02] select-none">"</div>
-               <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-10 leading-tight">
-                 Our <span className="text-brand-500 underline decoration-brand-500/30 underline-offset-8">Code-First</span> <br/>Philosophy
-               </h2>
-               <div className="space-y-8 text-slate-400 text-lg font-light leading-relaxed">
-                 <p>
-                   We believe the modern web is suffering from "Template Fatigue." Businesses are choosing the fastest route to launch, often sacrificing security, speed, and long-term sovereignty.
-                 </p>
-                 <p>
-                   At <span className="text-white font-bold">SKH.GLOBAL</span>, we take the path of engineering excellence. We don't use page builders or generic frameworks that bloat your system. We write original, optimized TypeScript that you own forever.
-                 </p>
-                 <div className="p-6 rounded-2xl bg-brand-500/5 border border-brand-500/20 italic text-brand-400">
-                   "If you are looking for the cheapest option, we aren't it. If you are looking for the most reliable, we are the only choice."
-                 </div>
-               </div>
-             </div>
-          </Reveal>
-          
-          <Reveal delay={200}>
-            <div className="grid gap-6">
-              {[
-                { title: "Sovereignty First", desc: "You own every single line of code. No vendor lock-ins or mandatory monthly fees." },
-                { title: "No-Bloat Architecture", desc: "We aim for 100/100 performance scores. Speed is a feature, not an afterthought." },
-                { title: "AI At the Core", desc: "We integrate Gemini and other LLMs directly into your processes for real automation." }
-              ].map((item, i) => (
-                <div key={i} className="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 hover:border-brand-500/30 transition-all group">
-                   <h4 className="text-white font-bold text-xl mb-3 font-display group-hover:text-brand-400 transition-colors">{item.title}</h4>
-                   <p className="text-slate-400 font-light leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
+            <div className="mb-20">
+              <h2 className="text-5xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-none mb-8">
+                {t('about_title', 'The Architecture of')} <br />
+                <span className="text-brand-500">{t('about_title_accent', 'Sovereignty')}</span>
+              </h2>
+              <p className="text-slate-400 text-xl font-light max-w-3xl leading-relaxed">
+                {t('about_desc', "We don't build websites. We engineer high-performance conversion machines that transform manual chaos into automated digital sovereignty. Our systems are built for those who refuse to wait for the future and choose to build it instead.")}
+              </p>
             </div>
           </Reveal>
-        </div>
-      </div>
 
-      {/* Stats Section */}
-      <div className="py-24 bg-slate-900/50 relative overflow-hidden border-y border-slate-800">
-         <div className="absolute inset-0 bg-grid opacity-5"></div>
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-               {[
-                 { icon: Trophy, val: "98%", label: "Client Retention" },
-                 { icon: Code2, val: "50+", label: "Systems Deployed" },
-                 { icon: Users, val: "15k+", label: "Users Served" },
-                 { icon: Globe, val: "24/7", label: "System Uptime" }
-               ].map((stat, i) => (
-                 <Reveal key={i} delay={i*100}>
-                   <div className="text-center">
-                      <div className="w-16 h-16 mx-auto rounded-2xl bg-brand-500/10 flex items-center justify-center mb-6 text-brand-400">
-                        <stat.icon size={32} />
-                      </div>
-                      <div className="text-4xl md:text-5xl font-bold text-white mb-2 font-display">{stat.val}</div>
-                      <div className="text-slate-500 uppercase tracking-widest text-xs font-semibold">{stat.label}</div>
-                   </div>
-                 </Reveal>
-               ))}
-            </div>
-         </div>
-      </div>
-
-      {/* Extended Testimonials Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-        <Reveal>
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">Client Success Stories</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-              We don't just have clients; we have long-term partners. Here is what they say about our architecture.
-            </p>
-          </div>
-        </Reveal>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((t, i) => (
-             <Reveal key={i} delay={i*100}>
-               <div className="glass-panel p-10 rounded-3xl h-full flex flex-col relative overflow-hidden group hover:bg-slate-800/60 transition-colors border border-slate-700/50 hover:border-brand-500/30">
-                 <div className="flex gap-1 mb-8">
-                   {[1,2,3,4,5].map(s => <Star key={s} size={16} className="text-yellow-500 fill-yellow-500"/>)}
-                 </div>
-                 <p className="text-slate-300 italic mb-8 flex-grow leading-relaxed text-lg">"{t.quote}"</p>
-                 <div className="flex items-center gap-4 pt-6 border-t border-slate-800">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                      {t.author[0]}
+          <div className="grid lg:grid-cols-2 gap-16 mb-32">
+             <Reveal delay={100}>
+               <div className="glass-panel p-10 rounded-[3rem] border border-slate-800 bg-slate-950/50">
+                  <h3 className="text-brand-400 font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
+                    <Target size={16} /> {t('phil_title', 'Our Philosophy')}
+                  </h3>
+                  <p className="text-slate-300 text-lg font-light leading-relaxed mb-8">
+                    {t('phil_desc', "We believe that technology should be a multiplier, not a hurdle. Our systems are engineered to liberate business owners from the grind of manual management, allowing them to focus on high-level strategy while the machine handles the rest.")}
+                  </p>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-black text-white mb-1">24/7</div>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-widest">{t('automated_stat', 'Automated')}</div>
                     </div>
-                    <div>
-                       <div className="text-white font-bold text-base">{t.author}</div>
-                       <div className="text-brand-400 text-sm font-medium">{t.company}</div>
+                    <div className="text-center">
+                      <div className="text-2xl font-black text-white mb-1">0%</div>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-widest">{t('friction_stat', 'Friction')}</div>
                     </div>
-                 </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-black text-white mb-1">100%</div>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-widest">{t('ownership_stat', 'Ownership')}</div>
+                    </div>
+                  </div>
                </div>
              </Reveal>
-          ))}
+
+             <div className="grid grid-cols-2 gap-6">
+                {[
+                  { icon: TrendingUp, title: t('stat_1_t', "Conversion Lift"), val: "+400%" },
+                  { icon: Zap, title: t('stat_2_t', "Hours Saved/Mo"), val: "120+" },
+                  { icon: Shield, title: t('stat_3_t', "Security Score"), val: "A+" },
+                  { icon: Award, title: t('uptime_stat', "Server Uptime"), val: "99.9%" }
+                ].map((stat, i) => (
+                  <Reveal key={i} delay={i * 50 + 200}>
+                    <div className="p-8 rounded-3xl border border-slate-900 bg-slate-950/30 flex flex-col items-center text-center group hover:border-brand-500/50 transition-colors">
+                      <div className="w-12 h-12 rounded-2xl bg-brand-500/10 flex items-center justify-center text-brand-400 mb-4 group-hover:scale-110 transition-transform">
+                        <stat.icon size={24} />
+                      </div>
+                      <div className="text-3xl font-black text-white mb-1">{stat.val}</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{stat.title}</div>
+                    </div>
+                  </Reveal>
+                ))}
+             </div>
+          </div>
+
+          {/* Core Team / Values HUD */}
+          <div className="pt-20 border-t border-slate-900">
+             <Reveal>
+               <div className="grid md:grid-cols-3 gap-12">
+                  <div className="space-y-4">
+                    <div className="w-px h-12 bg-brand-500"></div>
+                    <h4 className="text-white font-bold uppercase tracking-widest text-xs">{t('the_logic', 'The Logic')}</h4>
+                    <p className="text-slate-500 text-sm font-light leading-relaxed italic">
+                      {t('logic_quote', '"We don\'t follow trends. We hard-code the foundations of digital dominance."')}
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="w-px h-12 bg-slate-800"></div>
+                    <h4 className="text-white font-bold uppercase tracking-widest text-xs">{t('the_engine', 'The Engine')}</h4>
+                    <p className="text-slate-500 text-sm font-light leading-relaxed italic">
+                      {t('engine_quote', '"Every millisecond saved is a dollar earned. Optimization is our religion."')}
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="w-px h-12 bg-brand-900"></div>
+                    <h4 className="text-white font-bold uppercase tracking-widest text-xs">{t('the_vault', 'The Vault')}</h4>
+                    <p className="text-slate-500 text-sm font-light leading-relaxed italic">
+                      {t('vault_quote', '"Your data is yours. We build the fortresses that protect your digital assets."')}
+                    </p>
+                  </div>
+               </div>
+             </Reveal>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
