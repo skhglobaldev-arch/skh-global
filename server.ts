@@ -11,16 +11,27 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // Logging middleware
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+  });
+
   app.use(express.json());
+
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", environment: process.env.NODE_ENV || "development" });
+  });
 
   // API Routes
   app.post("/api/audit", async (req, res) => {
+    console.log("Received /api/audit request:", req.body.email);
     const { businessName, email, phone, businessType, volume, ticketNumber, channels, painPoint } = req.body;
 
     try {
-      // Check environment
       if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.error("Email configuration missing (EMAIL_USER/EMAIL_PASS)");
+        console.error("EMAIL_USER or EMAIL_PASS missing in environment.");
+        return res.status(500).json({ error: "Email configuration missing" });
       }
 
       // 1. Initialize Gemini
