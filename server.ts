@@ -6,40 +6,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import cors from "cors";
 
-dotenv.config({ path: ".env.local" });
 dotenv.config();
-
-const getMailConfig = () => {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
-
-  if (!emailUser || !emailPass) {
-    throw new Error("Server Configuration Error");
-  }
-
-  return { emailUser, emailPass };
-};
-
-const createMailTransporter = () => {
-  const { emailUser, emailPass } = getMailConfig();
-
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: { user: emailUser, pass: emailPass },
-  });
-};
-
-const escapeHtml = (value: unknown) =>
-  String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT || 3001);
+  const PORT = 3000;
 
   app.use(cors()); // Enable CORS for ALL origins
   
@@ -57,32 +28,81 @@ async function startServer() {
     res.send("PONG - Server is reachable");
   });
 
+  app.get("/api/health", (req, res) => {
+    res.json({ 
+      status: "ok", 
+      timestamp: new Date().toISOString(), 
+      env: process.env.NODE_ENV,
+      email_config: !!process.env.EMAIL_USER && !!process.env.EMAIL_PASS,
+      gemini_config: !!process.env.GEMINI_API_KEY
+    });
+  });
+
+  // GET route for /api/audit to test reachability from browser
+  app.get("/api/audit", (req, res) => {
+    res.json({ message: "Audit API is active. Use POST to submit data." });
+  });
+
+  app.get("/api/contact", (req, res) => {
+    res.json({ message: "Contact API is active. Use POST to submit data." });
+  });
+
   // --- API ROUTES ---
   app.post("/api/audit", async (req, res) => {
-    console.log("[API-AUDIT] POST request received");
-    console.log("[API-AUDIT] Headers:", req.headers['content-type']);
+    console.log(`[API-AUDIT] POST received at ${new Date().toISOString()}`);
+    console.log("[API-AUDIT] Headers:", JSON.stringify(req.headers));
     
     const { businessName, email, phone, businessType, volume, ticketNumber, channels, painPoint } = req.body;
 
     try {
-      const { emailUser } = getMailConfig();
+      const emailUser = process.env.EMAIL_USER;
+      const emailPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, ''); // Fix spaces
+
+      if (!emailUser || !emailPass) {
+        console.error("[API-AUDIT] Email credentials missing in environment variables");
+        return res.status(500).json({ error: "Server Configuration Error: Email credentials not set." });
+      }
+
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      console.log(`[API-AUDIT] Processing for ${businessName} (${email})`);
 
       // 1. Gemini
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+      const geminiKey = process.env.GEMINI_API_KEY;
+      if (!geminiKey) {
+        console.error("[API-AUDIT] GEMINI_API_KEY is missing");
+        return res.status(500).json({ error: "Server Configuration Error: AI key not set." });
+      }
+
+      const genAI = new GoogleGenerativeAI(geminiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const prompt = `
         You are the Lead Architectural Strategist for SKH Global. Write a structured response in Farsi (Persian).
-        Client Details: ${businessName}, ${businessType}, ${channels}, ${painPoint}, ${volume}.
-        Structure: 1. Hook, 2. Diagnostic, 3. Solution, 4. ROI, 5. Call to action.
-        Tone: Professional, premium. Farsi lang.
+        Client Details: 
+        Business: ${businessName}
+        Type: ${businessType}
+        Channels: ${channels}
+        Main Problem: ${painPoint}
+        Current Volume: ${volume}
+        
+        Structure: 1. Hook (Immediate attention), 2. Diagnostic (What is failing?), 3. Solution (The SKH Architecture), 4. ROI (Why this pays for itself), 5. Call to action.
+        Tone: Professional, premium, technical yet clear.
+        Language: Farsi (Persian).
       `;
 
+      console.log("[API-AUDIT] Generating AI response...");
       const result = await model.generateContent(prompt);
       const aiResponse = result.response.text();
 
       // 2. Transporter
-      const transporter = createMailTransporter();
+      console.log("[API-AUDIT] Setting up email transporter...");
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: emailUser, pass: emailPass }
+      });
 
       const htmlTemplate = `
         <div style="direction: rtl; text-align: right; background: #020617; color: white; padding: 40px; font-family: sans-serif; border-radius: 20px;">
@@ -90,82 +110,88 @@ async function startServer() {
           <p style="white-space: pre-line;">${aiResponse}</p>
           <hr style="border: 0; border-top: 1px solid #1e293b; margin: 30px 0;">
           <div style="text-align: center;">
-            <a href="https://skh.global/offers" style="background: #0ea5e9; color: #020617; padding: 15px 30px; text-decoration: none; border-radius: 10px; font-weight: bold;">مشاهده جزئیات سیستم</a>
+            <p style="color: #64748b; font-size: 12px; margin-bottom: 20px;">Ticket ID: ${ticketNumber || 'N/A'}</p>
+            <a href="https://skh.global/offers" style="background: #0ea5e9; color: #020617; padding: 15px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block;">مشاهده جزئیات سیستم پیشنهادی</a>
           </div>
         </div>
       `;
 
+      console.log(`[API-AUDIT] Sending mail to ${email}...`);
       await transporter.sendMail({
         from: `"SKH Architects" <${emailUser}>`,
         to: email,
-        subject: `[نظام اتوماسیون] گزارش بیزنس ${businessName}`,
+        subject: `[نظام اتوماسیون] گزارش بیزنس ${businessName || 'شما'}`,
         html: htmlTemplate
       });
 
-      console.log("[SERVER] Email sent successfully to:", email);
-      res.json({ success: true });
+      console.log("[API-AUDIT] Success. Response sent to client.");
+      res.json({ 
+        success: true, 
+        message: "Audit report generated and sent via email.",
+        ticketId: ticketNumber
+      });
     } catch (error) {
-      console.error("[SERVER ERROR]", error);
-      res.status(500).json({ error: "Submission Failed" });
+      console.error("[API-AUDIT] ERROR:", error);
+      res.status(500).json({ 
+        error: "Submission Failed", 
+        details: error instanceof Error ? error.message : String(error) 
+      });
     }
   });
 
   app.post("/api/contact", async (req, res) => {
-    console.log("[API-CONTACT] POST request received");
-    const { fullName, company, email, investment, systemFocus, ticketNumber } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-
+    console.log(`[API-CONTACT] POST received at ${new Date().toISOString()}`);
+    const { fullName, email, company, investment, systemFocus, ticketNumber } = req.body;
+    
     try {
-      const { emailUser } = getMailConfig();
-      const transporter = createMailTransporter();
-      const safeName = escapeHtml(fullName || "there");
-      const safeCompany = escapeHtml(company || "your business");
-      const safeTicket = escapeHtml(ticketNumber || "SKH");
-      const safeInvestment = escapeHtml(investment || "Not specified");
-      const safeSystemFocus = escapeHtml(systemFocus || "Not specified");
+      const emailUser = process.env.EMAIL_USER;
+      const emailPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, '');
 
-      const htmlTemplate = `
-        <div style="background:#020617;color:#ffffff;padding:40px;font-family:Arial,sans-serif;border-radius:20px;line-height:1.7;">
-          <h1 style="color:#0ea5e9;margin:0 0 18px;">SKH GLOBAL</h1>
-          <p>Hi ${safeName},</p>
-          <p>Thank you for submitting your project inquiry for <strong>${safeCompany}</strong>. We received your details and your request is now in our review queue.</p>
-          <div style="background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:18px;margin:24px 0;">
-            <p style="margin:0 0 8px;"><strong>Priority Ticket:</strong> #${safeTicket}</p>
-            <p style="margin:0 0 8px;"><strong>Estimated Investment:</strong> ${safeInvestment}</p>
-            <p style="margin:0;"><strong>System Focus:</strong> ${safeSystemFocus}</p>
-          </div>
-          <p>Our architects usually respond within 12-24 hours with the next step.</p>
-          <p style="margin-top:30px;color:#94a3b8;">SKH GLOBAL<br/>High-performance systems and AI automation</p>
-        </div>
+      if (!emailUser || !emailPass) {
+        console.error("[API-CONTACT] Email credentials missing");
+        return res.status(500).json({ error: "Server config error: Email credentials missing." });
+      }
+
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: emailUser, pass: emailPass }
+      });
+
+      const text = `
+        New Contact Inquiry:
+        Name: ${fullName}
+        Email: ${email}
+        Company: ${company}
+        Investment: ${investment}
+        Focus: ${systemFocus}
+        Ticket: ${ticketNumber}
       `;
 
       await transporter.sendMail({
-        from: `"SKH Architects" <${emailUser}>`,
-        to: email,
-        subject: `We received your SKH GLOBAL inquiry #${safeTicket}`,
-        html: htmlTemplate,
+        from: `"SKH Inquiries" <${emailUser}>`,
+        to: emailUser, // Send to self
+        subject: `New Inquiry: ${company} (#${ticketNumber})`,
+        text: text
       });
 
-      console.log("[SERVER] Autoreply sent successfully to:", email);
+      console.log("[API-CONTACT] Inquiry email sent.");
       res.json({ success: true });
     } catch (error) {
-      console.error("[SERVER ERROR]", error);
-      res.status(500).json({ error: "Autoreply Failed" });
+      console.error("[API-CONTACT] ERROR:", error);
+      res.status(500).json({ error: "Contact submission failed" });
     }
   });
 
-  // Add a test GET route
-  app.get("/api/test", (req, res) => {
-    res.json({ message: "API is active", env: process.env.NODE_ENV });
+  // Catch-all API 404
+  app.all("/api/*all", (req, res) => {
+    console.warn(`[API-404] ${req.method} ${req.url}`);
+    res.status(404).json({ error: "Endpoint Not Found", path: req.url });
   });
 
-  // Catch-all API 404
-  app.all(/^\/api\/.*/, (req, res) => {
-    console.warn(`[API 404] ${req.method} ${req.url}`);
-    res.status(404).json({ error: "Endpoint Not Found" });
+  // Global error handler
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("[SERVER-FATAL-ERROR]", err);
+    res.status(500).json({ error: "Internal Server Error", message: err.message });
   });
 
   // Vite middleware for development
@@ -178,7 +204,7 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
-    app.get(/.*/, (req, res) => {
+    app.get("*all", (req, res) => {
       // Avoid catching API routes here (handled by the app.all logic above)
       if (req.url.startsWith("/api")) return; 
       res.sendFile(path.join(distPath, "index.html"));
