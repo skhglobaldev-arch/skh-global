@@ -113,37 +113,26 @@ export const AuditView: React.FC = () => {
       return;
     }
 
+    const body = { 
+      ...formData,
+      ticketNumber: ticketNumber,
+      channels: formData.channels.join(', ')
+    };
+
+    console.log("Submitting form:", body);
+
     setLoading(true);
     
     try {
-      const body = encode({ 
-        "form-name": "revenue-audit", 
-        ...formData,
-        ticketNumber: ticketNumber,
-        channels: formData.channels.join(', ')
-      });
-
-      console.log("Submitting form...", body);
-
-      await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body
-      });
-
       // Send to custom backend for AI processing and email
-      try {
-        await fetch("/api/audit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            ...formData,
-            ticketNumber,
-            channels: formData.channels.join(', ')
-          })
-        });
-      } catch (backendError) {
-        console.error("Backend error:", backendError);
+      const response = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
       }
       
       // Intentional delay for effect

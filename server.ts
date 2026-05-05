@@ -67,7 +67,7 @@ async function startServer() {
         service: 'gmail',
         auth: {
           user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
+          pass: (process.env.EMAIL_PASS || "").replace(/\s/g, '') // AUTO-FIX: Remove spaces
         }
       });
 
@@ -166,7 +166,10 @@ ${aiResponse}
      try {
        const transporter = nodemailer.createTransport({
          service: 'gmail',
-         auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+         auth: { 
+           user: process.env.EMAIL_USER, 
+           pass: (process.env.EMAIL_PASS || "").replace(/\s/g, '') // AUTO-FIX: Remove spaces
+         }
        });
 
        const htmlTemplate = `
@@ -224,6 +227,12 @@ ${aiResponse}
      }
   });
 
+  // Handle missing API routes with a clear error
+  app.all("/api/*", (req, res) => {
+    console.warn(`404 on API route: ${req.method} ${req.url}`);
+    res.status(404).json({ error: "API route not found" });
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -235,6 +244,8 @@ ${aiResponse}
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
+      // Avoid catching API routes here (handled by the app.all logic above)
+      if (req.url.startsWith("/api")) return; 
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
