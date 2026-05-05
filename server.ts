@@ -24,8 +24,12 @@ async function startServer() {
   });
 
   // API Routes
+  app.get("/api/test", (req, res) => {
+    res.json({ message: "API is working", time: new Date().toISOString() });
+  });
+
   app.post("/api/audit", async (req, res) => {
-    console.log("Received /api/audit request:", req.body.email);
+    console.log("[SERVER] Received POST /api/audit", req.body?.email);
     const { businessName, email, phone, businessType, volume, ticketNumber, channels, painPoint } = req.body;
 
     try {
