@@ -17,7 +17,6 @@ export const Hero: React.FC<HeroProps> = ({ navigateTo }) => {
       <div className="absolute bottom-0 w-full h-[50vh] origin-bottom z-0 pointer-events-none">
         <div className="absolute inset-0 [transform:perspective(1200px)_rotateX(80deg)] scale-150">
            <div className="absolute inset-0 bg-grid opacity-30 animate-grid-flow"></div>
-           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         </div>
       </div>
 
