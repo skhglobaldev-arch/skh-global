@@ -8,34 +8,6 @@ import cors from "cors";
 
 dotenv.config();
 
-const getMailConfig = () => {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
-
-  if (!emailUser || !emailPass) {
-    throw new Error("Server Configuration Error");
-  }
-
-  return { emailUser, emailPass };
-};
-
-const createMailTransporter = () => {
-  const { emailUser, emailPass } = getMailConfig();
-
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: { user: emailUser, pass: emailPass },
-  });
-};
-
-const escapeHtml = (value: unknown) =>
-  String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -51,15 +23,26 @@ async function startServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  // --- DEBUG PING ---
+  app.get("/ping", (req, res) => {
+    res.send("PONG - Server is reachable");
+  });
+
   // --- API ROUTES ---
   app.post("/api/audit", async (req, res) => {
-    console.log("[SERVER-DEBUG] POST /api/audit hit");
-    console.log("[SERVER-DEBUG] Body:", JSON.stringify(req.body).substring(0, 100) + "...");
+    console.log("[API-AUDIT] POST request received");
+    console.log("[API-AUDIT] Headers:", req.headers['content-type']);
     
     const { businessName, email, phone, businessType, volume, ticketNumber, channels, painPoint } = req.body;
 
     try {
-      const { emailUser } = getMailConfig();
+      const emailUser = process.env.EMAIL_USER;
+      const emailPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, ''); // Fix spaces
+
+      if (!emailUser || !emailPass) {
+        console.error("Credentials missing in .env");
+        return res.status(500).json({ error: "Server Configuration Error" });
+      }
 
       // 1. Gemini
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
@@ -76,7 +59,10 @@ async function startServer() {
       const aiResponse = result.response.text();
 
       // 2. Transporter
-      const transporter = createMailTransporter();
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: emailUser, pass: emailPass }
+      });
 
       const htmlTemplate = `
         <div style="direction: rtl; text-align: right; background: #020617; color: white; padding: 40px; font-family: sans-serif; border-radius: 20px;">
@@ -101,53 +87,6 @@ async function startServer() {
     } catch (error) {
       console.error("[SERVER ERROR]", error);
       res.status(500).json({ error: "Submission Failed" });
-    }
-  });
-
-  app.post("/api/contact", async (req, res) => {
-    console.log("[SERVER-DEBUG] POST /api/contact hit");
-    const { fullName, company, email, investment, systemFocus, ticketNumber } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-
-    try {
-      const { emailUser } = getMailConfig();
-      const transporter = createMailTransporter();
-      const safeName = escapeHtml(fullName || "there");
-      const safeCompany = escapeHtml(company || "your business");
-      const safeTicket = escapeHtml(ticketNumber || "SKH");
-      const safeInvestment = escapeHtml(investment || "Not specified");
-      const safeSystemFocus = escapeHtml(systemFocus || "Not specified");
-
-      const htmlTemplate = `
-        <div style="background:#020617;color:#ffffff;padding:40px;font-family:Arial,sans-serif;border-radius:20px;line-height:1.7;">
-          <h1 style="color:#0ea5e9;margin:0 0 18px;">SKH GLOBAL</h1>
-          <p>Hi ${safeName},</p>
-          <p>Thank you for submitting your project inquiry for <strong>${safeCompany}</strong>. We received your details and your request is now in our review queue.</p>
-          <div style="background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:18px;margin:24px 0;">
-            <p style="margin:0 0 8px;"><strong>Priority Ticket:</strong> #${safeTicket}</p>
-            <p style="margin:0 0 8px;"><strong>Estimated Investment:</strong> ${safeInvestment}</p>
-            <p style="margin:0;"><strong>System Focus:</strong> ${safeSystemFocus}</p>
-          </div>
-          <p>Our architects usually respond within 12-24 hours with the next step.</p>
-          <p style="margin-top:30px;color:#94a3b8;">SKH GLOBAL<br/>High-performance systems and AI automation</p>
-        </div>
-      `;
-
-      await transporter.sendMail({
-        from: `"SKH Architects" <${emailUser}>`,
-        to: email,
-        subject: `We received your SKH GLOBAL inquiry #${safeTicket}`,
-        html: htmlTemplate,
-      });
-
-      console.log("[SERVER] Autoreply sent successfully to:", email);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("[SERVER ERROR]", error);
-      res.status(500).json({ error: "Autoreply Failed" });
     }
   });
 
