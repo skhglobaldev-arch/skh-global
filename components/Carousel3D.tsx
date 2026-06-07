@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { LucideIcon, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface CarouselItem {
   title: string;
@@ -13,6 +14,7 @@ interface Carousel3DProps {
 }
 
 export const Carousel3D: React.FC<Carousel3DProps> = ({ items }) => {
+  const { t } = useTranslation();
   const [rotation, setRotation] = useState(0);
   const [radius, setRadius] = useState(550);
   const [itemWidth, setItemWidth] = useState(360);
@@ -127,7 +129,7 @@ export const Carousel3D: React.FC<Carousel3DProps> = ({ items }) => {
                                     <div className="mt-auto w-full flex flex-col items-center [transform:translateZ(30px)]">
                                         <div className="h-1 w-14 bg-slate-700 rounded-full group-hover:w-28 group-hover:bg-brand-400 transition-all duration-700 mb-6"></div>
                                         <div className="flex items-center gap-2 text-brand-300 font-bold text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                                          Analyze Architecture <ArrowRight size={14} />
+                                          {t('carousel_view_solution', 'View Solution')} <ArrowRight size={14} />
                                         </div>
                                     </div>
                                 </div>
@@ -141,7 +143,7 @@ export const Carousel3D: React.FC<Carousel3DProps> = ({ items }) => {
         {/* User Interaction Cue */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none z-20">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-[10px] font-mono font-bold text-brand-200 uppercase tracking-[0.6em] animate-pulse">Drag_to_Rotate_Systems</span>
+              <span className="text-[10px] font-mono font-bold text-brand-200 uppercase tracking-[0.3em] animate-pulse">{t('carousel_drag_hint', 'Drag to explore')}</span>
               <div className="h-px w-20 bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
             </div>
         </div>

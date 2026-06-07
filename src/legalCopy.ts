@@ -1,0 +1,691 @@
+export type LegalSection = {
+  title: string;
+  body: string[];
+};
+
+export type LegalPageCopy = {
+  badge: string;
+  title: string;
+  subtitle: string;
+  intro?: string;
+  sections: LegalSection[];
+  lastUpdated?: string;
+  contactLabel?: string;
+  closingLine?: string;
+};
+
+export type LegalLocaleCopy = {
+  direction: "ltr" | "rtl";
+  nav: {
+    legal: string;
+    terms: string;
+    privacy: string;
+    backHome: string;
+  };
+  terms: LegalPageCopy;
+  privacy: LegalPageCopy;
+};
+
+const email = "skhglobal.dev@gmail.com";
+
+const en: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: {
+    legal: "Legal",
+    terms: "Terms of Service",
+    privacy: "Privacy Policy",
+    backHome: "Back to Home",
+  },
+  terms: {
+    badge: "Legal",
+    title: "Terms of Service",
+    subtitle: "Basic terms for project work, delivery, ownership and support.",
+    intro: "These Terms of Service outline the general conditions for working with SKH.GLOBAL. Specific project details, deliverables, timelines and fees will be confirmed separately in a written proposal or service agreement.",
+    sections: [
+      { title: "Service Provision", body: ["SKH.GLOBAL provides digital system design and development services, including web apps, dashboards, booking systems, payment flows, automation, customer portals and custom software solutions. Services are delivered according to the agreed project scope, milestones and written proposal."] },
+      { title: "Project Scope and Changes", body: ["Each project is based on an agreed scope of work. Any additional features, design changes, integrations or revisions outside the agreed scope may require a separate quote and timeline adjustment."] },
+      { title: "Payment and Delivery", body: ["Project payments, milestones and delivery dates are confirmed in the proposal or service agreement. Work may begin after the agreed initial payment has been received. Final delivery, launch or source-code handover may depend on full payment being completed."] },
+      { title: "Third-Party Services", body: ["Some projects may require third-party services such as domain providers, Firebase / Google Cloud, Stripe, AI API providers, email services, SMS tools or hosting platforms. These services are owned and paid for by the client unless agreed otherwise in writing. SKH.GLOBAL can assist with setup and integration but is not responsible for third-party pricing, outages, account restrictions or policy changes."] },
+      { title: "Intellectual Property", body: ["After full payment of project fees, the client receives ownership of the custom implementation and client-specific codebase developed for their project, unless a different arrangement is agreed in writing. SKH.GLOBAL retains ownership of pre-existing tools, templates, internal prompts, reusable components, workflows, design patterns and development methods used before or during the project."] },
+      { title: "Client Responsibilities", body: ["The client is responsible for providing accurate information, required access, brand assets, content, approvals and feedback within reasonable timeframes. Delays in providing these items may affect the project timeline."] },
+      { title: "Confidentiality", body: ["Both parties agree to keep confidential any business information, technical details, project materials, login access, customer data or private information shared during the project. This obligation continues after the project ends."] },
+      { title: "Limitation of Liability", body: ["SKH.GLOBAL aims to build reliable and secure systems using reasonable care and skill. However, SKH.GLOBAL is not responsible for indirect losses, loss of profit, business interruption, third-party service failures, misuse of the system or operational decisions made by the client. The client is responsible for how the system is used within their business."] },
+      { title: "Support and Maintenance", body: ["Post-launch support is not included unless stated in the proposal or covered by a separate care plan. Ongoing support, updates, monitoring, small changes or feature improvements may be provided under a separate monthly support agreement."] },
+      { title: "Portfolio Use", body: ["Unless the client requests confidentiality in writing, SKH.GLOBAL may reference the project in its portfolio, case studies or marketing materials. Sensitive business information, private data, customer records or confidential details will not be shown without permission."] },
+      { title: "Governing Terms", body: ["These website terms provide a general foundation for working with SKH.GLOBAL. A signed proposal, service agreement or written project agreement will take priority over these general terms where applicable."] },
+    ],
+  },
+  privacy: {
+    badge: "Privacy",
+    title: "Privacy Policy",
+    subtitle: "How we handle business details, project information and client communication.",
+    intro: "This Privacy Policy explains how SKH.GLOBAL collects, uses and protects information shared with us through this website, project enquiries and client communication.",
+    sections: [
+      { title: "Information We Collect", body: ["We may collect information such as your name, business name, email address, website or social media link, project requirements, budget range, timeline, business workflow details and any information you choose to submit through our System Review form or direct communication."] },
+      { title: "How We Use Information", body: ["We use this information to review project enquiries, understand your business needs, prepare proposals, communicate with you, plan project scope, deliver agreed services and provide support where applicable."] },
+      { title: "Project and Client Data", body: ["During a project, we may receive access to project files, business logic, technical requirements, customer-related information, platform settings or third-party service details. Access is used only for the purpose of delivering the agreed project or support service."] },
+      { title: "Data Ownership", body: ["Clients remain the owners of their business data, customer data, account data and third-party service accounts. SKH.GLOBAL does not sell client data and does not use project-specific data for unrelated purposes."] },
+      { title: "Data Security", body: ["We use practical security controls to protect project information, including restricted access, private project repositories where needed, secure handling of API keys and avoidance of unnecessary password storage. Where possible, clients are encouraged to own their own third-party accounts and provide limited access rather than sharing private passwords."] },
+      { title: "Third-Party Services", body: ["Projects may involve third-party providers such as Firebase / Google Cloud, Stripe, AI API providers, email services, SMS providers, hosting platforms or analytics tools. These providers may process data according to their own privacy policies and terms. We only recommend or integrate third-party tools that are relevant to the project requirements."] },
+      { title: "Sensitive Information", body: ["If a project involves sensitive data such as health-related information, private files, customer records or other confidential material, the required access controls, storage approach and responsibilities should be agreed separately in the proposal or service agreement."] },
+      { title: "Data Retention", body: ["We keep project and enquiry information only for as long as reasonably needed for communication, project delivery, support, record keeping or legal/business purposes. Clients may request deletion of unnecessary project information from active development environments where technically and legally possible."] },
+      { title: "Your Rights and Requests", body: ["You may contact SKH.GLOBAL to request access to the information we hold about you, ask for corrections, or request deletion of information where applicable."] },
+      { title: "No Sale of Data", body: ["SKH.GLOBAL does not sell personal information, business information or project data to third-party brokers."] },
+      { title: "Contact", body: [`For privacy-related requests, contact: ${email}`] },
+    ],
+    lastUpdated: "June 2026",
+    closingLine: "Privacy is not an optional feature; it is part of building trust into digital systems.",
+  },
+};
+
+const fa: LegalLocaleCopy = {
+  direction: "rtl",
+  nav: {
+    legal: "قوانین",
+    terms: "شرایط استفاده از خدمات",
+    privacy: "سیاست حفظ حریم خصوصی",
+    backHome: "بازگشت به صفحه اصلی",
+  },
+  terms: {
+    badge: "قوانین",
+    title: "شرایط استفاده از خدمات",
+    subtitle: "شرایط پایه برای انجام پروژه، تحویل، مالکیت و پشتیبانی.",
+    intro: "این شرایط، چارچوب کلی همکاری با SKH.GLOBAL را توضیح می‌دهد. جزئیات هر پروژه، خروجی‌ها، زمان‌بندی و هزینه‌ها جداگانه در proposal یا توافق‌نامه خدمات مشخص می‌شود.",
+    sections: [
+      { title: "ارائه خدمات", body: ["SKH.GLOBAL خدمات طراحی و توسعه سیستم‌های دیجیتال ارائه می‌دهد؛ از web app، داشبورد، سیستم رزرو، مسیر پرداخت، اتوماسیون و پرتال مشتری تا نرم‌افزار اختصاصی. خدمات بر اساس محدوده، milestoneها و proposal توافق‌شده انجام می‌شود."] },
+      { title: "محدوده پروژه و تغییرات", body: ["هر پروژه بر اساس محدوده کاری مشخص شروع می‌شود. هر قابلیت اضافه، تغییر طراحی، integration یا revision خارج از محدوده توافق‌شده می‌تواند نیازمند هزینه و زمان‌بندی جداگانه باشد."] },
+      { title: "پرداخت و تحویل", body: ["مبلغ پروژه، مرحله‌های پرداخت و تاریخ‌های تحویل در proposal یا توافق‌نامه مشخص می‌شود. شروع کار می‌تواند پس از دریافت پرداخت اولیه انجام شود. تحویل نهایی، launch یا تحویل سورس‌کد ممکن است به تکمیل پرداخت‌ها وابسته باشد."] },
+      { title: "سرویس‌های شخص ثالث", body: ["بعضی پروژه‌ها به سرویس‌هایی مثل دامنه، Firebase / Google Cloud، Stripe، ارائه‌دهندگان API هوش مصنوعی، ایمیل، پیامک یا hosting نیاز دارند. این حساب‌ها و هزینه‌ها متعلق به مشتری است مگر اینکه کتبی طور دیگری توافق شود. SKH.GLOBAL می‌تواند در setup و اتصال کمک کند، اما مسئول قیمت‌گذاری، قطعی، محدودیت حساب یا تغییر سیاست‌های سرویس‌های شخص ثالث نیست."] },
+      { title: "مالکیت فکری", body: ["پس از پرداخت کامل هزینه پروژه، مالکیت پیاده‌سازی اختصاصی و codebase مخصوص همان پروژه به مشتری منتقل می‌شود، مگر اینکه کتبی طور دیگری توافق شود. ابزارها، templateها، promptهای داخلی، componentهای قابل استفاده مجدد، workflowها، الگوهای طراحی و روش‌های توسعه قبلی یا عمومی متعلق به SKH.GLOBAL باقی می‌ماند."] },
+      { title: "مسئولیت‌های مشتری", body: ["مشتری مسئول ارائه اطلاعات درست، دسترسی‌های لازم، فایل‌های برند، محتوا، تأییدیه‌ها و بازخورد در زمان منطقی است. تأخیر در ارائه این موارد می‌تواند روی زمان‌بندی پروژه اثر بگذارد."] },
+      { title: "محرمانگی", body: ["هر دو طرف باید اطلاعات کسب‌وکار، جزئیات فنی، فایل‌های پروژه، دسترسی‌ها، داده‌های مشتریان و اطلاعات خصوصی را که در طول پروژه به اشتراک گذاشته می‌شود محرمانه نگه دارند. این تعهد پس از پایان پروژه نیز ادامه دارد."] },
+      { title: "محدودیت مسئولیت", body: ["SKH.GLOBAL تلاش می‌کند سیستم‌ها را با دقت، مهارت و استاندارد عملی مناسب بسازد. با این حال، مسئول زیان‌های غیرمستقیم، از دست رفتن سود، توقف کسب‌وکار، مشکل سرویس‌های شخص ثالث، استفاده نادرست از سیستم یا تصمیم‌های عملیاتی مشتری نیست. نحوه استفاده از سیستم در کسب‌وکار بر عهده مشتری است."] },
+      { title: "پشتیبانی و نگهداری", body: ["پشتیبانی پس از launch فقط زمانی شامل پروژه است که در proposal آمده باشد یا تحت care plan جداگانه تعریف شود. پشتیبانی ماهانه، update، monitoring، تغییرات کوچک یا توسعه قابلیت‌های جدید می‌تواند در توافق جداگانه ارائه شود."] },
+      { title: "استفاده در نمونه‌کارها", body: ["مگر اینکه مشتری کتبی درخواست محرمانگی کند، SKH.GLOBAL می‌تواند به پروژه در نمونه‌کارها، case study یا محتوای معرفی اشاره کند. اطلاعات حساس، داده‌های خصوصی، سوابق مشتریان یا جزئیات محرمانه بدون اجازه نمایش داده نمی‌شود."] },
+      { title: "اولویت توافق پروژه", body: ["این شرایط سایت، چارچوب کلی همکاری را مشخص می‌کند. اگر proposal امضاشده، توافق‌نامه خدمات یا توافق کتبی پروژه وجود داشته باشد، همان توافق در موارد مرتبط بر این شرایط عمومی اولویت دارد."] },
+    ],
+  },
+  privacy: {
+    badge: "حریم خصوصی",
+    title: "سیاست حفظ حریم خصوصی",
+    subtitle: "نحوه مدیریت اطلاعات کسب‌وکار، جزئیات پروژه و ارتباط با مشتری.",
+    intro: "این سیاست توضیح می‌دهد SKH.GLOBAL اطلاعاتی را که از طریق سایت، درخواست پروژه یا ارتباط مستقیم دریافت می‌کند چگونه جمع‌آوری، استفاده و محافظت می‌کند.",
+    sections: [
+      { title: "اطلاعاتی که دریافت می‌کنیم", body: ["ممکن است اطلاعاتی مثل نام، نام کسب‌وکار، ایمیل، لینک سایت یا شبکه اجتماعی، نیازهای پروژه، بازه بودجه، زمان‌بندی، جزئیات workflow کسب‌وکار و هر توضیحی که در فرم System Review یا ارتباط مستقیم ثبت می‌کنید دریافت شود."] },
+      { title: "نحوه استفاده از اطلاعات", body: ["از این اطلاعات برای بررسی درخواست پروژه، شناخت نیاز کسب‌وکار، آماده‌سازی proposal، ارتباط با شما، مشخص کردن محدوده پروژه، ارائه خدمات توافق‌شده و پشتیبانی در صورت نیاز استفاده می‌شود."] },
+      { title: "داده‌های پروژه و مشتری", body: ["در طول پروژه ممکن است به فایل‌ها، منطق کسب‌وکار، نیازهای فنی، اطلاعات مرتبط با مشتریان، تنظیمات پلتفرم یا جزئیات سرویس‌های شخص ثالث دسترسی داشته باشیم. این دسترسی فقط برای انجام پروژه یا پشتیبانی توافق‌شده استفاده می‌شود."] },
+      { title: "مالکیت داده", body: ["مشتری مالک داده‌های کسب‌وکار، داده‌های مشتریان، اطلاعات حساب‌ها و حساب‌های سرویس‌های شخص ثالث خود باقی می‌ماند. SKH.GLOBAL داده‌های مشتری را نمی‌فروشد و از داده‌های اختصاصی پروژه برای هدف نامرتبط استفاده نمی‌کند."] },
+      { title: "امنیت داده", body: ["برای محافظت از اطلاعات پروژه از کنترل‌های عملی مثل دسترسی محدود، repository خصوصی در صورت نیاز، مدیریت امن API keyها و خودداری از نگهداری غیرضروری password استفاده می‌شود. در صورت امکان، بهتر است حساب‌های شخص ثالث متعلق به خود مشتری باشد و به جای ارسال password خصوصی، دسترسی محدود ارائه شود."] },
+      { title: "سرویس‌های شخص ثالث", body: ["پروژه‌ها ممکن است شامل Firebase / Google Cloud، Stripe، ارائه‌دهندگان API هوش مصنوعی، ایمیل، پیامک، hosting یا analytics باشند. این سرویس‌ها طبق privacy policy و terms خودشان داده را پردازش می‌کنند. ما فقط ابزارهایی را پیشنهاد یا integrate می‌کنیم که با نیاز پروژه مرتبط باشند."] },
+      { title: "اطلاعات حساس", body: ["اگر پروژه شامل اطلاعات حساس مثل داده‌های مرتبط با سلامت، فایل‌های خصوصی، سوابق مشتریان یا محتوای محرمانه باشد، سطح دسترسی، روش ذخیره‌سازی و مسئولیت‌ها باید جداگانه در proposal یا توافق‌نامه مشخص شود."] },
+      { title: "مدت نگهداری داده", body: ["اطلاعات پروژه و درخواست‌ها فقط تا زمانی نگهداری می‌شود که برای ارتباط، تحویل پروژه، پشتیبانی، سوابق کاری یا الزامات قانونی و تجاری لازم باشد. مشتری می‌تواند درخواست حذف اطلاعات غیرضروری از محیط‌های توسعه فعال را، تا جایی که فنی و قانونی ممکن باشد، مطرح کند."] },
+      { title: "درخواست‌ها و حقوق شما", body: ["می‌توانید با SKH.GLOBAL تماس بگیرید تا درباره اطلاعاتی که از شما نگهداری می‌شود سؤال کنید، درخواست اصلاح بدهید یا در موارد قابل اجرا درخواست حذف اطلاعات کنید."] },
+      { title: "فروش داده انجام نمی‌شود", body: ["SKH.GLOBAL اطلاعات شخصی، اطلاعات کسب‌وکار یا داده پروژه را به واسطه‌های داده یا اشخاص ثالث نمی‌فروشد."] },
+      { title: "تماس", body: [`برای درخواست‌های مرتبط با حریم خصوصی: ${email}`] },
+    ],
+    lastUpdated: "ژوئن ۲۰۲۶",
+    closingLine: "حریم خصوصی یک قابلیت اختیاری نیست؛ بخشی از ساخت اعتماد در سیستم‌های دیجیتال است.",
+  },
+};
+
+const ar: LegalLocaleCopy = {
+  direction: "rtl",
+  nav: { legal: "الشؤون القانونية", terms: "شروط الخدمة", privacy: "سياسة الخصوصية", backHome: "العودة إلى الصفحة الرئيسية" },
+  terms: {
+    badge: "قانوني",
+    title: "شروط الخدمة",
+    subtitle: "شروط أساسية للعمل على المشاريع والتسليم والملكية والدعم.",
+    intro: "توضح هذه الشروط الإطار العام للتعاون مع SKH.GLOBAL. يتم تأكيد تفاصيل كل مشروع، والمخرجات، والجدول الزمني، والرسوم في عرض مكتوب أو اتفاق خدمة.",
+    sections: [
+      { title: "تقديم الخدمات", body: ["تقدم SKH.GLOBAL خدمات تصميم وتطوير الأنظمة الرقمية، بما في ذلك تطبيقات الويب، لوحات التحكم، أنظمة الحجز، مسارات الدفع، الأتمتة، بوابات العملاء والحلول البرمجية المخصصة، وفق نطاق العمل المتفق عليه."] },
+      { title: "نطاق المشروع والتغييرات", body: ["يعتمد كل مشروع على نطاق عمل متفق عليه. أي ميزات إضافية أو تغييرات تصميم أو تكاملات أو مراجعات خارج هذا النطاق قد تحتاج إلى عرض سعر وجدول زمني جديد."] },
+      { title: "الدفع والتسليم", body: ["تحدد المدفوعات والمراحل ومواعيد التسليم في العرض أو اتفاق الخدمة. قد يبدأ العمل بعد استلام الدفعة الأولية، وقد يعتمد الإطلاق أو تسليم الكود على اكتمال الدفع."] },
+      { title: "خدمات الطرف الثالث", body: ["قد يحتاج المشروع إلى خدمات مثل النطاقات، Firebase / Google Cloud، Stripe، مزودي AI API، البريد الإلكتروني، الرسائل القصيرة أو الاستضافة. هذه الحسابات وتكاليفها تقع على العميل ما لم يتم الاتفاق كتابة على غير ذلك."] },
+      { title: "الملكية الفكرية", body: ["بعد سداد الرسوم بالكامل، يحصل العميل على ملكية التنفيذ المخصص والكود الخاص بمشروعه، ما لم يتم الاتفاق كتابة على ترتيب مختلف. وتحتفظ SKH.GLOBAL بأدواتها وقوالبها ومكوناتها وأساليبها القابلة لإعادة الاستخدام."] },
+      { title: "مسؤوليات العميل", body: ["يتحمل العميل مسؤولية توفير المعلومات الدقيقة، الصلاحيات، أصول العلامة، المحتوى، الموافقات والملاحظات ضمن وقت معقول. أي تأخير قد يؤثر على الجدول الزمني."] },
+      { title: "السرية", body: ["يتفق الطرفان على الحفاظ على سرية معلومات العمل، التفاصيل التقنية، مواد المشروع، بيانات الدخول، بيانات العملاء وأي معلومات خاصة يتم مشاركتها خلال المشروع."] },
+      { title: "حدود المسؤولية", body: ["تعمل SKH.GLOBAL بعناية ومهارة لبناء أنظمة موثوقة، لكنها ليست مسؤولة عن الخسائر غير المباشرة، فقدان الأرباح، توقف العمل، أعطال خدمات الطرف الثالث، سوء الاستخدام أو القرارات التشغيلية للعميل."] },
+      { title: "الدعم والصيانة", body: ["الدعم بعد الإطلاق غير مشمول إلا إذا ورد في العرض أو ضمن خطة رعاية منفصلة. يمكن تقديم التحديثات والمراقبة والتحسينات باتفاق شهري مستقل."] },
+      { title: "استخدام المشروع في المعرض", body: ["ما لم يطلب العميل السرية كتابة، يمكن لـ SKH.GLOBAL الإشارة إلى المشروع في المعرض أو دراسات الحالة أو المواد التسويقية، دون نشر البيانات الحساسة أو الخاصة دون إذن."] },
+      { title: "الأولوية التعاقدية", body: ["هذه الشروط توفر أساسا عاما للتعاون. أي عرض موقع أو اتفاق خدمة أو اتفاق مشروع مكتوب تكون له الأولوية عند التعارض."] },
+    ],
+  },
+  privacy: {
+    badge: "الخصوصية",
+    title: "سياسة الخصوصية",
+    subtitle: "كيف نتعامل مع معلومات العمل وتفاصيل المشروع والتواصل مع العملاء.",
+    intro: "توضح هذه السياسة كيف تجمع SKH.GLOBAL المعلومات التي تشاركها عبر الموقع أو طلبات المشاريع أو التواصل المباشر، وكيف تستخدمها وتحميها.",
+    sections: [
+      { title: "المعلومات التي نجمعها", body: ["قد نجمع الاسم، اسم العمل، البريد الإلكتروني، رابط الموقع أو الشبكات الاجتماعية، متطلبات المشروع، نطاق الميزانية، الجدول الزمني، تفاصيل سير العمل وأي معلومات ترسلها في نموذج System Review أو التواصل المباشر."] },
+      { title: "كيف نستخدم المعلومات", body: ["نستخدم المعلومات لمراجعة الطلبات، فهم احتياجات العمل، إعداد العروض، التواصل معك، تخطيط نطاق المشروع، تقديم الخدمات المتفق عليها والدعم عند الحاجة."] },
+      { title: "بيانات المشروع والعميل", body: ["قد نحصل أثناء المشروع على ملفات، منطق عمل، متطلبات تقنية، معلومات مرتبطة بالعملاء، إعدادات منصات أو تفاصيل خدمات طرف ثالث. يستخدم الوصول فقط لتنفيذ المشروع أو الدعم المتفق عليه."] },
+      { title: "ملكية البيانات", body: ["يبقى العميل مالكا لبياناته وبيانات عملائه وحساباته لدى الخدمات الخارجية. لا تبيع SKH.GLOBAL بيانات العملاء ولا تستخدم بيانات المشروع لأغراض غير مرتبطة."] },
+      { title: "أمان البيانات", body: ["نستخدم ضوابط عملية مثل تقييد الوصول، مستودعات خاصة عند الحاجة، التعامل الآمن مع مفاتيح API وتجنب تخزين كلمات المرور دون ضرورة. ونشجع العملاء على امتلاك حساباتهم وتقديم صلاحيات محدودة."] },
+      { title: "خدمات الطرف الثالث", body: ["قد تستخدم المشاريع Firebase / Google Cloud، Stripe، مزودي AI API، البريد الإلكتروني، الرسائل القصيرة، الاستضافة أو التحليلات. تعالج هذه الخدمات البيانات وفق سياساتها الخاصة."] },
+      { title: "المعلومات الحساسة", body: ["إذا شمل المشروع بيانات صحية أو ملفات خاصة أو سجلات عملاء أو مواد سرية، فيجب تحديد ضوابط الوصول وطريقة التخزين والمسؤوليات في العرض أو الاتفاق."] },
+      { title: "مدة الاحتفاظ", body: ["نحتفظ بمعلومات المشروع والاستفسارات فقط بقدر ما يلزم للتواصل أو التسليم أو الدعم أو السجلات أو الأغراض القانونية والتجارية. يمكن طلب حذف المعلومات غير الضرورية حيثما كان ذلك ممكنا."] },
+      { title: "حقوقك وطلباتك", body: ["يمكنك التواصل مع SKH.GLOBAL لطلب الوصول إلى المعلومات التي نحتفظ بها عنك أو تصحيحها أو حذفها حيثما ينطبق ذلك."] },
+      { title: "لا نبيع البيانات", body: ["لا تبيع SKH.GLOBAL المعلومات الشخصية أو التجارية أو بيانات المشاريع إلى وسطاء بيانات."] },
+      { title: "التواصل", body: [`لطلبات الخصوصية: ${email}`] },
+    ],
+    lastUpdated: "يونيو 2026",
+    closingLine: "الخصوصية ليست ميزة اختيارية؛ إنها جزء من بناء الثقة داخل الأنظمة الرقمية.",
+  },
+};
+
+const fr: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "Legal", terms: "Conditions de service", privacy: "Politique de confidentialite", backHome: "Retour a l'accueil" },
+  terms: {
+    badge: "Legal",
+    title: "Conditions de service",
+    subtitle: "Conditions de base pour les projets, la livraison, la propriete et le support.",
+    intro: "Ces conditions definissent le cadre general d'une collaboration avec SKH.GLOBAL. Les details du projet, livrables, delais et frais sont confirmes separement dans une proposition ou un accord de service.",
+    sections: [
+      { title: "Prestation de services", body: ["SKH.GLOBAL conçoit et developpe des systemes numeriques: web apps, tableaux de bord, reservation, paiement, automatisation, portails clients et logiciels sur mesure, selon le perimetre et les etapes convenus."] },
+      { title: "Perimetre et changements", body: ["Chaque projet repose sur un perimetre valide. Les fonctionnalites, integrations, changements de design ou revisions hors perimetre peuvent demander un devis et un delai supplementaires."] },
+      { title: "Paiement et livraison", body: ["Les paiements, jalons et dates de livraison sont confirmes dans la proposition. Le travail peut commencer apres le paiement initial convenu, et la livraison finale peut dependre du paiement complet."] },
+      { title: "Services tiers", body: ["Certains projets utilisent des services tiers comme domaines, Firebase / Google Cloud, Stripe, fournisseurs d'API IA, email, SMS ou hebergement. Ces comptes et frais appartiennent au client, sauf accord ecrit contraire."] },
+      { title: "Propriete intellectuelle", body: ["Apres paiement complet, le client reçoit la propriete de l'implementation specifique et du code propre a son projet. SKH.GLOBAL conserve ses outils, templates, composants, workflows et methodes reutilisables."] },
+      { title: "Responsabilites du client", body: ["Le client fournit les informations, acces, contenus, assets de marque, validations et retours dans des delais raisonnables. Les retards peuvent affecter le planning."] },
+      { title: "Confidentialite", body: ["Les deux parties gardent confidentielles les informations business, details techniques, acces, donnees clients et informations privees partagees pendant le projet."] },
+      { title: "Limitation de responsabilite", body: ["SKH.GLOBAL travaille avec soin pour creer des systemes fiables, mais n'est pas responsable des pertes indirectes, pertes de profit, interruption d'activite, defaillances de services tiers, mauvaise utilisation ou decisions operationnelles du client."] },
+      { title: "Support et maintenance", body: ["Le support apres lancement n'est inclus que s'il est indique dans la proposition ou couvert par un plan separe. Les mises a jour et evolutions peuvent etre fournies dans un accord mensuel."] },
+      { title: "Utilisation portfolio", body: ["Sauf demande ecrite de confidentialite, SKH.GLOBAL peut mentionner le projet dans son portfolio ou ses supports, sans exposer de donnees sensibles ou confidentielles sans autorisation."] },
+      { title: "Priorite des accords", body: ["Ces conditions donnent une base generale. Une proposition signee ou un accord projet ecrit prevaut lorsque c'est applicable."] },
+    ],
+  },
+  privacy: {
+    badge: "Confidentialite",
+    title: "Politique de confidentialite",
+    subtitle: "Comment nous gerons les informations business, projet et communication client.",
+    intro: "Cette politique explique comment SKH.GLOBAL collecte, utilise et protege les informations partagees via le site, les demandes projet et les communications directes.",
+    sections: [
+      { title: "Informations collectees", body: ["Nous pouvons collecter nom, entreprise, email, lien web ou social, besoins projet, budget, delai, details de workflow et toute information envoyee via le formulaire System Review ou par contact direct."] },
+      { title: "Utilisation", body: ["Ces informations servent a etudier les demandes, comprendre le besoin, preparer des propositions, communiquer, definir le perimetre, livrer les services et fournir du support si necessaire."] },
+      { title: "Donnees projet et client", body: ["Pendant un projet, nous pouvons acceder a des fichiers, logique metier, specifications, donnees liees aux clients, reglages de plateforme ou services tiers uniquement pour livrer le travail convenu."] },
+      { title: "Propriete des donnees", body: ["Les clients restent proprietaires de leurs donnees business, donnees clients, comptes et services tiers. SKH.GLOBAL ne vend pas les donnees client et ne les utilise pas a des fins sans rapport."] },
+      { title: "Securite", body: ["Nous utilisons des controles pratiques: acces limite, repositories prives si besoin, gestion prudente des cles API et absence de stockage inutile de mots de passe."] },
+      { title: "Services tiers", body: ["Les projets peuvent impliquer Firebase / Google Cloud, Stripe, fournisseurs d'API IA, email, SMS, hebergement ou analytics. Ces fournisseurs appliquent leurs propres politiques."] },
+      { title: "Informations sensibles", body: ["Pour des donnees de sante, fichiers prives ou donnees confidentielles, les controles d'acces, le stockage et les responsabilites doivent etre definis dans la proposition."] },
+      { title: "Conservation", body: ["Les informations sont conservees uniquement aussi longtemps que necessaire pour la communication, livraison, support, registres ou raisons legales et business."] },
+      { title: "Vos demandes", body: ["Vous pouvez demander l'acces, la correction ou la suppression des informations vous concernant lorsque c'est applicable."] },
+      { title: "Pas de vente de donnees", body: ["SKH.GLOBAL ne vend pas les informations personnelles, business ou projet a des courtiers de donnees."] },
+      { title: "Contact", body: [`Pour les demandes privacy: ${email}`] },
+    ],
+    lastUpdated: "Juin 2026",
+    closingLine: "La confidentialite n'est pas une option; elle fait partie de la confiance dans les systemes numeriques.",
+  },
+};
+
+const es: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "Legal", terms: "Terminos de servicio", privacy: "Politica de privacidad", backHome: "Volver al inicio" },
+  terms: {
+    badge: "Legal",
+    title: "Terminos de servicio",
+    subtitle: "Condiciones basicas para proyectos, entrega, propiedad y soporte.",
+    intro: "Estos terminos describen las condiciones generales para trabajar con SKH.GLOBAL. Los detalles, entregables, plazos y honorarios se confirman por separado en una propuesta o acuerdo de servicio.",
+    sections: [
+      { title: "Prestacion del servicio", body: ["SKH.GLOBAL diseña y desarrolla sistemas digitales como web apps, dashboards, reservas, pagos, automatizaciones, portales de cliente y software a medida, segun el alcance acordado."] },
+      { title: "Alcance y cambios", body: ["Cada proyecto se basa en un alcance acordado. Funciones, integraciones, cambios de diseño o revisiones fuera de ese alcance pueden requerir presupuesto y plazo adicional."] },
+      { title: "Pago y entrega", body: ["Pagos, hitos y fechas de entrega se confirman en la propuesta. El trabajo puede comenzar tras el pago inicial, y la entrega final o el codigo pueden depender del pago completo."] },
+      { title: "Servicios de terceros", body: ["Algunos proyectos usan dominios, Firebase / Google Cloud, Stripe, APIs de IA, email, SMS o hosting. Estos servicios pertenecen y son pagados por el cliente salvo acuerdo escrito distinto."] },
+      { title: "Propiedad intelectual", body: ["Tras el pago completo, el cliente recibe la propiedad de la implementacion personalizada y del codigo especifico de su proyecto. SKH.GLOBAL conserva herramientas, plantillas, componentes, procesos y metodos reutilizables."] },
+      { title: "Responsabilidades del cliente", body: ["El cliente debe aportar informacion precisa, accesos, marca, contenido, aprobaciones y feedback en plazos razonables. Los retrasos pueden afectar el calendario."] },
+      { title: "Confidencialidad", body: ["Ambas partes protegen la informacion de negocio, detalles tecnicos, accesos, datos de clientes y material privado compartido durante el proyecto."] },
+      { title: "Limitacion de responsabilidad", body: ["SKH.GLOBAL trabaja con cuidado para crear sistemas fiables, pero no responde por perdidas indirectas, lucro cesante, interrupcion del negocio, fallos de terceros, mal uso del sistema o decisiones operativas del cliente."] },
+      { title: "Soporte y mantenimiento", body: ["El soporte posterior al lanzamiento no esta incluido salvo que figure en la propuesta o en un plan aparte. Actualizaciones y mejoras pueden contratarse mediante acuerdo mensual."] },
+      { title: "Uso en portfolio", body: ["Salvo solicitud escrita de confidencialidad, SKH.GLOBAL puede mencionar el proyecto en portfolio o casos de estudio sin publicar datos sensibles o privados sin permiso."] },
+      { title: "Terminos aplicables", body: ["Estos terminos son una base general. Una propuesta firmada o acuerdo escrito de proyecto tendra prioridad cuando corresponda."] },
+    ],
+  },
+  privacy: {
+    badge: "Privacidad",
+    title: "Politica de privacidad",
+    subtitle: "Como gestionamos datos de negocio, informacion del proyecto y comunicacion con clientes.",
+    intro: "Esta politica explica como SKH.GLOBAL recopila, usa y protege informacion compartida a traves del sitio, solicitudes de proyecto y comunicacion directa.",
+    sections: [
+      { title: "Informacion que recopilamos", body: ["Podemos recopilar nombre, empresa, email, enlace web o social, necesidades del proyecto, presupuesto, plazo, detalles del flujo de trabajo y cualquier informacion enviada en el formulario System Review o por contacto directo."] },
+      { title: "Uso de la informacion", body: ["Usamos la informacion para revisar solicitudes, entender necesidades, preparar propuestas, comunicarnos, planificar el alcance, entregar servicios y dar soporte cuando aplique."] },
+      { title: "Datos de proyecto y cliente", body: ["Durante un proyecto podemos acceder a archivos, logica de negocio, requisitos tecnicos, datos relacionados con clientes, ajustes de plataforma o servicios de terceros solo para entregar el trabajo acordado."] },
+      { title: "Propiedad de los datos", body: ["Los clientes mantienen la propiedad de sus datos, cuentas y servicios externos. SKH.GLOBAL no vende datos de clientes ni usa datos especificos del proyecto para fines no relacionados."] },
+      { title: "Seguridad de datos", body: ["Usamos controles practicos como acceso limitado, repositorios privados cuando sea necesario, manejo seguro de API keys y evitar guardar contraseñas innecesarias."] },
+      { title: "Servicios de terceros", body: ["Los proyectos pueden incluir Firebase / Google Cloud, Stripe, APIs de IA, email, SMS, hosting o analitica. Cada proveedor procesa datos segun sus propias politicas."] },
+      { title: "Informacion sensible", body: ["Si el proyecto incluye datos de salud, archivos privados o material confidencial, los accesos, almacenamiento y responsabilidades deben acordarse por separado."] },
+      { title: "Retencion", body: ["Conservamos informacion de proyectos y consultas solo mientras sea razonablemente necesario para comunicacion, entrega, soporte, registros o fines legales y de negocio."] },
+      { title: "Tus solicitudes", body: ["Puedes contactar a SKH.GLOBAL para solicitar acceso, correccion o eliminacion de informacion cuando corresponda."] },
+      { title: "No vendemos datos", body: ["SKH.GLOBAL no vende informacion personal, comercial ni datos de proyecto a intermediarios de datos."] },
+      { title: "Contacto", body: [`Para solicitudes de privacidad: ${email}`] },
+    ],
+    lastUpdated: "Junio de 2026",
+    closingLine: "La privacidad no es una funcion opcional; forma parte de la confianza en los sistemas digitales.",
+  },
+};
+
+const pt: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "Legal", terms: "Termos de servico", privacy: "Politica de privacidade", backHome: "Voltar ao inicio" },
+  terms: {
+    badge: "Legal",
+    title: "Termos de servico",
+    subtitle: "Termos base para trabalho de projeto, entrega, propriedade e suporte.",
+    intro: "Estes termos descrevem as condicoes gerais para trabalhar com SKH.GLOBAL. Detalhes, entregaveis, prazos e valores sao confirmados separadamente numa proposta ou acordo de servico.",
+    sections: [
+      { title: "Prestacao de servicos", body: ["SKH.GLOBAL desenha e desenvolve sistemas digitais como web apps, dashboards, reservas, pagamentos, automacao, portais de cliente e software personalizado, de acordo com o escopo aprovado."] },
+      { title: "Escopo e alteracoes", body: ["Cada projeto parte de um escopo acordado. Funcionalidades, integracoes, alteracoes de design ou revisoes fora desse escopo podem exigir novo orcamento e ajuste de prazo."] },
+      { title: "Pagamento e entrega", body: ["Pagamentos, marcos e datas de entrega sao definidos na proposta. O trabalho pode comecar apos o pagamento inicial, e a entrega final ou codigo podem depender do pagamento completo."] },
+      { title: "Servicos terceiros", body: ["Projetos podem usar dominios, Firebase / Google Cloud, Stripe, APIs de IA, email, SMS ou alojamento. Estes servicos pertencem e sao pagos pelo cliente, salvo acordo escrito diferente."] },
+      { title: "Propriedade intelectual", body: ["Apos pagamento integral, o cliente recebe a propriedade da implementacao personalizada e do codigo especifico do projeto. SKH.GLOBAL mantem ferramentas, templates, componentes, fluxos e metodos reutilizaveis."] },
+      { title: "Responsabilidades do cliente", body: ["O cliente deve fornecer informacao correta, acessos, marca, conteudo, aprovacoes e feedback em tempo razoavel. Atrasos podem afetar o cronograma."] },
+      { title: "Confidencialidade", body: ["Ambas as partes protegem informacao de negocio, detalhes tecnicos, acessos, dados de clientes e material privado partilhado durante o projeto."] },
+      { title: "Limitacao de responsabilidade", body: ["SKH.GLOBAL trabalha com cuidado para criar sistemas fiaveis, mas nao responde por perdas indiretas, perda de lucro, interrupcao do negocio, falhas de terceiros, uso indevido ou decisoes operacionais do cliente."] },
+      { title: "Suporte e manutencao", body: ["Suporte apos lancamento nao esta incluido salvo se indicado na proposta ou num plano separado. Atualizacoes e melhorias podem ser contratadas mensalmente."] },
+      { title: "Uso em portfolio", body: ["Salvo pedido escrito de confidencialidade, SKH.GLOBAL pode referir o projeto em portfolio ou estudos de caso sem expor dados sensiveis sem permissao."] },
+      { title: "Termos aplicaveis", body: ["Estes termos sao uma base geral. Uma proposta assinada ou acordo escrito tera prioridade quando aplicavel."] },
+    ],
+  },
+  privacy: {
+    badge: "Privacidade",
+    title: "Politica de privacidade",
+    subtitle: "Como tratamos dados de negocio, informacao de projeto e comunicacao com clientes.",
+    intro: "Esta politica explica como SKH.GLOBAL recolhe, usa e protege informacao enviada pelo site, pedidos de projeto e comunicacao direta.",
+    sections: [
+      { title: "Informacao recolhida", body: ["Podemos recolher nome, empresa, email, link web ou social, requisitos do projeto, orcamento, prazo, detalhes de workflow e informacao enviada no formulario System Review ou por contacto direto."] },
+      { title: "Uso da informacao", body: ["Usamos estes dados para analisar pedidos, entender necessidades, preparar propostas, comunicar, planear o escopo, entregar servicos e prestar suporte quando aplicavel."] },
+      { title: "Dados de projeto e cliente", body: ["Durante um projeto podemos aceder a ficheiros, logica de negocio, requisitos tecnicos, dados relacionados com clientes, configuracoes ou servicos terceiros apenas para entregar o trabalho acordado."] },
+      { title: "Propriedade dos dados", body: ["Os clientes mantem a propriedade dos seus dados, contas e servicos terceiros. SKH.GLOBAL nao vende dados de clientes nem usa dados especificos do projeto para fins nao relacionados."] },
+      { title: "Seguranca", body: ["Usamos controlos praticos como acesso limitado, repositorios privados quando necessario, cuidado com API keys e evitamos armazenar passwords sem necessidade."] },
+      { title: "Servicos terceiros", body: ["Projetos podem incluir Firebase / Google Cloud, Stripe, APIs de IA, email, SMS, alojamento ou analytics. Cada fornecedor aplica as suas proprias politicas."] },
+      { title: "Informacao sensivel", body: ["Se houver dados de saude, ficheiros privados ou material confidencial, acessos, armazenamento e responsabilidades devem ser definidos na proposta."] },
+      { title: "Retencao", body: ["Guardamos informacao apenas pelo tempo razoavelmente necessario para comunicacao, entrega, suporte, registos ou fins legais e de negocio."] },
+      { title: "Pedidos", body: ["Pode contactar SKH.GLOBAL para pedir acesso, correcao ou eliminacao de informacao quando aplicavel."] },
+      { title: "Nao vendemos dados", body: ["SKH.GLOBAL nao vende informacao pessoal, comercial ou dados de projeto a intermediarios de dados."] },
+      { title: "Contacto", body: [`Para pedidos de privacidade: ${email}`] },
+    ],
+    lastUpdated: "Junho de 2026",
+    closingLine: "Privacidade nao e um extra; faz parte da confianca nos sistemas digitais.",
+  },
+};
+
+const de: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "Rechtliches", terms: "Nutzungsbedingungen", privacy: "Datenschutzerklaerung", backHome: "Zurueck zur Startseite" },
+  terms: {
+    badge: "Rechtliches",
+    title: "Nutzungsbedingungen",
+    subtitle: "Grundlagen fuer Projektarbeit, Lieferung, Eigentum und Support.",
+    intro: "Diese Bedingungen beschreiben die allgemeinen Grundlagen fuer die Zusammenarbeit mit SKH.GLOBAL. Projektdetails, Leistungen, Zeitplan und Verguetung werden separat in einem Angebot oder Servicevertrag bestaetigt.",
+    sections: [
+      { title: "Leistungserbringung", body: ["SKH.GLOBAL entwickelt digitale Systeme wie Web Apps, Dashboards, Buchungssysteme, Zahlungsablaeufe, Automatisierung, Kundenportale und individuelle Software gemaess vereinbartem Umfang."] },
+      { title: "Projektumfang und Aenderungen", body: ["Jedes Projekt basiert auf einem abgestimmten Umfang. Zusaetzliche Funktionen, Designaenderungen, Integrationen oder Revisionen ausserhalb davon koennen ein neues Angebot und einen angepassten Zeitplan erfordern."] },
+      { title: "Zahlung und Lieferung", body: ["Zahlungen, Meilensteine und Liefertermine werden im Angebot bestaetigt. Die Arbeit kann nach Eingang der vereinbarten Anzahlung beginnen; finale Lieferung oder Codeuebergabe kann von vollstaendiger Zahlung abhaengen."] },
+      { title: "Drittanbieter", body: ["Projekte koennen Dienste wie Domains, Firebase / Google Cloud, Stripe, AI APIs, E-Mail, SMS oder Hosting nutzen. Diese Konten und Kosten liegen beim Kunden, sofern nichts anderes schriftlich vereinbart ist."] },
+      { title: "Geistiges Eigentum", body: ["Nach vollstaendiger Zahlung erhaelt der Kunde das Eigentum an der kundenspezifischen Umsetzung und Codebasis. SKH.GLOBAL behaelt eigene Tools, Templates, Komponenten, Workflows und wiederverwendbare Methoden."] },
+      { title: "Pflichten des Kunden", body: ["Der Kunde stellt korrekte Informationen, Zugriffe, Markenmaterial, Inhalte, Freigaben und Feedback in angemessener Zeit bereit. Verzoegerungen koennen den Zeitplan beeinflussen."] },
+      { title: "Vertraulichkeit", body: ["Beide Seiten behandeln Geschaeftsinformationen, technische Details, Projektmaterial, Zugriffe, Kundendaten und private Informationen vertraulich."] },
+      { title: "Haftungsbegrenzung", body: ["SKH.GLOBAL arbeitet sorgfaeltig an verlaesslichen Systemen, haftet jedoch nicht fuer indirekte Schaeden, entgangenen Gewinn, Betriebsunterbrechung, Drittanbieter-Ausfaelle, Fehlgebrauch oder operative Entscheidungen des Kunden."] },
+      { title: "Support und Wartung", body: ["Support nach Launch ist nur enthalten, wenn er im Angebot steht oder ueber einen separaten Care Plan abgedeckt ist. Laufende Updates und Verbesserungen koennen separat vereinbart werden."] },
+      { title: "Portfolio-Nutzung", body: ["Sofern der Kunde nicht schriftlich Vertraulichkeit verlangt, darf SKH.GLOBAL das Projekt im Portfolio oder in Case Studies erwaehnen, ohne sensible Daten ohne Erlaubnis zu zeigen."] },
+      { title: "Vorrang", body: ["Diese Website-Bedingungen bilden eine allgemeine Grundlage. Ein unterschriebenes Angebot oder schriftlicher Projektvertrag hat Vorrang, soweit anwendbar."] },
+    ],
+  },
+  privacy: {
+    badge: "Datenschutz",
+    title: "Datenschutzerklaerung",
+    subtitle: "Umgang mit Geschaeftsdaten, Projektinformationen und Kundenkommunikation.",
+    intro: "Diese Erklaerung beschreibt, wie SKH.GLOBAL Informationen aus Website, Projektanfragen und direkter Kommunikation erhebt, nutzt und schuetzt.",
+    sections: [
+      { title: "Erhobene Informationen", body: ["Wir koennen Name, Unternehmen, E-Mail, Website oder Social Link, Projektbedarf, Budget, Zeitplan, Workflow-Details und Angaben aus dem System Review Formular oder direkter Kommunikation erfassen."] },
+      { title: "Nutzung", body: ["Wir nutzen diese Daten zur Pruefung von Anfragen, Bedarfsklaerung, Angebotserstellung, Kommunikation, Projektplanung, Leistungserbringung und Support, sofern relevant."] },
+      { title: "Projekt- und Kundendaten", body: ["Im Projekt koennen wir Zugriff auf Dateien, Geschaeftslogik, technische Anforderungen, kundennahen Informationen, Plattform-Einstellungen oder Drittanbieter-Details erhalten, nur zur Umsetzung der vereinbarten Leistung."] },
+      { title: "Dateneigentum", body: ["Kunden bleiben Eigentuemer ihrer Geschaeftsdaten, Kundendaten, Konten und Drittanbieter-Accounts. SKH.GLOBAL verkauft keine Kundendaten und nutzt Projektdaten nicht fuer fremde Zwecke."] },
+      { title: "Datensicherheit", body: ["Wir nutzen praktische Schutzmassnahmen wie beschraenkten Zugriff, private Repositories bei Bedarf, sicheren Umgang mit API Keys und vermeiden unnoetige Passwortspeicherung."] },
+      { title: "Drittanbieter", body: ["Projekte koennen Firebase / Google Cloud, Stripe, AI APIs, E-Mail, SMS, Hosting oder Analytics einbinden. Diese Anbieter verarbeiten Daten nach eigenen Bedingungen."] },
+      { title: "Sensible Informationen", body: ["Bei Gesundheitsdaten, privaten Dateien oder vertraulichen Materialien sollten Zugriff, Speicherung und Verantwortlichkeiten separat im Angebot geregelt werden."] },
+      { title: "Aufbewahrung", body: ["Wir speichern Informationen nur so lange, wie es fuer Kommunikation, Lieferung, Support, Aufzeichnungen oder rechtliche und geschaeftliche Zwecke angemessen notwendig ist."] },
+      { title: "Ihre Anfragen", body: ["Sie koennen SKH.GLOBAL kontaktieren, um Auskunft, Berichtigung oder Loeschung von Informationen anzufragen, soweit anwendbar."] },
+      { title: "Kein Datenverkauf", body: ["SKH.GLOBAL verkauft keine personenbezogenen, geschaeftlichen oder projektbezogenen Daten an Datenbroker."] },
+      { title: "Kontakt", body: [`Datenschutzanfragen: ${email}`] },
+    ],
+    lastUpdated: "Juni 2026",
+    closingLine: "Datenschutz ist kein optionales Extra; er gehoert zum Vertrauen in digitale Systeme.",
+  },
+};
+
+const it: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "Legale", terms: "Termini di servizio", privacy: "Informativa privacy", backHome: "Torna alla home" },
+  terms: {
+    badge: "Legale",
+    title: "Termini di servizio",
+    subtitle: "Condizioni base per progetti, consegna, proprieta e supporto.",
+    intro: "Questi termini descrivono le condizioni generali per collaborare con SKH.GLOBAL. Dettagli, deliverable, tempi e costi sono confermati separatamente in una proposta o accordo di servizio.",
+    sections: [
+      { title: "Servizi forniti", body: ["SKH.GLOBAL progetta e sviluppa sistemi digitali: web app, dashboard, prenotazioni, pagamenti, automazioni, portali clienti e software su misura, secondo lo scope concordato."] },
+      { title: "Scope e modifiche", body: ["Ogni progetto parte da uno scope approvato. Funzionalita, integrazioni, modifiche o revisioni fuori scope possono richiedere un preventivo e tempi aggiornati."] },
+      { title: "Pagamento e consegna", body: ["Pagamenti, milestone e date sono indicati nella proposta. Il lavoro puo iniziare dopo il pagamento iniziale; consegna finale o codice possono dipendere dal saldo completo."] },
+      { title: "Servizi terzi", body: ["Alcuni progetti usano domini, Firebase / Google Cloud, Stripe, API AI, email, SMS o hosting. Account e costi sono del cliente salvo accordo scritto diverso."] },
+      { title: "Proprieta intellettuale", body: ["Dopo il pagamento completo, il cliente riceve la proprieta dell'implementazione personalizzata e del codice specifico. SKH.GLOBAL conserva tool, template, componenti, workflow e metodi riutilizzabili."] },
+      { title: "Responsabilita del cliente", body: ["Il cliente fornisce informazioni accurate, accessi, asset, contenuti, approvazioni e feedback in tempi ragionevoli. Ritardi possono incidere sul calendario."] },
+      { title: "Riservatezza", body: ["Entrambe le parti proteggono informazioni aziendali, dettagli tecnici, accessi, dati clienti e informazioni private condivise durante il progetto."] },
+      { title: "Limitazione di responsabilita", body: ["SKH.GLOBAL lavora con cura per creare sistemi affidabili, ma non risponde di perdite indirette, mancato profitto, interruzioni, problemi di servizi terzi, uso improprio o decisioni operative del cliente."] },
+      { title: "Supporto e manutenzione", body: ["Il supporto post-lancio non e incluso salvo indicazione nella proposta o piano separato. Aggiornamenti e miglioramenti possono essere concordati mensilmente."] },
+      { title: "Uso portfolio", body: ["Salvo richiesta scritta di riservatezza, SKH.GLOBAL puo citare il progetto in portfolio o case study senza mostrare dati sensibili senza permesso."] },
+      { title: "Termini prevalenti", body: ["Questi termini sono una base generale. Una proposta firmata o accordo scritto prevale dove applicabile."] },
+    ],
+  },
+  privacy: {
+    badge: "Privacy",
+    title: "Informativa privacy",
+    subtitle: "Come gestiamo dettagli business, informazioni progetto e comunicazioni.",
+    intro: "Questa informativa spiega come SKH.GLOBAL raccoglie, usa e protegge informazioni condivise tramite sito, richieste progetto e comunicazione diretta.",
+    sections: [
+      { title: "Informazioni raccolte", body: ["Possiamo raccogliere nome, azienda, email, sito o link social, requisiti, budget, tempi, dettagli workflow e informazioni inviate nel form System Review o via contatto diretto."] },
+      { title: "Uso delle informazioni", body: ["Usiamo le informazioni per valutare richieste, capire esigenze, preparare proposte, comunicare, pianificare lo scope, consegnare servizi e fornire supporto se previsto."] },
+      { title: "Dati progetto e cliente", body: ["Durante un progetto possiamo accedere a file, logica business, requisiti tecnici, dati collegati ai clienti, impostazioni piattaforma o servizi terzi solo per il lavoro concordato."] },
+      { title: "Proprieta dei dati", body: ["I clienti restano proprietari dei propri dati, account e servizi terzi. SKH.GLOBAL non vende dati cliente e non usa dati specifici del progetto per scopi non collegati."] },
+      { title: "Sicurezza", body: ["Usiamo controlli pratici: accesso limitato, repository privati se necessario, gestione sicura delle API key ed evitiamo di conservare password senza necessita."] },
+      { title: "Servizi terzi", body: ["I progetti possono includere Firebase / Google Cloud, Stripe, API AI, email, SMS, hosting o analytics. Ogni provider applica le proprie policy."] },
+      { title: "Informazioni sensibili", body: ["Se sono presenti dati sanitari, file privati o materiali riservati, accessi, archiviazione e responsabilita vanno definiti nella proposta."] },
+      { title: "Conservazione", body: ["Conserviamo informazioni solo per il tempo ragionevolmente necessario a comunicazione, consegna, supporto, registri o finalita legali e business."] },
+      { title: "Richieste", body: ["Puoi contattare SKH.GLOBAL per chiedere accesso, correzione o cancellazione dove applicabile."] },
+      { title: "Nessuna vendita di dati", body: ["SKH.GLOBAL non vende informazioni personali, business o dati progetto a broker di dati."] },
+      { title: "Contatto", body: [`Per richieste privacy: ${email}`] },
+    ],
+    lastUpdated: "Giugno 2026",
+    closingLine: "La privacy non e un'opzione; fa parte della fiducia nei sistemi digitali.",
+  },
+};
+
+const tr: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "Yasal", terms: "Hizmet kosullari", privacy: "Gizlilik politikasi", backHome: "Ana sayfaya don" },
+  terms: {
+    badge: "Yasal",
+    title: "Hizmet kosullari",
+    subtitle: "Proje, teslim, sahiplik ve destek icin temel kosullar.",
+    intro: "Bu kosullar SKH.GLOBAL ile calismanin genel cercevesini aciklar. Proje detaylari, teslimatlar, zaman cizelgesi ve ucretler yazili teklif veya hizmet anlasmasinda ayrica onaylanir.",
+    sections: [
+      { title: "Hizmet sunumu", body: ["SKH.GLOBAL web app, dashboard, rezervasyon, odeme akislari, otomasyon, musteri portallari ve ozel yazilim sistemleri tasarlar ve gelistirir. Hizmetler kabul edilen kapsama gore verilir."] },
+      { title: "Kapsam ve degisiklikler", body: ["Her proje onaylanan kapsama dayanir. Ek ozellikler, entegrasyonlar, tasarim degisiklikleri veya revizyonlar ek teklif ve sure gerektirebilir."] },
+      { title: "Odeme ve teslim", body: ["Odemeler, kilometre taslari ve teslim tarihleri teklifte belirtilir. Calisma ilk odeme alindiktan sonra baslayabilir; final teslim veya kaynak kodu tam odemeye bagli olabilir."] },
+      { title: "Ucuncu taraf servisler", body: ["Projeler domain, Firebase / Google Cloud, Stripe, AI API, email, SMS veya hosting servisleri kullanabilir. Bu hesaplar ve maliyetler, aksi yazili kararlastirilmadikca, musteriye aittir."] },
+      { title: "Fikri mulkiyet", body: ["Tam odemeden sonra musteri, projesine ozel uygulama ve kod tabaninin sahipligini alir. SKH.GLOBAL mevcut araclarini, template'lerini, bilesenlerini, workflow'larini ve tekrar kullanilabilir metodlarini korur."] },
+      { title: "Musteri sorumluluklari", body: ["Musteri dogru bilgi, gerekli erisim, marka dosyalari, icerik, onay ve geri bildirimi makul surede saglar. Gecikmeler proje takvimini etkileyebilir."] },
+      { title: "Gizlilik", body: ["Taraflar proje sirasinda paylasilan is bilgisi, teknik detaylar, erisimler, musteri verileri ve ozel bilgileri gizli tutar."] },
+      { title: "Sorumluluk siniri", body: ["SKH.GLOBAL guvenilir sistemler kurmak icin makul ozen gosterir; dolayli kayiplar, kar kaybi, is kesintisi, ucuncu taraf arizalari, yanlis kullanim veya musteri operasyon kararlarindan sorumlu degildir."] },
+      { title: "Destek ve bakim", body: ["Lansman sonrasi destek teklifte belirtilmedikce veya ayri bir care plan olmadikca dahil degildir. Guncellemeler ve gelistirmeler ayri anlasmayla saglanabilir."] },
+      { title: "Portfolyo kullanimi", body: ["Musteri yazili gizlilik talep etmedikce SKH.GLOBAL projeyi portfolyo veya case study olarak anabilir; hassas bilgiler izin olmadan gosterilmez."] },
+      { title: "Gecerli kosullar", body: ["Bu sayfa genel bir temel sunar. Imzali teklif veya yazili proje anlasmasi ilgili durumlarda onceliklidir."] },
+    ],
+  },
+  privacy: {
+    badge: "Gizlilik",
+    title: "Gizlilik politikasi",
+    subtitle: "Is detaylari, proje bilgileri ve musteri iletisimini nasil ele aliyoruz.",
+    intro: "Bu politika SKH.GLOBAL'in site, proje basvurulari ve dogrudan iletisim yoluyla paylasilan bilgileri nasil topladigini, kullandigini ve korudugunu aciklar.",
+    sections: [
+      { title: "Toplanan bilgiler", body: ["Ad, isletme adi, email, web veya sosyal link, proje ihtiyaclari, butce, zamanlama, workflow detaylari ve System Review formu veya dogrudan iletisimle verdiginiz bilgiler toplanabilir."] },
+      { title: "Kullanim", body: ["Bilgiler proje taleplerini incelemek, ihtiyaci anlamak, teklif hazirlamak, iletisim kurmak, kapsam planlamak, hizmet sunmak ve gerekirse destek vermek icin kullanilir."] },
+      { title: "Proje ve musteri verileri", body: ["Proje sirasinda dosyalar, is mantigi, teknik gereksinimler, musteriyle ilgili bilgiler, platform ayarlari veya ucuncu taraf servis detaylarina sadece anlasilan hizmet icin erisilebilir."] },
+      { title: "Veri sahipligi", body: ["Musteriler is verilerinin, musteri verilerinin, hesaplarinin ve ucuncu taraf servislerinin sahibidir. SKH.GLOBAL musteri verilerini satmaz ve proje verisini ilgisiz amacla kullanmaz."] },
+      { title: "Veri guvenligi", body: ["Sinirli erisim, gerekli durumlarda ozel repository, API key'lerin dikkatli yonetimi ve gereksiz password saklamaktan kacinma gibi pratik kontroller kullanilir."] },
+      { title: "Ucuncu taraf servisler", body: ["Projeler Firebase / Google Cloud, Stripe, AI API, email, SMS, hosting veya analytics icerebilir. Bu servisler kendi politikalarina gore veri isler."] },
+      { title: "Hassas bilgiler", body: ["Saglik verisi, ozel dosyalar veya gizli materyal varsa erisim kontrolleri, depolama ve sorumluluklar teklifte ayrica belirlenmelidir."] },
+      { title: "Saklama", body: ["Bilgiler iletisim, teslim, destek, kayit veya yasal ve ticari nedenler icin makul gerekli sure kadar saklanir."] },
+      { title: "Talepleriniz", body: ["Uygun durumlarda bilgiye erisim, duzeltme veya silme talebi icin SKH.GLOBAL ile iletisime gecebilirsiniz."] },
+      { title: "Veri satisi yok", body: ["SKH.GLOBAL kisisel, ticari veya proje verilerini veri aracilarina satmaz."] },
+      { title: "Iletisim", body: [`Gizlilik talepleri icin: ${email}`] },
+    ],
+    lastUpdated: "Haziran 2026",
+    closingLine: "Gizlilik opsiyonel bir ozellik degildir; dijital sistemlerde guvenin parcasidir.",
+  },
+};
+
+const ru: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "Правовая информация", terms: "Условия обслуживания", privacy: "Политика конфиденциальности", backHome: "На главную" },
+  terms: {
+    badge: "Правовые условия",
+    title: "Условия обслуживания",
+    subtitle: "Базовые условия проектной работы, передачи, владения и поддержки.",
+    intro: "Эти условия описывают общие правила сотрудничества с SKH.GLOBAL. Детали проекта, результаты, сроки и стоимость подтверждаются отдельно в письменном предложении или соглашении.",
+    sections: [
+      { title: "Предоставление услуг", body: ["SKH.GLOBAL проектирует и разрабатывает цифровые системы: web apps, панели, бронирования, платежные потоки, автоматизации, клиентские порталы и индивидуальное ПО в рамках согласованного объема."] },
+      { title: "Объем и изменения", body: ["Каждый проект строится на согласованном объеме работ. Дополнительные функции, интеграции, изменения дизайна или правки вне объема могут потребовать отдельной оценки и сроков."] },
+      { title: "Оплата и передача", body: ["Оплата, этапы и даты передачи фиксируются в предложении. Работа может начаться после первоначального платежа; финальная передача или код могут зависеть от полной оплаты."] },
+      { title: "Сторонние сервисы", body: ["Проекты могут использовать домены, Firebase / Google Cloud, Stripe, AI API, email, SMS или хостинг. Эти аккаунты и расходы принадлежат клиенту, если письменно не согласовано иное."] },
+      { title: "Интеллектуальная собственность", body: ["После полной оплаты клиент получает права на индивидуальную реализацию и кодовую базу проекта. SKH.GLOBAL сохраняет свои инструменты, шаблоны, компоненты, процессы и повторно используемые методы."] },
+      { title: "Обязанности клиента", body: ["Клиент предоставляет точную информацию, доступы, бренд-материалы, контент, согласования и обратную связь в разумные сроки. Задержки могут повлиять на план проекта."] },
+      { title: "Конфиденциальность", body: ["Стороны сохраняют конфиденциальность деловой информации, технических деталей, доступов, данных клиентов и частной информации, переданной в ходе проекта."] },
+      { title: "Ограничение ответственности", body: ["SKH.GLOBAL работает с должной внимательностью, но не отвечает за косвенные убытки, упущенную прибыль, остановку бизнеса, сбои сторонних сервисов, неправильное использование системы или операционные решения клиента."] },
+      { title: "Поддержка", body: ["Поддержка после запуска не включена, если она не указана в предложении или отдельном плане. Обновления и доработки могут предоставляться по отдельному соглашению."] },
+      { title: "Портфолио", body: ["Если клиент письменно не просит о конфиденциальности, SKH.GLOBAL может упоминать проект в портфолио или кейсах без публикации чувствительных данных без разрешения."] },
+      { title: "Приоритет документов", body: ["Эти условия являются общей основой. Подписанное предложение или письменное соглашение имеет приоритет там, где применимо."] },
+    ],
+  },
+  privacy: {
+    badge: "Конфиденциальность",
+    title: "Политика конфиденциальности",
+    subtitle: "Как мы обращаемся с бизнес-данными, проектной информацией и коммуникацией.",
+    intro: "Эта политика объясняет, как SKH.GLOBAL собирает, использует и защищает информацию, полученную через сайт, проектные заявки и прямое общение.",
+    sections: [
+      { title: "Что мы собираем", body: ["Мы можем получать имя, название бизнеса, email, сайт или соцсеть, требования проекта, бюджет, сроки, детали рабочих процессов и информацию из формы System Review или прямой коммуникации."] },
+      { title: "Как используем", body: ["Информация используется для рассмотрения заявок, понимания потребностей, подготовки предложений, связи, планирования объема, выполнения услуг и поддержки при необходимости."] },
+      { title: "Данные проекта и клиента", body: ["Во время проекта мы можем получить доступ к файлам, бизнес-логике, техническим требованиям, данным, связанным с клиентами, настройкам платформ или сторонних сервисов только для согласованной работы."] },
+      { title: "Владение данными", body: ["Клиенты остаются владельцами своих бизнес-данных, клиентских данных, аккаунтов и сторонних сервисов. SKH.GLOBAL не продает данные клиентов и не использует проектные данные для посторонних целей."] },
+      { title: "Безопасность", body: ["Мы используем практические меры: ограниченный доступ, приватные репозитории при необходимости, аккуратное обращение с API keys и избегание лишнего хранения паролей."] },
+      { title: "Сторонние сервисы", body: ["Проекты могут включать Firebase / Google Cloud, Stripe, AI API, email, SMS, хостинг или аналитику. Эти провайдеры обрабатывают данные по своим правилам."] },
+      { title: "Чувствительная информация", body: ["Если проект включает медицинские данные, частные файлы или конфиденциальные материалы, доступ, хранение и ответственность должны быть согласованы отдельно."] },
+      { title: "Хранение", body: ["Мы храним информацию только столько, сколько разумно необходимо для общения, выполнения проекта, поддержки, учета или законных и бизнес-целей."] },
+      { title: "Ваши запросы", body: ["Вы можете обратиться в SKH.GLOBAL для запроса доступа, исправления или удаления информации, где это применимо."] },
+      { title: "Данные не продаются", body: ["SKH.GLOBAL не продает персональную, деловую или проектную информацию брокерам данных."] },
+      { title: "Контакт", body: [`По вопросам конфиденциальности: ${email}`] },
+    ],
+    lastUpdated: "Июнь 2026",
+    closingLine: "Конфиденциальность не является дополнительной функцией; это часть доверия к цифровым системам.",
+  },
+};
+
+const zh: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "法律信息", terms: "服务条款", privacy: "隐私政策", backHome: "返回首页" },
+  terms: {
+    badge: "法律",
+    title: "服务条款",
+    subtitle: "关于项目工作、交付、所有权和支持的基本条款。",
+    intro: "这些条款说明与 SKH.GLOBAL 合作的一般条件。具体项目范围、交付物、时间和费用会在书面方案或服务协议中另行确认。",
+    sections: [
+      { title: "服务提供", body: ["SKH.GLOBAL 提供数字系统设计与开发服务，包括 web apps、仪表盘、预约系统、支付流程、自动化、客户门户和定制软件，并按约定范围交付。"] },
+      { title: "项目范围与变更", body: ["每个项目都基于已确认的工作范围。范围外的功能、设计修改、集成或修订可能需要新的报价和时间调整。"] },
+      { title: "付款与交付", body: ["付款节点和交付日期会在方案中确认。工作可在收到约定首付款后开始，最终上线、交付或源码移交可能取决于完整付款。"] },
+      { title: "第三方服务", body: ["项目可能需要域名、Firebase / Google Cloud、Stripe、AI API、邮件、短信或托管平台。这些账户和费用通常由客户拥有并支付，除非另有书面约定。"] },
+      { title: "知识产权", body: ["项目费用全部支付后，客户拥有为其项目定制开发的实现和代码。SKH.GLOBAL 保留已有工具、模板、组件、流程、设计模式和开发方法。"] },
+      { title: "客户责任", body: ["客户需要在合理时间内提供准确信息、必要访问权限、品牌素材、内容、确认和反馈。延迟可能影响项目时间表。"] },
+      { title: "保密", body: ["双方应保护项目期间共享的业务信息、技术细节、项目资料、登录访问、客户数据和私人信息。"] },
+      { title: "责任限制", body: ["SKH.GLOBAL 会以合理的谨慎和技能构建系统，但不承担间接损失、利润损失、业务中断、第三方服务故障、系统误用或客户运营决策造成的责任。"] },
+      { title: "支持与维护", body: ["上线后支持不自动包含，除非在方案或独立 care plan 中说明。持续支持、更新和小改动可通过单独月度协议提供。"] },
+      { title: "作品展示", body: ["除非客户书面要求保密，SKH.GLOBAL 可在作品集或案例中提及项目，但未经许可不会展示敏感、私人或客户记录信息。"] },
+      { title: "适用条款", body: ["这些网站条款是一般基础。已签署的方案、服务协议或书面项目协议在适用时优先。"] },
+    ],
+  },
+  privacy: {
+    badge: "隐私",
+    title: "隐私政策",
+    subtitle: "我们如何处理业务细节、项目信息和客户沟通。",
+    intro: "本政策说明 SKH.GLOBAL 如何收集、使用和保护通过网站、项目咨询和直接沟通分享的信息。",
+    sections: [
+      { title: "收集的信息", body: ["我们可能收集姓名、业务名称、邮箱、网站或社交链接、项目需求、预算范围、时间计划、业务流程细节，以及通过 System Review 表单或直接沟通提交的信息。"] },
+      { title: "使用方式", body: ["这些信息用于审核项目咨询、了解业务需求、准备方案、沟通、规划项目范围、交付服务和提供适用支持。"] },
+      { title: "项目和客户数据", body: ["项目期间我们可能接触文件、业务逻辑、技术需求、客户相关信息、平台设置或第三方服务细节。访问仅用于交付约定项目或支持。"] },
+      { title: "数据所有权", body: ["客户仍拥有其业务数据、客户数据、账户数据和第三方服务账户。SKH.GLOBAL 不出售客户数据，也不将项目数据用于无关目的。"] },
+      { title: "数据安全", body: ["我们采用实际安全控制，例如限制访问、必要时使用私有仓库、安全处理 API keys，并避免不必要地保存密码。"] },
+      { title: "第三方服务", body: ["项目可能涉及 Firebase / Google Cloud、Stripe、AI API、邮件、短信、托管或分析工具。这些服务按其自身政策处理数据。"] },
+      { title: "敏感信息", body: ["如果项目涉及健康信息、私人文件、客户记录或保密材料，访问控制、存储方式和责任应在方案中单独确认。"] },
+      { title: "数据保留", body: ["我们仅在沟通、项目交付、支持、记录保存或合法业务目的所需的合理期间保留信息。"] },
+      { title: "您的请求", body: ["您可以联系 SKH.GLOBAL 请求访问、更正或在适用情况下删除我们持有的信息。"] },
+      { title: "不出售数据", body: ["SKH.GLOBAL 不向数据经纪商出售个人信息、业务信息或项目数据。"] },
+      { title: "联系", body: [`隐私相关请求：${email}`] },
+    ],
+    lastUpdated: "2026年6月",
+    closingLine: "隐私不是可选功能；它是把信任构建进数字系统的一部分。",
+  },
+};
+
+const ko: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "법적 안내", terms: "서비스 약관", privacy: "개인정보 처리방침", backHome: "홈으로 돌아가기" },
+  terms: {
+    badge: "Legal",
+    title: "서비스 약관",
+    subtitle: "프로젝트 작업, 납품, 소유권 및 지원에 대한 기본 조건입니다.",
+    intro: "이 약관은 SKH.GLOBAL과 협업할 때의 일반 조건을 설명합니다. 프로젝트 세부사항, 산출물, 일정 및 비용은 별도의 제안서 또는 서비스 계약에서 확인됩니다.",
+    sections: [
+      { title: "서비스 제공", body: ["SKH.GLOBAL은 web apps, 대시보드, 예약 시스템, 결제 흐름, 자동화, 고객 포털 및 맞춤 소프트웨어를 포함한 디지털 시스템 설계와 개발 서비스를 제공합니다."] },
+      { title: "범위와 변경", body: ["각 프로젝트는 합의된 작업 범위를 기준으로 진행됩니다. 범위 밖 기능, 디자인 변경, 통합 또는 수정은 별도 견적과 일정 조정이 필요할 수 있습니다."] },
+      { title: "결제와 납품", body: ["결제, 마일스톤, 납품일은 제안서에서 확인됩니다. 합의된 초기 결제 후 작업이 시작될 수 있으며, 최종 납품이나 코드 전달은 전체 결제 완료에 따라 달라질 수 있습니다."] },
+      { title: "제3자 서비스", body: ["프로젝트에는 도메인, Firebase / Google Cloud, Stripe, AI API, 이메일, SMS 또는 호스팅 서비스가 필요할 수 있습니다. 계정과 비용은 별도 서면 합의가 없는 한 고객에게 있습니다."] },
+      { title: "지식재산", body: ["프로젝트 비용 전액 결제 후 고객은 프로젝트 전용 구현과 코드베이스의 소유권을 받습니다. SKH.GLOBAL은 기존 도구, 템플릿, 컴포넌트, 워크플로 및 재사용 가능한 방법을 보유합니다."] },
+      { title: "고객 책임", body: ["고객은 정확한 정보, 필요한 접근 권한, 브랜드 자료, 콘텐츠, 승인 및 피드백을 합리적인 시간 내 제공해야 합니다. 지연은 일정에 영향을 줄 수 있습니다."] },
+      { title: "비밀유지", body: ["양측은 프로젝트 중 공유된 비즈니스 정보, 기술 세부사항, 접근 정보, 고객 데이터 및 개인 정보를 보호해야 합니다."] },
+      { title: "책임 제한", body: ["SKH.GLOBAL은 신뢰할 수 있는 시스템을 만들기 위해 합리적인 주의를 기울이지만, 간접 손실, 수익 손실, 업무 중단, 제3자 서비스 장애, 시스템 오용 또는 고객 운영 결정에 대해 책임지지 않습니다."] },
+      { title: "지원과 유지보수", body: ["출시 후 지원은 제안서나 별도 care plan에 명시된 경우에만 포함됩니다. 지속적인 업데이트와 개선은 별도 월간 계약으로 제공될 수 있습니다."] },
+      { title: "포트폴리오 사용", body: ["고객이 서면으로 비공개를 요청하지 않는 한 SKH.GLOBAL은 프로젝트를 포트폴리오나 사례로 언급할 수 있으며, 민감한 데이터는 허가 없이 공개하지 않습니다."] },
+      { title: "우선 적용", body: ["이 약관은 일반 기준입니다. 서명된 제안서나 서면 프로젝트 계약이 적용 가능한 경우 우선합니다."] },
+    ],
+  },
+  privacy: {
+    badge: "Privacy",
+    title: "개인정보 처리방침",
+    subtitle: "비즈니스 정보, 프로젝트 정보 및 고객 커뮤니케이션 처리 방식입니다.",
+    intro: "이 방침은 SKH.GLOBAL이 웹사이트, 프로젝트 문의 및 직접 커뮤니케이션을 통해 공유된 정보를 어떻게 수집, 사용 및 보호하는지 설명합니다.",
+    sections: [
+      { title: "수집 정보", body: ["이름, 비즈니스 이름, 이메일, 웹사이트 또는 소셜 링크, 프로젝트 요구사항, 예산 범위, 일정, 업무 흐름 정보 및 System Review 양식이나 직접 연락으로 제공한 정보를 수집할 수 있습니다."] },
+      { title: "사용 목적", body: ["정보는 프로젝트 문의 검토, 요구사항 파악, 제안서 준비, 커뮤니케이션, 범위 계획, 서비스 제공 및 필요한 지원에 사용됩니다."] },
+      { title: "프로젝트 및 고객 데이터", body: ["프로젝트 중 파일, 비즈니스 로직, 기술 요구사항, 고객 관련 정보, 플랫폼 설정 또는 제3자 서비스 정보를 받을 수 있으며, 이는 합의된 작업에만 사용됩니다."] },
+      { title: "데이터 소유권", body: ["고객은 자신의 비즈니스 데이터, 고객 데이터, 계정 및 제3자 서비스 계정의 소유자입니다. SKH.GLOBAL은 고객 데이터를 판매하거나 관련 없는 목적으로 사용하지 않습니다."] },
+      { title: "데이터 보안", body: ["제한된 접근, 필요 시 비공개 저장소, API key의 안전한 처리, 불필요한 비밀번호 저장 방지 등 실무적인 보호 조치를 사용합니다."] },
+      { title: "제3자 서비스", body: ["프로젝트에는 Firebase / Google Cloud, Stripe, AI API, 이메일, SMS, 호스팅 또는 분석 도구가 포함될 수 있으며 각 제공자는 자체 정책에 따라 데이터를 처리합니다."] },
+      { title: "민감한 정보", body: ["건강 관련 정보, 개인 파일, 고객 기록 또는 기밀 자료가 포함되는 경우 접근 권한, 저장 방식 및 책임은 제안서에서 별도로 합의해야 합니다."] },
+      { title: "보관 기간", body: ["정보는 커뮤니케이션, 프로젝트 제공, 지원, 기록 또는 법적 및 비즈니스 목적에 합리적으로 필요한 기간 동안만 보관됩니다."] },
+      { title: "요청 권리", body: ["해당되는 경우 SKH.GLOBAL에 정보 접근, 수정 또는 삭제를 요청할 수 있습니다."] },
+      { title: "데이터 판매 없음", body: ["SKH.GLOBAL은 개인 정보, 비즈니스 정보 또는 프로젝트 데이터를 데이터 중개업체에 판매하지 않습니다."] },
+      { title: "연락처", body: [`개인정보 관련 문의: ${email}`] },
+    ],
+    lastUpdated: "2026년 6월",
+    closingLine: "개인정보 보호는 선택 기능이 아니라 디지털 시스템 안에 신뢰를 만드는 일의 일부입니다.",
+  },
+};
+
+const ja: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "法務情報", terms: "利用規約", privacy: "プライバシーポリシー", backHome: "ホームへ戻る" },
+  terms: {
+    badge: "Legal",
+    title: "利用規約",
+    subtitle: "プロジェクト作業、納品、所有権、サポートに関する基本条件です。",
+    intro: "本規約は、SKH.GLOBAL と協力する際の一般的な条件を示すものです。プロジェクトの詳細、成果物、期間、費用は、別途の提案書またはサービス合意で確認されます。",
+    sections: [
+      { title: "サービス提供", body: ["SKH.GLOBAL は、web apps、ダッシュボード、予約システム、決済フロー、自動化、顧客ポータル、カスタムソフトウェアなどのデジタルシステム設計・開発を行います。"] },
+      { title: "範囲と変更", body: ["各プロジェクトは合意された作業範囲に基づきます。範囲外の機能、デザイン変更、連携、修正には追加見積りとスケジュール調整が必要になる場合があります。"] },
+      { title: "支払いと納品", body: ["支払い、マイルストーン、納品日は提案書で確認されます。合意された初回支払い後に作業を開始し、最終納品やソースコード引き渡しは全額支払いに依存する場合があります。"] },
+      { title: "第三者サービス", body: ["プロジェクトではドメイン、Firebase / Google Cloud、Stripe、AI API、メール、SMS、ホスティングなどを使用する場合があります。これらのアカウントと費用は、別途書面で合意しない限りクライアントのものです。"] },
+      { title: "知的財産", body: ["費用全額の支払い後、クライアントはプロジェクト専用の実装とコードベースの所有権を受け取ります。SKH.GLOBAL は既存ツール、テンプレート、再利用可能なコンポーネント、ワークフロー、開発手法を保持します。"] },
+      { title: "クライアントの責任", body: ["クライアントは正確な情報、必要なアクセス、ブランド素材、コンテンツ、承認、フィードバックを合理的な期間内に提供する責任があります。遅れはスケジュールに影響する場合があります。"] },
+      { title: "機密保持", body: ["双方は、プロジェクト中に共有される事業情報、技術情報、アクセス情報、顧客データ、個人情報を適切に守ります。"] },
+      { title: "責任の制限", body: ["SKH.GLOBAL は合理的な注意をもって信頼できるシステムを構築しますが、間接損失、利益損失、事業中断、第三者サービス障害、誤用、クライアントの運用判断について責任を負いません。"] },
+      { title: "サポートと保守", body: ["公開後のサポートは、提案書または別の care plan に明記されている場合のみ含まれます。継続的な更新や改善は別契約で提供できます。"] },
+      { title: "ポートフォリオ利用", body: ["クライアントが書面で非公開を求めない限り、SKH.GLOBAL はポートフォリオや事例でプロジェクトを紹介できます。機密データは許可なく公開しません。"] },
+      { title: "優先される合意", body: ["本規約は一般的な土台です。署名済み提案書または書面のプロジェクト合意がある場合、その内容が優先されます。"] },
+    ],
+  },
+  privacy: {
+    badge: "Privacy",
+    title: "プライバシーポリシー",
+    subtitle: "事業情報、プロジェクト情報、クライアントとの連絡の扱いについて。",
+    intro: "このポリシーは、SKH.GLOBAL がウェブサイト、プロジェクト相談、直接連絡を通じて共有された情報をどのように収集、利用、保護するかを説明します。",
+    sections: [
+      { title: "収集する情報", body: ["氏名、事業名、メール、ウェブサイトまたはSNSリンク、プロジェクト要件、予算、時期、業務フロー、System Review フォームまたは直接連絡で送信された情報を収集する場合があります。"] },
+      { title: "利用目的", body: ["情報は、問い合わせの確認、事業ニーズの理解、提案書作成、連絡、プロジェクト範囲の計画、サービス提供、必要なサポートに使用します。"] },
+      { title: "プロジェクトと顧客データ", body: ["プロジェクト中、ファイル、事業ロジック、技術要件、顧客関連情報、プラットフォーム設定、第三者サービス情報にアクセスする場合がありますが、合意された作業のためだけに使用します。"] },
+      { title: "データ所有権", body: ["クライアントは自社データ、顧客データ、アカウント、第三者サービスアカウントの所有者です。SKH.GLOBAL はクライアントデータを販売せず、無関係な目的で使用しません。"] },
+      { title: "データ保護", body: ["アクセス制限、必要に応じた private repository、API key の安全な扱い、不要なパスワード保存の回避など実務的な対策を行います。"] },
+      { title: "第三者サービス", body: ["Firebase / Google Cloud、Stripe、AI API、メール、SMS、ホスティング、分析ツールなどを利用する場合があり、各サービスは独自のポリシーに従ってデータを扱います。"] },
+      { title: "機微情報", body: ["健康情報、私的ファイル、顧客記録、機密資料を扱う場合、アクセス権限、保存方法、責任範囲を提案書で別途合意する必要があります。"] },
+      { title: "保存期間", body: ["情報は、連絡、プロジェクト提供、サポート、記録、法的または業務上の目的に合理的に必要な期間のみ保持します。"] },
+      { title: "請求について", body: ["該当する場合、SKH.GLOBAL に情報の確認、修正、削除を依頼できます。"] },
+      { title: "データ販売なし", body: ["SKH.GLOBAL は個人情報、事業情報、プロジェクトデータをデータブローカーに販売しません。"] },
+      { title: "連絡先", body: [`プライバシー関連の連絡先: ${email}`] },
+    ],
+    lastUpdated: "2026年6月",
+    closingLine: "プライバシーは任意の機能ではなく、デジタルシステムに信頼を組み込む一部です。",
+  },
+};
+
+const hi: LegalLocaleCopy = {
+  direction: "ltr",
+  nav: { legal: "कानूनी", terms: "सेवा की शर्तें", privacy: "गोपनीयता नीति", backHome: "होम पर वापस जाएं" },
+  terms: {
+    badge: "Legal",
+    title: "सेवा की शर्तें",
+    subtitle: "प्रोजेक्ट कार्य, डिलीवरी, स्वामित्व और सपोर्ट की मूल शर्तें।",
+    intro: "ये शर्तें SKH.GLOBAL के साथ काम करने की सामान्य स्थितियां बताती हैं। हर प्रोजेक्ट के विवरण, डिलिवरेबल, समय और फीस अलग लिखित proposal या service agreement में तय किए जाते हैं।",
+    sections: [
+      { title: "सेवा प्रदान करना", body: ["SKH.GLOBAL web apps, dashboards, booking systems, payment flows, automation, customer portals और custom software जैसे digital systems design और develop करता है, agreed project scope के अनुसार।"] },
+      { title: "Project scope और बदलाव", body: ["हर प्रोजेक्ट agreed scope पर आधारित होता है। Scope से बाहर नई features, design changes, integrations या revisions के लिए अलग quote और timeline की जरूरत हो सकती है।"] },
+      { title: "Payment और delivery", body: ["Payments, milestones और delivery dates proposal में confirm होते हैं। काम agreed initial payment के बाद शुरू हो सकता है, और final launch या source-code handover full payment पर निर्भर हो सकता है।"] },
+      { title: "Third-party services", body: ["Projects में domains, Firebase / Google Cloud, Stripe, AI APIs, email, SMS या hosting की जरूरत हो सकती है। ये accounts और costs client के होते हैं जब तक written agreement में अलग न हो।"] },
+      { title: "Intellectual property", body: ["Full payment के बाद client को project-specific implementation और codebase की ownership मिलती है। SKH.GLOBAL अपने existing tools, templates, components, workflows और reusable methods retain करता है।"] },
+      { title: "Client responsibilities", body: ["Client सही जानकारी, required access, brand assets, content, approvals और feedback reasonable time में provide करता है। Delay project timeline को affect कर सकता है।"] },
+      { title: "Confidentiality", body: ["दोनों parties project के दौरान share हुई business information, technical details, access, customer data और private information को confidential रखते हैं।"] },
+      { title: "Limitation of liability", body: ["SKH.GLOBAL reasonable care से reliable systems बनाता है, लेकिन indirect losses, profit loss, business interruption, third-party failures, misuse या client के operational decisions के लिए responsible नहीं है।"] },
+      { title: "Support and maintenance", body: ["Post-launch support included नहीं है जब तक proposal या अलग care plan में लिखा न हो। Ongoing support, updates और improvements अलग monthly agreement से दिए जा सकते हैं।"] },
+      { title: "Portfolio use", body: ["जब तक client written confidentiality request न करे, SKH.GLOBAL project को portfolio या case study में mention कर सकता है; sensitive data permission के बिना नहीं दिखाया जाएगा।"] },
+      { title: "Governing terms", body: ["ये website terms general foundation हैं। Signed proposal या written project agreement applicable cases में priority रखता है।"] },
+    ],
+  },
+  privacy: {
+    badge: "Privacy",
+    title: "गोपनीयता नीति",
+    subtitle: "Business details, project information और client communication को कैसे संभाला जाता है।",
+    intro: "यह policy बताती है कि SKH.GLOBAL website, project enquiries और direct communication से मिली information को कैसे collect, use और protect करता है।",
+    sections: [
+      { title: "Information we collect", body: ["हम name, business name, email, website या social link, project requirements, budget range, timeline, workflow details और System Review form या direct communication में दी गई information collect कर सकते हैं।"] },
+      { title: "How we use information", body: ["Information project enquiries review करने, business needs समझने, proposals तैयार करने, communication, project scope plan करने, agreed services deliver करने और applicable support के लिए use होती है।"] },
+      { title: "Project and client data", body: ["Project के दौरान files, business logic, technical requirements, customer-related information, platform settings या third-party service details तक access मिल सकता है, केवल agreed project या support के लिए।"] },
+      { title: "Data ownership", body: ["Clients अपनी business data, customer data, account data और third-party service accounts के owner रहते हैं। SKH.GLOBAL client data sell नहीं करता और project data unrelated purpose के लिए use नहीं करता।"] },
+      { title: "Data security", body: ["हम restricted access, private repositories where needed, secure API key handling और unnecessary password storage से बचने जैसे practical controls use करते हैं।"] },
+      { title: "Third-party services", body: ["Projects में Firebase / Google Cloud, Stripe, AI APIs, email, SMS, hosting या analytics शामिल हो सकते हैं। ये providers अपनी policies के अनुसार data process करते हैं।"] },
+      { title: "Sensitive information", body: ["Health-related information, private files, customer records या confidential material होने पर access controls, storage और responsibilities proposal में अलग से तय होनी चाहिए।"] },
+      { title: "Data retention", body: ["Information communication, delivery, support, record keeping या legal/business purposes के लिए जितनी reasonable जरूरत हो उतनी देर रखी जाती है।"] },
+      { title: "Your requests", body: ["आप SKH.GLOBAL से information access, correction या deletion request कर सकते हैं, जहां applicable हो।"] },
+      { title: "No sale of data", body: ["SKH.GLOBAL personal, business या project data को data brokers को sell नहीं करता।"] },
+      { title: "Contact", body: [`Privacy requests के लिए: ${email}`] },
+    ],
+    lastUpdated: "June 2026",
+    closingLine: "Privacy optional feature नहीं है; यह digital systems में trust build करने का हिस्सा है.",
+  },
+};
+
+export const legalCopy: Record<string, LegalLocaleCopy> = {
+  en,
+  fa,
+  ar,
+  fr,
+  es,
+  pt,
+  de,
+  it,
+  tr,
+  ru,
+  zh,
+  ko,
+  ja,
+  hi,
+};
+
+export const getLegalLocaleCopy = (language?: string) => {
+  const normalized = String(language || "en").split("-")[0].toLowerCase();
+  return legalCopy[normalized] || legalCopy.en;
+};

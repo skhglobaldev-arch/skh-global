@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { translations } from './translations';
 import { autoTranslations } from './autoTranslations';
+import { brandTranslations } from './brandTranslations';
 
 const funnelTranslations: Record<string, Record<string, string>> = {
   pt: {
@@ -406,15 +407,21 @@ const funnelTranslations: Record<string, Record<string, string>> = {
   }
 };
 
-const languageCodes = Array.from(new Set([...Object.keys(translations), ...Object.keys(autoTranslations), ...Object.keys(funnelTranslations)]));
+const languageCodes = Array.from(new Set([
+  ...Object.keys(translations),
+  ...Object.keys(autoTranslations),
+  ...Object.keys(funnelTranslations),
+  ...Object.keys(brandTranslations)
+]));
 
 const resources = languageCodes.reduce((acc: any, lang) => {
+  const automatic = (autoTranslations as any)[lang];
+  const manual = (translations as any)[lang];
+  const funnel = (funnelTranslations as any)[lang];
+  const brand = (brandTranslations as any)[lang];
+
   acc[lang] = {
-    translation: {
-      ...(autoTranslations as any)[lang],
-      ...(translations as any)[lang],
-      ...(funnelTranslations as any)[lang]
-    }
+    translation: { ...automatic, ...manual, ...funnel, ...brand }
   };
   return acc;
 }, {});
@@ -424,15 +431,19 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
+    lng: 'en',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
+      order: [],
+      caches: [],
     }
   });
+
+document.dir = 'ltr';
+document.documentElement.lang = 'en';
 
 i18n.on('languageChanged', (lng) => {
   const rtlLanguages = ['fa', 'ar', 'ur'];

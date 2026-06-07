@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Terminal, Box, Sparkles } from 'lucide-react';
+import { Box, Network, Sparkles } from 'lucide-react';
 
 interface PageHeroProps {
   title: React.ReactNode;
@@ -10,45 +10,40 @@ interface PageHeroProps {
 
 export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge }) => {
   return (
-    <div className="relative h-[70vh] min-h-[650px] flex items-center justify-center overflow-hidden bg-transparent">
+    <div className="relative flex min-h-[560px] items-center justify-center overflow-hidden bg-transparent py-28 md:min-h-[610px]">
       
-      {/* 3D Perspective Floor Grid (Home Style) */}
-      <div className="absolute bottom-0 w-full h-[40vh] origin-bottom z-0 pointer-events-none">
-        <div className="absolute inset-0 [transform:perspective(1200px)_rotateX(80deg)] scale-150">
-           <div className="absolute inset-0 bg-grid opacity-20 animate-grid-flow"></div>
-           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-        </div>
-      </div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(124,58,237,0.18),transparent_32%),radial-gradient(circle_at_78%_38%,rgba(56,216,255,0.11),transparent_28%),linear-gradient(180deg,rgba(5,7,19,0.12)_0%,#050713_100%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-[34vh] bg-[linear-gradient(rgba(148,163,184,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.045)_1px,transparent_1px)] bg-[size:72px_72px] opacity-45 [mask-image:linear-gradient(to_top,black,transparent)]" />
       
       {/* Floating Decorative Elements (Subtle) */}
-      <div className="absolute top-1/4 left-[5%] opacity-10 animate-float delay-100 hidden lg:block pointer-events-none">
+      <div className="absolute top-1/4 left-[5%] opacity-[0.08] animate-float delay-100 hidden lg:block pointer-events-none">
          <Box size={100} strokeWidth={0.5} className="text-brand-400 rotate-12" />
       </div>
-      <div className="absolute bottom-1/4 right-[5%] opacity-10 animate-float delay-700 hidden lg:block pointer-events-none">
-         <Sparkles size={140} strokeWidth={0.5} className="text-indigo-400 -rotate-12" />
+      <div className="absolute bottom-1/4 right-[5%] opacity-[0.08] animate-float delay-700 hidden lg:block pointer-events-none">
+         <Sparkles size={140} strokeWidth={0.5} className="text-violet-400 -rotate-12" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center text-center pt-20">
         
         {/* Animated HUD Badge */}
         {badge && (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100 inline-flex items-center gap-3 px-6 py-2 rounded-full bg-slate-950/80 border border-brand-500/30 mb-10 backdrop-blur-3xl shadow-[0_0_40px_rgba(14,165,233,0.2)] group cursor-default hover:border-brand-500/60 transition-all">
-            <Terminal size={14} className="text-brand-400 animate-pulse" />
-            <span className="text-[10px] md:text-xs font-mono font-bold text-brand-100 uppercase tracking-[0.5em]">{badge}</span>
+          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100 inline-flex items-center gap-3 rounded-full border border-violet-400/20 bg-[#101827]/70 px-5 py-2.5 shadow-[0_18px_70px_rgba(37,99,235,0.14)] backdrop-blur-2xl">
+            <Network size={14} className="text-cyan-200" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-cyan-100 md:text-xs">{badge}</span>
           </div>
         )}
         
         {/* 3D Title Typography */}
-        <h1 className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 text-5xl md:text-7xl lg:text-8xl font-display font-black text-white mb-8 leading-[1.05] tracking-tighter text-3d-hero">
+        <h1 className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 mb-7 text-4xl font-black leading-[1.06] tracking-tight text-white md:text-6xl lg:text-7xl">
           {title}
         </h1>
         
-        <p className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500 text-lg md:text-2xl text-slate-300 max-w-3xl font-light leading-relaxed drop-shadow-2xl">
+        <p className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500 max-w-3xl text-base font-light leading-relaxed text-slate-300 drop-shadow-2xl md:text-xl">
           {subtitle}
         </p>
 
         {/* HUD Indicator Base */}
-        <div className="animate-in fade-in duration-1000 delay-700 mt-12 w-24 h-1 bg-gradient-to-r from-transparent via-brand-500/50 to-transparent rounded-full shadow-[0_0_20px_rgba(14,165,233,0.4)]"></div>
+        <div className="animate-in fade-in duration-1000 delay-700 mt-12 h-1 w-24 rounded-full bg-gradient-to-r from-transparent via-[#38D8FF]/50 to-transparent shadow-[0_0_20px_rgba(56,216,255,0.25)]"></div>
       </div>
     </div>
   );

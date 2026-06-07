@@ -12,52 +12,52 @@ export const ContactView: React.FC = () => {
     <div className="pb-0">
       
       <PageHero 
-        badge={t('contact_page_badge', 'Inquiry Protocol')}
-        title={<>{t('contact_page_title', 'Request Your')} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">{t('contact_page_title_accent', 'Revenue Audit')}</span></>}
-        subtitle={t('contact_page_subtitle', "We aren't just developers. We are strategic partners. If you have an established business and are ready to automate your growth with AI, let's talk.")}
+        badge={t('contact_page_badge', 'Get in Touch')}
+        title={<>{t('contact_page_title', 'Request a')} <br/><span className="bg-gradient-to-br from-[#A855F7] via-[#2563EB] to-[#38D8FF] bg-clip-text text-transparent">{t('contact_page_title_accent', 'Free Consultation')}</span></>}
+        subtitle={t('contact_page_subtitle', "Tell us what your business needs. We can help with booking, payments, dashboards, customer portals, automation and custom systems.")}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-20">
-        <div className="glass-panel rounded-3xl p-8 md:p-16 border border-slate-700 shadow-2xl bg-slate-900/80 backdrop-blur-xl">
+        <div className="glass-panel rounded-3xl border border-violet-400/12 bg-[#101827]/72 p-8 shadow-[0_24px_100px_rgba(5,7,19,0.55)] backdrop-blur-xl md:p-16">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             
              <Reveal>
                <div className="space-y-10">
                   <div>
-                    <h3 className="text-2xl font-display font-bold text-white mb-4">{t('boarding_office_title', 'Boarding Office')}</h3>
-                    <p className="text-slate-400">{t('boarding_office_desc', 'Direct channels for high-priority architectural discussions.')}</p>
+                    <h3 className="mb-4 text-2xl font-bold text-white">{t('boarding_office_title', 'Contact Details')}</h3>
+                    <p className="text-slate-400">{t('boarding_office_desc', 'Send your request and our specialists will contact you soon.')}</p>
                   </div>
 
                   <div className="space-y-6">
-                    <div className="flex items-start gap-5 p-4 rounded-2xl bg-slate-950/50 border border-slate-800 hover:border-brand-500/50 transition-colors group">
-                      <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <Mail className="text-brand-400" />
+                    <div className="group flex items-start gap-5 rounded-2xl border border-violet-400/10 bg-[#050713]/50 p-4 transition-colors hover:border-cyan-300/30">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-violet-400/10 bg-[#101827] transition-transform group-hover:scale-110">
+                        <Mail className="text-cyan-300" />
                       </div>
                       <div>
                         <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t('email_us', 'Email Us')}</div>
-                        <div className="font-medium text-white text-lg">skhglobal.dev@gmail.com</div>
+                        <a href="mailto:skhglobal.dev@gmail.com" className="font-medium text-white text-lg transition-colors hover:text-cyan-200">skhglobal.dev@gmail.com</a>
                         <p className="text-xs text-slate-500 mt-1">{t('response_time', '24h Response Time')}</p>
                       </div>
                     </div>
                     
-                    <div className="flex items-start gap-5 p-4 rounded-2xl bg-slate-950/50 border border-slate-800 hover:border-brand-500/50 transition-colors group">
-                      <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <MapPin className="text-brand-400" />
+                    <div className="group flex items-start gap-5 rounded-2xl border border-violet-400/10 bg-[#050713]/50 p-4 transition-colors hover:border-cyan-300/30">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-violet-400/10 bg-[#101827] transition-transform group-hover:scale-110">
+                        <MapPin className="text-cyan-300" />
                       </div>
                       <div>
-                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t('global_hq', 'Global HQ')}</div>
-                        <div className="font-medium text-white text-lg">{t('remote_first', 'Digital Systems / Remote First')}</div>
-                        <p className="text-xs text-slate-500 mt-1">{t('operating_worldwide', 'Operating Worldwide')}</p>
+                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t('global_hq', 'Working Location')}</div>
+                        <div className="font-medium text-white text-lg">{t('remote_first', 'Based in the UK / Online collaboration')}</div>
+                        <p className="text-xs text-slate-500 mt-1">{t('operating_worldwide', 'Remote-friendly system projects')}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-5 p-4 rounded-2xl bg-slate-950/50 border border-slate-800 hover:border-brand-500/50 transition-colors group">
-                      <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <Clock className="text-brand-400" />
+                    <div className="group flex items-start gap-5 rounded-2xl border border-violet-400/10 bg-[#050713]/50 p-4 transition-colors hover:border-cyan-300/30">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-violet-400/10 bg-[#101827] transition-transform group-hover:scale-110">
+                        <Clock className="text-cyan-300" />
                       </div>
                       <div>
                         <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t('working_hours_title', 'Working Hours')}</div>
-                        <div className="font-medium text-white text-lg">{t('working_hours_val', 'Mon - Fri, 09:00 - 18:00 EST')}</div>
+                        <div className="font-medium text-white text-lg">{t('working_hours_val', 'Mon - Fri, 09:00 - 18:00 UK time')}</div>
                       </div>
                     </div>
                   </div>

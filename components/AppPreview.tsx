@@ -24,25 +24,25 @@ interface AppPreviewProps {
 export const AppPreview: React.FC<AppPreviewProps> = ({ data }) => {
   if (!data || Object.keys(data).length === 0) return (
     <div className="p-32 text-center text-slate-600 font-mono text-xs uppercase tracking-[0.5em] animate-pulse">
-      Synthesizing System Visuals...
+      Preparing System Visuals...
     </div>
   );
 
   const {
     siteType = 'saas',
-    appName = 'Neural System',
-    primaryColor = '#0ea5e9',
-    secondaryColor = '#6366f1',
+    appName = 'Business System',
+    primaryColor = '#2563EB',
+    secondaryColor = '#7C3AED',
     fontStyle = 'display',
     layoutMode = 'dark',
     hero = {
-      title: 'Next Gen Architecture',
-      subtitle: 'Bespoke systems for global scale.',
+      title: 'From Idea to System',
+      subtitle: 'A practical digital product built around the business workflow.',
       cta: 'Explore System',
       imageSearch: 'modern tech'
     },
     sections = [],
-    navigation = ['Vision', 'Architecture', 'Systems']
+    navigation = ['Problem', 'System', 'Result']
   } = data;
 
   const isDark = layoutMode !== 'light';

@@ -1,574 +1,607 @@
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { 
-  ArrowRight, 
-  ChevronLeft, 
-  Send, 
-  CheckCircle2, 
-  Sparkles,
+import {
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  ChevronLeft,
+  FileText,
+  Layers3,
+  Send,
   ShieldCheck,
-  Zap,
-  BarChart3,
-  Monitor,
-  Target,
-  MessageSquare
+  Sparkles,
 } from 'lucide-react';
+import { getSystemReviewCopy, ReviewChoice } from '../src/systemReviewCopy';
 
-interface FormData {
-  businessType: string;
-  channels: string[];
-  painPoint: string;
-  volume: string;
+type ReviewFormData = {
+  name: string;
   businessName: string;
-  phone: string;
   email: string;
-  instagram: string;
-}
+  website: string;
+  businessType: string;
+  businessTypeOther: string;
+  workflow: string[];
+  workflowNotes: string;
+  mainProblem: string;
+  systemIncludes: string[];
+  systemOther: string;
+  customerExperience: string[];
+  adminNeeds: string[];
+  sensitiveData: string;
+  sensitiveNotes: string;
+  budget: string;
+  timeline: string;
+  finalNotes: string;
+  consent: boolean;
+};
+
+const initialFormData: ReviewFormData = {
+  name: '',
+  businessName: '',
+  email: '',
+  website: '',
+  businessType: '',
+  businessTypeOther: '',
+  workflow: [],
+  workflowNotes: '',
+  mainProblem: '',
+  systemIncludes: [],
+  systemOther: '',
+  customerExperience: [],
+  adminNeeds: [],
+  sensitiveData: '',
+  sensitiveNotes: '',
+  budget: '',
+  timeline: '',
+  finalNotes: '',
+  consent: false,
+};
+
+const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+const localizeNumber = (value: number, language: string) => {
+  const normalized = String(language || '').split('-')[0].toLowerCase();
+  if (!['fa', 'ar', 'ur'].includes(normalized)) return String(value);
+
+  const digits = normalized === 'fa'
+    ? ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
+    : ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+  return String(value).replace(/\d/g, (digit) => digits[Number(digit)]);
+};
 
 export const AuditView: React.FC = () => {
-  const { t, i18n } = useTranslation();
-  const [step, setStep] = useState(1);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [ticketNumber] = useState(() => Math.random().toString(36).substr(2, 6).toUpperCase());
-  const [formData, setFormData] = useState<FormData>({
-    businessType: '',
-    channels: [],
-    painPoint: '',
-    volume: '',
-    businessName: '',
-    phone: '',
-    email: '',
-    instagram: ''
-  });
+  const { i18n } = useTranslation();
+  const copy = React.useMemo(() => getSystemReviewCopy(i18n.language), [i18n.language]);
+  const isRtl = copy.direction === 'rtl';
+  const [step, setStep] = React.useState(1);
+  const [formData, setFormData] = React.useState<ReviewFormData>(initialFormData);
+  const [attempted, setAttempted] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState('');
+  const [ticketNumber] = React.useState(() => `SKH-${Math.random().toString(36).slice(2, 8).toUpperCase()}`);
 
-  const [errors, setErrors] = useState<string[]>([]);
+  const totalSteps = copy.steps.length;
+  const currentStepCopy = copy.steps[step - 1];
+  const progress = (step / totalSteps) * 100;
 
-  const totalSteps = 6;
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const industryOptions = [
-    { label: t('audit_opt_beauty', 'Beauty & Wellness'), value: 'Beauty & Wellness' },
-    { label: t('audit_opt_clinic', 'Medical & Clinic'), value: 'Medical & Clinic' },
-    { label: t('audit_opt_restaurant', 'Restaurant & Catering'), value: 'Restaurant & Catering' },
-    { label: t('audit_opt_store', 'E-Commerce & Store'), value: 'E-Commerce & Store' },
-    { label: t('audit_opt_property', 'Property & Real Estate'), value: 'Property & Real Estate' },
-    { label: t('audit_opt_service', 'Consultancy & Service'), value: 'Consultancy & Service' },
-    { label: t('audit_opt_other', 'Other Business'), value: 'Other Business' }
-  ];
-
-  const channelOptions = [
-    { label: t('audit_chan_insta', 'Instagram / Social'), value: 'Instagram / Social' },
-    { label: t('audit_chan_whatsapp', 'WhatsApp'), value: 'WhatsApp' },
-    { label: t('audit_chan_phone', 'Phone Calls'), value: 'Phone Calls' },
-    { label: t('audit_chan_web', 'Existing Website'), value: 'Existing Website' },
-    { label: t('audit_chan_referral', 'Referrals / Word of Mouth'), value: 'Referrals / Word of Mouth' },
-    { label: t('audit_chan_ads', 'Paid Advertising'), value: 'Paid Advertising' }
-  ];
-
-  const painOptions = [
-    { value: 'Manual booking and follow-up', label: t('audit_prob_manual', "Too much manual work"), desc: t('audit_prob_manual_desc', "You are losing time in DMs, calls, and repeated follow-up.") },
-    { value: 'Traffic does not convert', label: t('audit_prob_conversion', "Traffic doesn't convert"), desc: t('audit_prob_conversion_desc', "People visit or message, but too few become paying clients.") },
-    { value: 'Old website or weak technical system', label: t('audit_prob_tech', "Old website or weak system"), desc: t('audit_prob_tech_desc', "Your current setup feels slow, outdated, or difficult to manage.") },
-    { value: 'Ready to scale without a proper system', label: t('audit_prob_growth', "Ready to scale, no system"), desc: t('audit_prob_growth_desc', "Demand exists, but operations are not structured enough to grow.") }
-  ];
-
-  const volumeOptions = [
-    { label: t('audit_vol_1', '< 50 Clients'), value: '< 50 Clients' },
-    { label: t('audit_vol_2', '50 - 200 Clients'), value: '50 - 200 Clients' },
-    { label: t('audit_vol_3', '200+ Clients'), value: '200+ Clients' }
-  ];
-
-  const findLabel = (options: { label: string; value: string }[], value: string) =>
-    options.find((option) => option.value === value)?.label || value;
-
-  const nextStep = () => {
-    setErrors([]);
-    setStep(s => Math.min(s + 1, totalSteps));
-  };
-  const prevStep = () => {
-    setErrors([]);
-    setStep(s => Math.max(s - 1, 1));
-  };
-
-  // Force scroll to top on every step change or submission
   React.useEffect(() => {
-    window.scrollTo(0, 0);
-    if (typeof document !== 'undefined') {
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step, submitted]);
 
-  const handleRadioChange = (name: keyof FormData, value: string) => {
-    setErrors([]);
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setTimeout(nextStep, 400); 
+  const update = <K extends keyof ReviewFormData>(key: K, value: ReviewFormData[K]) => {
+    setSubmitError('');
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleCheckboxChange = (value: string) => {
-    setErrors([]);
-    setFormData(prev => {
-      const channels = prev.channels.includes(value)
-        ? prev.channels.filter(c => c !== value)
-        : [...prev.channels, value];
-      return { ...prev, channels };
+  const toggleValue = (key: 'workflow' | 'systemIncludes' | 'customerExperience' | 'adminNeeds', value: string) => {
+    setSubmitError('');
+    setFormData((prev) => {
+      const current = prev[key];
+      return {
+        ...prev,
+        [key]: current.includes(value)
+          ? current.filter((item) => item !== value)
+          : [...current, value],
+      };
     });
   };
 
-  const encode = (data: any) => {
-    return Object.keys(data)
-      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(String(data[key])))
-      .join("&");
+  const choiceLabel = (choices: ReviewChoice[], value: string) =>
+    choices.find((choice) => choice.value === value)?.label || value;
+
+  const choiceLabels = (choices: ReviewChoice[], values: string[]) =>
+    values.map((value) => choiceLabel(choices, value)).join(', ');
+
+  const requiresSensitiveNotes = ['private-files', 'medical'].includes(formData.sensitiveData);
+
+  const getStepError = () => {
+    if (step === 1) {
+      if (!formData.name.trim() || !formData.businessName.trim() || !formData.email.trim()) return copy.validationRequired;
+      if (!isValidEmail(formData.email)) return copy.validationEmail;
+      return '';
+    }
+    if (step === 2) {
+      if (!formData.businessType) return copy.validationRequired;
+      if (formData.businessType === 'other' && !formData.businessTypeOther.trim()) return copy.validationOther;
+      return '';
+    }
+    if (step === 3) return formData.workflow.length ? '' : copy.validationRequired;
+    if (step === 4) return formData.mainProblem.trim() ? '' : copy.validationRequired;
+    if (step === 5) {
+      if (!formData.systemIncludes.length) return copy.validationRequired;
+      if (formData.systemIncludes.includes('other') && !formData.systemOther.trim()) return copy.validationOther;
+      return '';
+    }
+    if (step === 6) return formData.customerExperience.length ? '' : copy.validationRequired;
+    if (step === 7) return formData.adminNeeds.length ? '' : copy.validationRequired;
+    if (step === 8) return formData.sensitiveData ? '' : copy.validationRequired;
+    if (step === 9) return formData.budget && formData.timeline ? '' : copy.validationRequired;
+    if (step === 10) return formData.consent ? '' : copy.validationConsent;
+    return '';
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors([]);
-    
-    if (step < totalSteps) {
-      if (step === 5 && !formData.businessName) {
-        setErrors(['businessName']);
-        return;
-      }
-      nextStep();
-      return;
-    }
+  const stepError = getStepError();
+  const canContinue = !stepError;
 
-    // Final Validation
-    const newErrors = [];
-    if (!formData.email) newErrors.push('email');
-    if (!formData.phone || formData.phone.length < 8) newErrors.push('phone');
-    
-    if (newErrors.length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+  const goNext = () => {
+    setAttempted(true);
+    if (!canContinue) return;
+    setAttempted(false);
+    setStep((current) => Math.min(current + 1, totalSteps));
+  };
 
-    const body = { 
-      ...formData,
-      businessTypeLabel: findLabel(industryOptions, formData.businessType),
-      channelsLabel: formData.channels.map((channel) => findLabel(channelOptions, channel)).join(', '),
-      painPointLabel: findLabel(painOptions, formData.painPoint),
-      volumeLabel: findLabel(volumeOptions, formData.volume),
-      ticketNumber: ticketNumber,
-      channels: formData.channels.join(', '),
-      currentLanguage: i18n.language
+  const goPrevious = () => {
+    setAttempted(false);
+    setSubmitError('');
+    setStep((current) => Math.max(current - 1, 1));
+  };
+
+  const buildPayload = () => {
+    const businessTypeLabel = formData.businessType === 'other'
+      ? formData.businessTypeOther
+      : choiceLabel(copy.businessTypes, formData.businessType);
+
+    const reviewSummary = {
+      name: formData.name,
+      businessName: formData.businessName,
+      email: formData.email,
+      website: formData.website,
+      businessType: businessTypeLabel,
+      currentWorkflow: choiceLabels(copy.workflowOptions, formData.workflow),
+      currentWorkflowNotes: formData.workflowNotes,
+      mainProblem: formData.mainProblem,
+      systemIncludes: `${choiceLabels(copy.systemOptions, formData.systemIncludes)}${formData.systemOther ? `, ${formData.systemOther}` : ''}`,
+      customerExperience: choiceLabels(copy.customerOptions, formData.customerExperience),
+      adminNeeds: choiceLabels(copy.adminOptions, formData.adminNeeds),
+      sensitiveData: choiceLabel(copy.sensitiveOptions, formData.sensitiveData),
+      sensitiveNotes: formData.sensitiveNotes,
+      budget: choiceLabel(copy.budgetOptions, formData.budget),
+      timeline: choiceLabel(copy.timelineOptions, formData.timeline),
+      finalNotes: formData.finalNotes,
     };
 
+    return {
+      name: formData.name,
+      businessName: formData.businessName,
+      email: formData.email,
+      phone: '',
+      instagram: formData.website,
+      businessType: formData.businessType,
+      businessTypeLabel,
+      channels: formData.workflow.join(', '),
+      channelsLabel: reviewSummary.currentWorkflow,
+      painPoint: formData.mainProblem,
+      painPointLabel: formData.mainProblem,
+      volume: `${reviewSummary.budget} / ${reviewSummary.timeline}`,
+      volumeLabel: `${reviewSummary.budget} / ${reviewSummary.timeline}`,
+      ticketNumber,
+      currentLanguage: i18n.language,
+      review: formData,
+      reviewSummary,
+    };
+  };
+
+  const handleSubmit = async () => {
+    setAttempted(true);
+    if (!canContinue) return;
+
     setLoading(true);
-    
+    setSubmitError('');
+
     try {
-      const apiUrl = "/api/audit";
-      console.log(`[AUDIT] Submitting to: ${window.location.origin}${apiUrl}`);
-      
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
+      const response = await fetch('/api/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildPayload()),
       });
 
-      if (!response.ok) {
-        throw new Error(`Server responded with ${response.status}`);
-      }
-      
-      // Intentional delay for effect
-      setTimeout(() => {
-        setLoading(false);
-        setSubmitted(true);
-      }, 1000);
-
+      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+      setSubmitted(true);
     } catch (error) {
-      console.error("Submission error:", error);
+      console.error('System review submission error:', error);
+      setSubmitError(copy.submitError);
+    } finally {
       setLoading(false);
-      setSubmitted(true); // Still show success to prevent frustration
     }
   };
 
-  const progress = (step / totalSteps) * 100;
+  const progressText = copy.progressText
+    .replace('{{step}}', localizeNumber(step, i18n.language))
+    .replace('{{total}}', localizeNumber(totalSteps, i18n.language));
+
+  const cardBase = "rounded-[1.35rem] border p-4 text-sm font-bold transition-all duration-300 md:p-5";
+
+  const renderChoiceCard = (
+    choice: ReviewChoice,
+    selected: boolean,
+    onClick: () => void,
+    mode: 'checkbox' | 'radio' = 'checkbox',
+  ) => (
+    <button
+      key={choice.value}
+      type="button"
+      onClick={onClick}
+      className={`${cardBase} ${isRtl ? 'text-right' : 'text-left'} ${
+        selected
+          ? 'border-cyan-300/55 bg-gradient-to-br from-[#7C3AED]/22 via-[#2563EB]/14 to-[#38D8FF]/10 text-white shadow-[0_0_34px_rgba(56,216,255,0.16)]'
+          : 'border-white/10 bg-[#101827]/60 text-slate-400 hover:border-cyan-300/30 hover:text-white'
+      }`}
+    >
+      <span className="flex items-center justify-between gap-4">
+        <span>{choice.label}</span>
+        <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${
+          selected ? 'border-cyan-200 bg-cyan-200 text-[#050713]' : 'border-white/15 text-transparent'
+        }`}>
+          {selected && (mode === 'radio' ? <span className="h-2 w-2 rounded-full bg-[#050713]" /> : <Check size={14} strokeWidth={4} />)}
+        </span>
+      </span>
+    </button>
+  );
+
+  const inputClass = `w-full rounded-2xl border border-white/10 bg-[#050713]/80 px-5 py-4 text-base text-white outline-none transition-all placeholder:text-slate-700 focus:border-cyan-300/45 focus:shadow-[0_0_0_4px_rgba(56,216,255,0.08)] ${isRtl ? 'text-right' : 'text-left'}`;
+  const labelClass = `mb-2 block text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 ${isRtl ? 'text-right' : 'text-left'}`;
+
+  const renderStep = () => {
+    if (step === 1) {
+      return (
+        <div className="grid gap-5 md:grid-cols-2">
+          <label>
+            <span className={labelClass}>{copy.fields.name}</span>
+            <input className={inputClass} value={formData.name} onChange={(event) => update('name', event.target.value)} placeholder={copy.placeholders.name} />
+          </label>
+          <label>
+            <span className={labelClass}>{copy.fields.businessName}</span>
+            <input className={inputClass} value={formData.businessName} onChange={(event) => update('businessName', event.target.value)} placeholder={copy.placeholders.businessName} />
+          </label>
+          <label>
+            <span className={labelClass}>{copy.fields.email}</span>
+            <input className={inputClass} type="email" value={formData.email} onChange={(event) => update('email', event.target.value)} placeholder={copy.placeholders.email} />
+          </label>
+          <label>
+            <span className={labelClass}>{copy.fields.website} <span className="text-slate-700">({copy.optional})</span></span>
+            <input className={inputClass} value={formData.website} onChange={(event) => update('website', event.target.value)} placeholder={copy.placeholders.website} />
+          </label>
+        </div>
+      );
+    }
+
+    if (step === 2) {
+      return (
+        <div className="space-y-5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {copy.businessTypes.map((choice) => renderChoiceCard(
+              choice,
+              formData.businessType === choice.value,
+              () => update('businessType', choice.value),
+              'radio',
+            ))}
+          </div>
+          {formData.businessType === 'other' && (
+            <label className="block">
+              <span className={labelClass}>{copy.fields.other}</span>
+              <input className={inputClass} value={formData.businessTypeOther} onChange={(event) => update('businessTypeOther', event.target.value)} placeholder={copy.placeholders.businessOther} />
+            </label>
+          )}
+        </div>
+      );
+    }
+
+    if (step === 3) {
+      return (
+        <div className="space-y-5">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {copy.workflowOptions.map((choice) => renderChoiceCard(
+              choice,
+              formData.workflow.includes(choice.value),
+              () => toggleValue('workflow', choice.value),
+            ))}
+          </div>
+          <label className="block">
+            <span className={labelClass}>{copy.fields.workflowNotes} <span className="text-slate-700">({copy.optional})</span></span>
+            <textarea className={`${inputClass} min-h-28 resize-none`} value={formData.workflowNotes} onChange={(event) => update('workflowNotes', event.target.value)} placeholder={copy.placeholders.workflowNotes} />
+          </label>
+        </div>
+      );
+    }
+
+    if (step === 4) {
+      return (
+        <label className="block">
+          <span className={labelClass}>{copy.fields.mainProblem}</span>
+          <textarea className={`${inputClass} min-h-56 resize-none text-lg leading-relaxed`} value={formData.mainProblem} onChange={(event) => update('mainProblem', event.target.value)} placeholder={copy.placeholders.mainProblem} />
+        </label>
+      );
+    }
+
+    if (step === 5) {
+      return (
+        <div className="space-y-5">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {copy.systemOptions.map((choice) => renderChoiceCard(
+              choice,
+              formData.systemIncludes.includes(choice.value),
+              () => toggleValue('systemIncludes', choice.value),
+            ))}
+          </div>
+          {formData.systemIncludes.includes('other') && (
+            <label className="block">
+              <span className={labelClass}>{copy.fields.other}</span>
+              <input className={inputClass} value={formData.systemOther} onChange={(event) => update('systemOther', event.target.value)} placeholder={copy.placeholders.systemOther} />
+            </label>
+          )}
+        </div>
+      );
+    }
+
+    if (step === 6) {
+      return (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {copy.customerOptions.map((choice) => renderChoiceCard(
+            choice,
+            formData.customerExperience.includes(choice.value),
+            () => toggleValue('customerExperience', choice.value),
+          ))}
+        </div>
+      );
+    }
+
+    if (step === 7) {
+      return (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {copy.adminOptions.map((choice) => renderChoiceCard(
+            choice,
+            formData.adminNeeds.includes(choice.value),
+            () => toggleValue('adminNeeds', choice.value),
+          ))}
+        </div>
+      );
+    }
+
+    if (step === 8) {
+      return (
+        <div className="space-y-5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {copy.sensitiveOptions.map((choice) => renderChoiceCard(
+              choice,
+              formData.sensitiveData === choice.value,
+              () => update('sensitiveData', choice.value),
+              'radio',
+            ))}
+          </div>
+          {requiresSensitiveNotes && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-cyan-300/18 bg-cyan-300/[0.055] p-5">
+              <div className={`mb-4 flex gap-3 text-sm leading-relaxed text-cyan-100 ${isRtl ? 'text-right' : 'text-left'}`}>
+                <ShieldCheck className="mt-1 shrink-0 text-cyan-200" size={18} />
+                <p>{copy.sensitiveHelper}</p>
+              </div>
+              <label className="block">
+                <span className={labelClass}>{copy.fields.sensitiveNotes} <span className="text-slate-700">({copy.optional})</span></span>
+                <textarea className={`${inputClass} min-h-28 resize-none`} value={formData.sensitiveNotes} onChange={(event) => update('sensitiveNotes', event.target.value)} placeholder={copy.placeholders.sensitiveNotes} />
+              </label>
+            </motion.div>
+          )}
+        </div>
+      );
+    }
+
+    if (step === 9) {
+      return (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div>
+            <span className={labelClass}>{copy.fields.budget}</span>
+            <div className="grid gap-3">
+              {copy.budgetOptions.map((choice) => renderChoiceCard(
+                choice,
+                formData.budget === choice.value,
+                () => update('budget', choice.value),
+                'radio',
+              ))}
+            </div>
+          </div>
+          <div>
+            <span className={labelClass}>{copy.fields.timeline}</span>
+            <div className="grid gap-3">
+              {copy.timelineOptions.map((choice) => renderChoiceCard(
+                choice,
+                formData.timeline === choice.value,
+                () => update('timeline', choice.value),
+                'radio',
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        <label className="block">
+          <span className={labelClass}>{copy.fields.finalNotes} <span className="text-slate-700">({copy.optional})</span></span>
+          <textarea className={`${inputClass} min-h-44 resize-none`} value={formData.finalNotes} onChange={(event) => update('finalNotes', event.target.value)} placeholder={copy.placeholders.finalNotes} />
+        </label>
+        <button
+          type="button"
+          onClick={() => update('consent', !formData.consent)}
+          className={`flex w-full items-start gap-4 rounded-2xl border p-5 transition-all ${isRtl ? 'text-right' : 'text-left'} ${
+            formData.consent
+              ? 'border-cyan-300/45 bg-cyan-300/[0.055] text-white'
+              : 'border-white/10 bg-[#101827]/60 text-slate-400 hover:border-cyan-300/25'
+          }`}
+        >
+          <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${formData.consent ? 'border-cyan-200 bg-cyan-200 text-[#050713]' : 'border-white/15'}`}>
+            {formData.consent && <Check size={15} strokeWidth={4} />}
+          </span>
+          <span className="text-sm leading-relaxed">{copy.consent}</span>
+        </button>
+      </div>
+    );
+  };
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center px-4">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-xl w-full glass-panel p-12 rounded-[3.5rem] border border-brand-500/30 text-center relative overflow-hidden"
+      <main dir={copy.direction} className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#050713] px-4 py-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.18),transparent_36%),radial-gradient(circle_at_80%_70%,rgba(56,216,255,0.10),transparent_34%)]" />
+        <motion.section
+          initial={{ opacity: 0, scale: 0.94, y: 18 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[2.4rem] border border-cyan-300/18 bg-[#101827]/78 p-8 text-center shadow-[0_30px_120px_rgba(5,7,19,0.65)] backdrop-blur-2xl md:p-12"
         >
-          <div className="absolute inset-0 bg-brand-500/5 blur-3xl"></div>
-          <div className="relative z-10 text-center">
-            <div className="w-24 h-24 bg-brand-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(14,165,233,0.5)]">
-              <CheckCircle2 size={48} className="text-slate-950" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,216,255,0.10),transparent_44%)]" />
+          <div className="relative z-10">
+            <div className="mx-auto mb-7 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] text-white shadow-[0_20px_70px_rgba(37,99,235,0.34)]">
+              <CheckCircle2 size={38} />
             </div>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-white mb-4 uppercase tracking-tighter">{t('success_title', 'Analysis Initiated')}</h2>
-            <p className="text-slate-400 text-lg font-light leading-relaxed mb-8">
-              {t('success_desc', 'We received your data safely. Our engineers are now auditing your online infrastructure. Expect a detailed PDF blueprint in your inbox shortly.')}
-            </p>
-            <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800 text-brand-400 font-mono text-sm mb-8 inline-block">
-              {t('priority_ticket_label', 'Priority Ticket')}: #{ticketNumber}
+            <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-cyan-200">{copy.brandSignature}</p>
+            <h1 className="text-4xl font-black leading-tight text-white md:text-5xl">{copy.successTitle}</h1>
+            <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-400">{copy.successBody}</p>
+            <div className="mt-8 inline-flex rounded-2xl border border-white/10 bg-[#050713]/70 px-5 py-3 text-sm font-bold text-cyan-200">
+              {ticketNumber}
             </div>
-            <button 
-              onClick={() => window.location.href = '/'}
-              className="px-10 py-4 bg-white text-slate-950 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-brand-400 transition-all block mx-auto"
+            <button
+              type="button"
+              onClick={() => { window.location.hash = '#/'; }}
+              className="mx-auto mt-8 flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] px-8 py-4 text-sm font-black text-white shadow-[0_18px_52px_rgba(37,99,235,0.28)] transition-all hover:-translate-y-1"
             >
-              {t('back_to_command_btn', 'Back to Command Center')}
+              {copy.backHome}
+              <ArrowRight className={isRtl ? 'rotate-180' : ''} size={18} />
             </button>
           </div>
-        </motion.div>
-      </div>
+        </motion.section>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] pt-24 pb-20 relative overflow-hidden flex flex-col items-center">
-      {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-slate-900 z-50">
-        <motion.div 
+    <main dir={copy.direction} className="relative min-h-screen overflow-hidden bg-[#050713] px-4 pb-16 pt-28 md:pt-32">
+      <div className="fixed left-0 right-0 top-0 z-[60] h-1 bg-[#101827]">
+        <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
-          className="h-full bg-brand-500 shadow-[0_0_15px_rgba(14,165,233,0.8)]"
+          className="h-full bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#38D8FF] shadow-[0_0_20px_rgba(56,216,255,0.45)]"
         />
       </div>
 
-      <div className="max-w-3xl w-full px-6 relative z-10 flex-1 flex flex-col justify-center">
-        {/* Decorative elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.16),transparent_36%),radial-gradient(circle_at_85%_40%,rgba(56,216,255,0.09),transparent_30%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-20 mx-auto h-[520px] max-w-[920px] rounded-full bg-gradient-to-br from-[#7C3AED]/10 via-[#2563EB]/7 to-[#38D8FF]/8 blur-[90px]" />
 
-        <form 
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="relative"
-        >
-          <input type="hidden" name="form-name" value="revenue-audit" />
-          <input type="hidden" name="ticketNumber" value={ticketNumber} />
-          
-          <AnimatePresence mode="wait">
-            {step === 1 && (
-              <motion.div 
-                key="step1"
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -30, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                className="space-y-8 text-center"
-              >
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400">
-                    <Sparkles size={32} />
-                  </div>
-                </div>
-                <h2 className="text-4xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-none mb-4">
-                  {t('audit_step_1_title', 'Identify Your Industry')}
-                </h2>
-                <p className="text-slate-400 text-lg font-light mb-12">{t('audit_step_1_desc', 'Select your business type to begin the diagnostic.')}</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {industryOptions.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => handleRadioChange('businessType', opt.value)}
-                      className={`p-6 rounded-3xl border transition-all text-center group relative overflow-hidden ${
-                        formData.businessType === opt.value 
-                        ? 'border-brand-500 bg-brand-500/10 text-white' 
-                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <span className="font-bold uppercase tracking-widest text-xs relative z-10">{opt.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {step === 2 && (
-              <motion.div 
-                key="step2"
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -30, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                className="space-y-8 text-center"
-              >
-                <h2 className="text-4xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-none mb-4">
-                  {t('audit_step_2_title', 'Where do customers Find You?')}
-                </h2>
-                <p className="text-slate-400 text-lg font-light mb-12">{t('audit_step_2_desc', 'Select all channels you currently use for bookings.')}</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-left">
-                  {channelOptions.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => handleCheckboxChange(opt.value)}
-                      className={`p-6 rounded-3xl border transition-all ${
-                        formData.channels.includes(opt.value)
-                        ? 'border-brand-500 bg-brand-500/10 text-white' 
-                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <span className="font-bold uppercase tracking-widest text-xs">{opt.label}</span>
-                    </button>
-                  ))}
-                </div>
-                <button 
-                  type="button"
-                  onClick={nextStep}
-                  disabled={formData.channels.length === 0}
-                  className="mt-8 px-12 py-5 bg-brand-500 text-slate-950 rounded-2xl font-black uppercase tracking-widest text-sm disabled:opacity-50 disabled:grayscale transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:translate-y-[-2px]"
-                >
-                  {t('btn_confirm_channels', 'Confirm Channels')}
-                </button>
-              </motion.div>
-            )}
-
-            {step === 3 && (
-              <motion.div 
-                key="step3"
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -30, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                className="space-y-8 text-center"
-              >
-                <h2 className="text-4xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-none mb-4">
-                  {t('audit_step_3_title', 'What stops your Growth?')}
-                </h2>
-                <div className="grid gap-4 max-w-xl mx-auto">
-                  {painOptions.map((item) => (
-                    <button
-                      key={item.value}
-                      type="button"
-                      onClick={() => handleRadioChange('painPoint', item.value)}
-                      className={`p-6 rounded-3xl border transition-all text-left flex items-center justify-between group ${
-                        formData.painPoint === item.value
-                        ? 'border-brand-500 bg-brand-500/10 text-white shadow-[0_0_20px_rgba(14,165,233,0.1)]' 
-                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <div>
-                        <div className="font-bold uppercase tracking-widest text-xs mb-1 text-white">{item.label}</div>
-                        <div className="text-[11px] opacity-60 font-light">{item.desc}</div>
-                      </div>
-                      <ArrowRight size={20} className={`transition-transform group-hover:translate-x-1 ${formData.painPoint === item.value ? 'text-brand-500' : 'text-slate-700'}`} />
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {step === 4 && (
-              <motion.div 
-                key="step4"
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -30, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                className="space-y-8 text-center"
-              >
-                <h2 className="text-4xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-none mb-4">
-                  {t('audit_step_4_title', 'Client Volume')}
-                </h2>
-                <div className="grid md:grid-cols-3 gap-6">
-                  {volumeOptions.map((v) => (
-                    <button
-                      key={v.value}
-                      type="button"
-                      onClick={() => handleRadioChange('volume', v.value)}
-                      className={`p-12 rounded-[3rem] border transition-all text-center flex flex-col items-center group ${
-                        formData.volume === v.value 
-                        ? 'border-brand-500 bg-brand-500/10 text-white shadow-[0_0_30px_rgba(14,165,233,0.15)]' 
-                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <BarChart3 className={`mb-6 transition-colors ${formData.volume === v.value ? 'text-brand-400' : 'text-slate-600'}`} size={40} />
-                      <span className="font-bold uppercase tracking-widest text-xs">{v.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {step === 5 && (
-              <motion.div 
-                key="step5"
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -30, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                className="space-y-12"
-              >
-                <div className="text-center">
-                   <h2 className="text-4xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-none mb-4">
-                    {t('audit_step_5_title', 'Business Identity')}
-                  </h2>
-                </div>
-                <div className="grid gap-8 max-w-xl mx-auto">
-                  <div className="space-y-3">
-                    <label className={`text-[10px] font-black uppercase tracking-[0.3em] font-mono ml-2 transition-colors ${errors.includes('businessName') ? 'text-red-500' : 'text-slate-500'}`}>
-                      {errors.includes('businessName') ? t('error_name_required', 'Business Name Required') : t('form_business_name', 'Business Name')}
-                    </label>
-                    <input 
-                      required 
-                      type="text" 
-                      placeholder={t('form_business_placeholder', "e.g. Aura Aesthetics")} 
-                      value={formData.businessName}
-                      onChange={(e) => setFormData({...formData, businessName: e.target.value})}
-                      className={`w-full bg-slate-950 border rounded-3xl px-8 py-6 text-white text-lg outline-none transition-all placeholder:text-slate-800 font-medium ${
-                        errors.includes('businessName') ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse' : 'border-slate-800 focus:border-brand-500'
-                      }`}
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 font-mono ml-2">{t('form_insta', 'Instagram Handle (Optional)')}</label>
-                    <input 
-                      type="text" 
-                      placeholder={t('form_insta_placeholder', "@yourpage")} 
-                      value={formData.instagram}
-                      onChange={(e) => setFormData({...formData, instagram: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-3xl px-8 py-6 text-white text-lg focus:border-brand-500 outline-none transition-all placeholder:text-slate-800 font-medium"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-center pt-4">
-                  <button 
-                    type="button"
-                    onClick={nextStep}
-                    disabled={!formData.businessName}
-                    className="px-16 py-6 bg-brand-500 text-slate-950 rounded-3xl font-black uppercase tracking-widest text-sm disabled:opacity-50 transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:scale-105 active:scale-95"
-                  >
-                    {t('btn_set_destination', 'Set Destination')}
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {step === totalSteps && (
-              <motion.div 
-                key="step6"
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -30, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                className="space-y-12"
-              >
-                <div className="text-center">
-                   <h2 className="text-4xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-none mb-4">
-                    {t('audit_step_6_title', 'Send My Blueprint')}
-                  </h2>
-                  <p className="text-slate-400 text-lg font-light">{t('audit_step_6_desc', 'Where should we transmit your diagnostic results?')}</p>
-                </div>
-                
-                <div className="grid gap-8 max-w-xl mx-auto">
-                  <div className="space-y-3">
-                    <label className={`text-[10px] font-black uppercase tracking-[0.3em] font-mono ml-2 transition-colors ${errors.includes('phone') ? 'text-red-500' : 'text-slate-500'}`}>
-                      {errors.includes('phone') ? t('error_phone_required', 'Valid Phone Required') : t('form_phone', 'Mobile Number (WhatsApp Enabled)')}
-                    </label>
-                    <div className={`custom-phone-input border rounded-[24px] overflow-hidden transition-all ${errors.includes('phone') ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-transparent'}`}>
-                      <PhoneInput
-                        country={'ae'}
-                        value={formData.phone}
-                        onChange={phone => setFormData({...formData, phone})}
-                        containerStyle={{ width: '100%' }}
-                        inputStyle={{ 
-                          width: '100%', 
-                          height: '76px', 
-                          background: '#020617', 
-                          border: '1px solid #1e293b', 
-                          borderRadius: '24px', 
-                          color: 'white',
-                          paddingLeft: '70px',
-                          fontSize: '18px'
-                        }}
-                        buttonStyle={{ 
-                          background: '#0f172a', 
-                          border: 'none', 
-                          borderRadius: '24px 0 0 24px',
-                          borderRight: '1px solid #1e293b',
-                          width: '60px'
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className={`text-[10px] font-black uppercase tracking-[0.3em] font-mono ml-2 transition-colors ${errors.includes('email') ? 'text-red-500' : 'text-slate-500'}`}>
-                      {errors.includes('email') ? t('error_email_required', 'Valid Email Required') : t('form_email', 'Business Email')}
-                    </label>
-                    <input 
-                      required 
-                      type="email" 
-                      placeholder={t('form_email_placeholder', "name@company.com")} 
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className={`w-full bg-slate-950 border rounded-3xl px-8 py-6 text-white text-lg outline-none transition-all placeholder:text-slate-800 font-medium ${
-                        errors.includes('email') ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse' : 'border-slate-800 focus:border-brand-500'
-                      }`}
-                    />
-                  </div>
-
-                  <motion.button 
-                    animate={errors.length > 0 ? { x: [0, -10, 10, -10, 10, 0] } : {}}
-                    transition={{ duration: 0.4 }}
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-brand-500 text-slate-950 font-black uppercase tracking-widest py-8 rounded-[2.5rem] hover:bg-brand-400 transition-all flex items-center justify-center gap-4 shadow-[0_0_60px_rgba(14,165,233,0.4)] relative overflow-hidden group"
-                  >
-                    {loading ? (
-                      <div className="w-8 h-8 border-4 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <>
-                        {t('submit_btn', 'Initiate Secure Audit')}
-                        <Send size={24} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                      </>
-                    )}
-                  </motion.button>
-                </div>
-
-                <div className="flex flex-wrap justify-center gap-10 text-slate-600 mt-12 border-t border-slate-900 pt-10">
-                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]"><ShieldCheck size={16} className="text-brand-500"/> {t('audit_footer_sovereign', 'Data Sovereign')}</div>
-                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]"><Zap size={16} className="text-brand-500"/> {t('audit_footer_sync', 'Real-Time Sync')}</div>
-                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]"><BarChart3 size={16} className="text-brand-500"/> {t('audit_footer_growth', 'Growth Focused')}</div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </form>
-
-        {/* Navigation Actions */}
-        {step > 1 && step < totalSteps && !submitted && (
-          <div className="mt-12 flex justify-center">
-            <button 
-              onClick={prevStep}
-              className="flex items-center gap-2 text-slate-600 hover:text-white transition-colors font-black uppercase tracking-[0.3em] text-[10px] py-4"
-            >
-              <ChevronLeft size={16} /> {t('prev_btn', 'Previous Diagnostic')}
-            </button>
+      <div className="relative z-10 mx-auto max-w-5xl">
+        <header className={`mb-8 flex flex-col gap-6 md:mb-10 md:flex-row md:items-end md:justify-between ${isRtl ? 'text-right' : 'text-left'}`}>
+          <div className="max-w-3xl">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/16 bg-white/[0.03] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-200">
+              <Sparkles size={14} />
+              {copy.pageBadge}
+            </div>
+            <h1 className="text-4xl font-black leading-tight tracking-tight text-white md:text-6xl">
+              {copy.pageTitle}
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-400 md:text-lg">
+              {copy.pageSubtitle}
+            </p>
           </div>
-        )}
-      </div>
 
-      <style>{`
-        .custom-phone-input .react-tel-input .country-list {
-          background: #020617 !important;
-          border: 1px solid #1e293b !important;
-          color: white !important;
-          border-radius: 20px !important;
-          padding: 10px !important;
-          margin-top: 15px !important;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
-        }
-        .custom-phone-input .react-tel-input .country-list .country:hover {
-          background: #0ea5e920 !important;
-        }
-        .custom-phone-input .react-tel-input .country-list .country.highlight {
-          background: #0ea5e940 !important;
-        }
-        .custom-phone-input .react-tel-input .selected-flag:hover {
-          background: transparent !important;
-        }
-      `}</style>
-    </div>
+          <div className="min-w-[190px] rounded-2xl border border-white/10 bg-[#101827]/60 p-4 backdrop-blur-xl">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">{progressText}</p>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#050713]">
+              <motion.div
+                animate={{ width: `${progress}%` }}
+                className="h-full rounded-full bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#38D8FF]"
+              />
+            </div>
+          </div>
+        </header>
+
+        <section className="relative overflow-hidden rounded-[2.4rem] border border-violet-400/14 bg-[#101827]/70 p-5 shadow-[0_30px_120px_rgba(5,7,19,0.62)] backdrop-blur-2xl md:p-8 lg:p-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(124,58,237,0.14),transparent_36%),radial-gradient(circle_at_100%_20%,rgba(56,216,255,0.10),transparent_34%)]" />
+          <div className="relative z-10">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: isRtl ? -24 : 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: isRtl ? 24 : -24 }}
+                transition={{ duration: 0.26, ease: 'easeOut' }}
+              >
+                <div className={`mb-8 ${isRtl ? 'text-right' : 'text-left'}`}>
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/14 bg-[#050713]/80 text-cyan-200">
+                    {step === 1 ? <FileText size={24} /> : step === 10 ? <Send size={23} /> : <Layers3 size={24} />}
+                  </div>
+                  <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-violet-200">{progressText}</p>
+                  <h2 className="text-3xl font-black leading-tight text-white md:text-5xl">{currentStepCopy.title}</h2>
+                  <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-400 md:text-lg">{currentStepCopy.helper}</p>
+                  {currentStepCopy.question && <p className="mt-3 text-sm font-semibold text-cyan-100/80">{currentStepCopy.question}</p>}
+                </div>
+
+                {renderStep()}
+
+                {(attempted && stepError) || submitError ? (
+                  <motion.p
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`mt-5 rounded-2xl border border-red-400/20 bg-red-400/[0.06] px-4 py-3 text-sm font-semibold text-red-100 ${isRtl ? 'text-right' : 'text-left'}`}
+                  >
+                    {submitError || stepError}
+                  </motion.p>
+                ) : null}
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="mt-10 flex flex-col-reverse gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                onClick={goPrevious}
+                disabled={step === 1 || loading}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.035] px-6 py-4 text-sm font-black text-white transition-all hover:border-cyan-300/25 hover:bg-white/[0.06] disabled:pointer-events-none disabled:opacity-30"
+              >
+                <ChevronLeft className={isRtl ? 'rotate-180' : ''} size={18} />
+                {copy.previous}
+              </button>
+
+              <div className={`flex items-center gap-3 text-xs font-medium text-slate-500 ${isRtl ? 'text-right' : 'text-left'}`}>
+                <ShieldCheck className="shrink-0 text-cyan-300" size={16} />
+                <span>{copy.privacyNote}</span>
+              </div>
+
+              <button
+                type="button"
+                onClick={step === totalSteps ? handleSubmit : goNext}
+                disabled={!canContinue || loading}
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] px-7 py-4 text-sm font-black text-white shadow-[0_18px_52px_rgba(37,99,235,0.28)] transition-all hover:-translate-y-1 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-45 disabled:grayscale"
+              >
+                {loading ? copy.sending : step === totalSteps ? copy.submit : copy.next}
+                {loading ? (
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/80 border-t-transparent" />
+                ) : step === totalSteps ? (
+                  <Send size={18} />
+                ) : (
+                  <ArrowRight className={isRtl ? 'rotate-180' : ''} size={18} />
+                )}
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 };

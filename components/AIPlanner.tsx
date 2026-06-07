@@ -43,13 +43,13 @@ export const AIPlanner: React.FC = () => {
     setErrorState('none');
     setPlan('');
     setDemoData(null);
-    setLoadingStep('Analyzing Business Logic...');
+    setLoadingStep('Understanding the workflow...');
     
     try {
       const planResult = await generateProjectPlan(idea);
       setPlan(planResult);
 
-      setLoadingStep('Rendering Visual Identity...');
+      setLoadingStep('Preparing a product preview...');
       const demoResult = await generateVisualDemo(idea);
       if (demoResult) {
         setDemoData(demoResult);
@@ -80,9 +80,9 @@ export const AIPlanner: React.FC = () => {
     return (
       <div className="max-w-4xl mx-auto glass-panel p-16 rounded-[4rem] text-center border border-brand-500/20 shadow-2xl animate-in zoom-in duration-500 bg-slate-950/80">
         <Key className="text-brand-400 mx-auto mb-10 animate-pulse" size={64} />
-        <h3 className="text-4xl font-display font-black text-white mb-6 uppercase tracking-tighter text-3d-hero">Neural Link Required</h3>
+        <h3 className="text-4xl font-display font-black text-white mb-6 uppercase tracking-tighter text-3d-hero">API Key Required</h3>
         <p className="text-slate-400 text-xl mb-12 font-light leading-relaxed max-w-lg mx-auto">
-          Please connect your API Key to initialize the System Architect.
+          Please connect your API key to generate a system plan.
         </p>
         <button 
           onClick={handleOpenKeyDialog}
@@ -102,8 +102,8 @@ export const AIPlanner: React.FC = () => {
             <Cpu size={32} className={isLoading ? 'animate-spin' : ''} />
           </div>
           <div>
-            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">System Architect</h3>
-            <p className="text-slate-500 text-xs font-mono uppercase tracking-[0.3em]">Neural Synthesis Engine</p>
+            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">System Planner</h3>
+            <p className="text-slate-500 text-xs font-mono uppercase tracking-[0.3em]">Workflow to product plan</p>
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export const AIPlanner: React.FC = () => {
           <textarea
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
-            placeholder="What should we build? (e.g., A luxury watch e-commerce store...)"
+            placeholder="What should we build? (e.g., a booking platform for a beauty clinic...)"
             className="w-full h-40 bg-black/40 border-2 border-slate-800 rounded-[2rem] p-8 text-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500/50 outline-none transition-all text-xl mb-8 placeholder:opacity-30"
           />
           <button
@@ -120,7 +120,7 @@ export const AIPlanner: React.FC = () => {
             className="w-full py-6 bg-brand-600 text-white rounded-2xl font-black text-xl hover:bg-brand-500 transition-all flex items-center justify-center gap-4 disabled:opacity-30 shadow-[0_20px_50px_rgba(14,165,233,0.2)]"
           >
             {isLoading ? <Loader2 className="animate-spin" /> : <Zap size={24} />}
-            {isLoading ? 'Processing Neural Streams...' : 'Synthesize Architecture'}
+            {isLoading ? 'Preparing Your Plan...' : 'Create System Plan'}
           </button>
         </form>
       </div>
@@ -129,8 +129,8 @@ export const AIPlanner: React.FC = () => {
         <div className="max-w-full mx-auto w-full animate-in fade-in slide-in-from-bottom-10 duration-1000">
           <div className="flex justify-center mb-10">
              <div className="flex p-1.5 bg-slate-900/90 rounded-2xl border border-white/5 backdrop-blur-xl">
-                <button onClick={() => setActiveTab('demo')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'demo' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><Layout size={14} /> Site Preview</button>
-                <button onClick={() => setActiveTab('blueprint')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'blueprint' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><FileText size={14} /> Logic Blueprint</button>
+                <button onClick={() => setActiveTab('demo')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'demo' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><Layout size={14} /> Product Preview</button>
+                <button onClick={() => setActiveTab('blueprint')} className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'blueprint' ? 'bg-white text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white'}`}><FileText size={14} /> System Plan</button>
              </div>
           </div>
           
@@ -138,7 +138,7 @@ export const AIPlanner: React.FC = () => {
             {isLoading && (
               <div className="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-3xl flex flex-col items-center justify-center text-center p-10">
                  <div className="w-20 h-20 rounded-full border-4 border-slate-800 border-t-brand-500 animate-spin mb-8 shadow-[0_0_50px_rgba(14,165,233,0.4)]"></div>
-                 <p className="text-2xl font-display font-black text-white tracking-[0.2em] uppercase mb-3">Architecting Your Vision</p>
+                 <p className="text-2xl font-display font-black text-white tracking-[0.2em] uppercase mb-3">Designing Your System</p>
                  <p className="text-brand-400 font-mono text-sm uppercase tracking-[0.4em] animate-pulse">{loadingStep}</p>
               </div>
             )}

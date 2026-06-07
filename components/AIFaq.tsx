@@ -61,13 +61,13 @@ export const AIFaq: React.FC = () => {
           <div className="bg-slate-900/95 p-5 border-b border-slate-800 flex justify-between items-center backdrop-blur-md">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center p-1.5 shadow-inner">
-                 <img src="https://files.catbox.moe/n3xbja.png" alt="SKH" className="w-full h-full object-cover rounded-lg brightness-110" />
+                 <img src="/skh-logo-mark.png" alt="SKH" className="w-full h-full object-contain rounded-lg brightness-110" />
               </div>
               <div>
                  <h3 className="text-white font-black text-sm font-display tracking-tight uppercase">SKH Assistant</h3>
                  <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">Protocol_Active</span>
+                    <span className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">Online</span>
                  </div>
               </div>
             </div>
@@ -112,7 +112,7 @@ export const AIFaq: React.FC = () => {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Query architectural team..."
+              placeholder="Ask about your system..."
               className="flex-1 bg-slate-800/50 text-white text-sm rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-500/50 border border-slate-700 placeholder-slate-600 transition-all font-medium"
             />
             <button

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Menu, X, Globe, ChevronDown, Hexagon } from 'lucide-react';
+import { Mail, Menu, X, Globe, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface NavBarProps {
@@ -46,10 +46,10 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
 
   const navItems = [
     { id: 'home', label: t('nav_home', 'Home') },
-    { id: 'services', label: t('nav_services', 'Services') },
-    { id: 'process', label: t('nav_process', 'Methodology') },
-    { id: 'offers', label: t('nav_offers', 'Offers') },
-    { id: 'about', label: t('nav_about', 'About') },
+    { id: 'services', label: t('nav_services', 'Systems') },
+    { id: 'about', label: t('nav_about', 'Case Studies') },
+    { id: 'process', label: t('nav_process', 'Process') },
+    { id: 'contact', label: t('nav_contact', 'Contact') },
   ];
 
   return (
@@ -64,11 +64,11 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
               onClick={() => setActivePage('home')}
             >
               <div className="relative group">
-                 <div className="absolute inset-0 bg-brand-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                 <div className="absolute inset-0 bg-violet-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                  <img 
-                    src="https://files.catbox.moe/n3xbja.png" 
+                    src="/skh-logo-mark.png" 
                     alt="SKH Logo" 
-                    className="relative w-20 h-20 md:w-28 md:h-28 object-cover brightness-110 contrast-110 filter drop-shadow-[0_0_15px_rgba(14,165,233,0.4)] transition-transform group-hover:scale-105" 
+                    className="relative w-20 h-20 md:w-28 md:h-28 object-contain brightness-110 contrast-110 filter drop-shadow-[0_0_15px_rgba(124,58,237,0.35)] transition-transform group-hover:scale-105"
                  />
               </div>
             </div>
@@ -102,9 +102,9 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
                <div className="relative">
                  <button 
                     onClick={() => setLangOpen(!langOpen)}
-                    className="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-white/10 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all active:scale-95"
+                    className="flex items-center gap-2 px-3 py-2 bg-[#101827]/80 border border-white/10 text-white rounded-xl text-xs font-bold hover:bg-[#101827] transition-all active:scale-95"
                  >
-                    <Globe size={14} className="text-brand-400" />
+                    <Globe size={14} className="text-cyan-300" />
                     <span className="uppercase">{i18n.language.split('-')[0]}</span>
                     <ChevronDown size={12} className={`transition-transform ${langOpen ? 'rotate-180' : ''}`} />
                  </button>
@@ -115,7 +115,7 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
                        <button
                          key={l.code}
                          onClick={() => changeLanguage(l.code)}
-                         className={`w-full flex items-center gap-3 px-5 py-3 text-sm transition-colors ${i18n.language.startsWith(l.code) ? 'bg-brand-500/10 text-brand-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                         className={`w-full flex items-center gap-3 px-5 py-3 text-sm transition-colors ${i18n.language.startsWith(l.code) ? 'bg-violet-500/10 text-cyan-200' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
                        >
                          <span className="text-base">{l.flag}</span>
                          <span className="font-bold">{l.label}</span>
@@ -127,11 +127,11 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
 
                <button 
                   onClick={() => setActivePage('audit')}
-                  className="hidden md:flex group relative items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-sm transition-all shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] overflow-hidden"
+                  className="hidden md:flex group relative items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] text-white rounded-xl font-bold text-sm transition-all shadow-[0_14px_42px_rgba(37,99,235,0.28)] hover:shadow-[0_18px_60px_rgba(56,216,255,0.22)] overflow-hidden"
                >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                   <Mail size={16} />
-                  <span>{t('nav_audit')}</span>
+                  <span>{t('nav_audit', 'Start a System Review')}</span>
                </button>
 
                {/* Mobile Toggle */}
@@ -152,7 +152,7 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
          {/* Background Grid */}
          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none"></div>
          
-         <img src="https://files.catbox.moe/n3xbja.png" alt="Logo" className="w-28 h-28 mb-4 brightness-110 contrast-110 shadow-2xl" />
+         <img src="/skh-logo-mark.png" alt="Logo" className="w-28 h-28 mb-4 object-contain brightness-110 contrast-110 shadow-2xl" />
 
          {navItems.map((item, idx) => (
             <button
@@ -169,9 +169,9 @@ export const NavBar: React.FC<NavBarProps> = ({ activePage, setActivePage }) => 
 
          <button 
             onClick={() => { setActivePage('audit'); setMobileMenuOpen(false); }}
-            className="px-8 py-4 bg-white text-slate-950 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+            className="px-8 py-4 bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] text-white rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-[0_20px_60px_rgba(37,99,235,0.30)]"
          >
-            {t('audit_btn', 'Get My Growth Analysis')}
+            {t('audit_btn', 'Start a System Review')}
          </button>
       </div>
     </>

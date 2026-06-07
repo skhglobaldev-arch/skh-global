@@ -27,33 +27,33 @@ export const NAV_ITEMS: NavItem[] = [
 
 export const SERVICES: ServiceItem[] = [
   {
-    title: 'Advanced Real-Time Dashboards',
-    description: 'We build admin & client portals with enterprise-grade syncing. Track sales, bookings, and user activity live without refreshing. No more waiting for reports.',
+    title: 'Real-Time Dashboards',
+    description: 'Admin and customer portals for bookings, sales and daily activity without waiting for reports.',
     icon: Monitor
   },
   {
     title: 'Business Workflow Automation',
-    description: 'We replace manual chaos with bespoke automation engines. Connect your forms to CRMs, automate complex logistics, and trigger intelligent event logic.',
+    description: 'Connect forms, CRMs, messages and follow-ups so repeated tasks happen with less manual work.',
     icon: Workflow
   },
   {
-    title: 'Complex Booking & Payments',
-    description: 'Multi-step booking flows with intelligent branch logic, multi-currency support, and automated availability protocols across your entire team.',
+    title: 'Booking & Payments',
+    description: 'Booking flows with staff logic, deposits, payment links, availability and reminders.',
     icon: CalendarCheck
   },
   {
-    title: 'Growth & Tracking Hubs',
-    description: 'Built-in growth engines: referral architectures, cookie-based attribution, and custom commission dashboards for your strategic partners.',
+    title: 'Customer & Sales Tracking',
+    description: 'Track enquiries, sources, status and outcomes in one practical dashboard.',
     icon: Users
   },
   {
-    title: 'Military-Grade Security',
-    description: 'Strict RBAC (Role-Based Access Control), zero-trust architecture, and secure API integration ensuring your data sovereignty remains absolute.',
+    title: 'Secure Access',
+    description: 'Role-based access, secure API connections and sensible protection for business data.',
     icon: ShieldCheck
   },
   {
     title: 'AI Product Engineering',
-    description: 'We don\'t just add a chatbot. We analyze your model to engineer a scalable, AI-orchestrated architecture that delivers real business edge.',
+    description: 'Useful AI features, chatbots and SaaS tools designed around the way the product should work.',
     icon: BrainCircuit
   }
 ];
@@ -86,8 +86,8 @@ export const STEPS: StepItem[] = [
     icon: Lightbulb
   },
   {
-    title: "Strategic Architecture",
-    description: "Our architects design a scalable system blueprint tailored to your specific needs.",
+    title: "System Plan",
+    description: "We design a clear blueprint for the features, data and workflow you need.",
     icon: FileCode
   },
   {
@@ -102,26 +102,26 @@ export const STEPS: StepItem[] = [
   },
   {
     title: "Scale & Support",
-    description: "We ensure your system grows effortlessly alongside your expanding business.",
+    description: "We support the system as your business changes and grows.",
     icon: TrendingUp
   }
 ];
 
 export const PAIN_POINTS: PainPoint[] = [
   {
-    question: "Do you really own a business, or just a website?",
+    question: "Do your tools actually help run the business?",
     pain: "Most sites are static brochures that don't do any real work, leaving you to handle the heavy lifting manually.",
-    solution: "We build revenue-ready systems with booking, payments, and dashboards that automate your operations 24/7.",
+    solution: "We build practical systems with booking, payments and dashboards so less work depends on manual follow-up.",
     icon: Rocket
   },
   {
     question: "Drowning in manual processes?",
     pain: "Managing reservations, emails, and syncs between different tools manually is a bottleneck that kills growth.",
-    solution: "Our custom automation layers handle everything. From form submission to CRM integration and reporting—zero manual intervention.",
+    solution: "We connect forms, CRMs, messages and reports so repeated follow-up takes less manual work.",
     icon: Zap
   },
   {
-    question: "Are you flying blind?",
+    question: "Are you making decisions without clear data?",
     pain: "Without real-time data, you can't make strategic decisions. Static admin panels are outdated and slow.",
     solution: "Get custom Live Dashboards. See sales, active users, and resource availability the second it happens.",
     icon: Monitor
@@ -129,7 +129,7 @@ export const PAIN_POINTS: PainPoint[] = [
   {
     question: "Is security a recurring anxiety?",
     pain: "Generic plugins and third-party boxes leave your business vulnerable to leaks and data loss.",
-    solution: "We implement custom Hardened Security: Zero-trust access, encrypted channels, and secure payment pipelines.",
+    solution: "We design secure access for accounts, customer data and payments.",
     icon: ShieldCheck
   }
 ];

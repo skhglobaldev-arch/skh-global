@@ -25,15 +25,15 @@ export const Services: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <Reveal>
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-brand-500/20 bg-slate-900/50 mb-6 backdrop-blur-xl">
-               <Sparkles size={14} className="text-brand-400 mr-2 animate-pulse" />
-               <span className="text-brand-400 text-xs font-bold uppercase tracking-[0.2em]">{t('our_ecosystem_tag', 'Our Ecosystem')}</span>
+            <div className="mb-6 inline-flex items-center justify-center rounded-full border border-violet-400/20 bg-[#101827]/60 px-4 py-1.5 backdrop-blur-xl">
+               <Sparkles size={14} className="mr-2 text-cyan-200" />
+               <span className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-100">{t('our_ecosystem_tag', 'System Types')}</span>
             </div>
             <h3 className="text-4xl md:text-6xl font-display font-black text-white mb-6 tracking-tight">
-              {t('modular_architecture_title', 'Modular')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-cyan-300 to-white">{t('architecture_accent', 'Architecture')}</span>
+              {t('modular_architecture_title', 'Practical')} <span className="bg-gradient-to-br from-[#A855F7] via-[#2563EB] to-[#38D8FF] bg-clip-text text-transparent">{t('architecture_accent', 'Systems')}</span>
             </h3>
             <p className="text-slate-400 text-lg font-light leading-relaxed">
-              {t('services_desc_text', "We don't just build websites. We engineer high-performance systems. Drag the carousel below to explore our core technical capabilities.")}
+              {t('services_desc_text', "We build web apps, dashboards, booking flows, automations and SaaS products around the way your business works.")}
             </p>
           </div>
         </Reveal>

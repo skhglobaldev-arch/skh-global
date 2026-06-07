@@ -124,8 +124,8 @@ export const SystemIntro: React.FC<SystemIntroProps> = ({ onComplete }) => {
             <Power size={72} className="text-brand-400 group-hover:text-white transition-colors animate-pulse" />
           </button>
           <div className="text-center">
-            <h2 className="text-white font-display font-black text-4xl tracking-[0.5em] uppercase mb-4 drop-shadow-[0_0_20px_rgba(14,165,233,0.9)]">Connect Grid</h2>
-            <p className="text-brand-300 font-mono text-xs tracking-[0.4em] uppercase opacity-60">System Ready for Neural Link</p>
+            <h2 className="text-white font-display font-black text-4xl tracking-[0.5em] uppercase mb-4 drop-shadow-[0_0_20px_rgba(14,165,233,0.9)]">Start System</h2>
+            <p className="text-brand-300 font-mono text-xs tracking-[0.4em] uppercase opacity-60">System preview is ready</p>
           </div>
         </div>
       )}
@@ -154,8 +154,8 @@ export const SystemIntro: React.FC<SystemIntroProps> = ({ onComplete }) => {
                    <Zap className="text-brand-400 animate-pulse" size={28} />
                 </div>
                 <div className="flex flex-col">
-                   <span className="text-[10px] font-mono text-brand-500 uppercase tracking-[0.5em] mb-1 font-black">Link_Established</span>
-                   <span className="text-2xl font-bold text-white tracking-widest font-display drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] uppercase">Syncing Neural Data...</span>
+                   <span className="text-[10px] font-mono text-brand-500 uppercase tracking-[0.5em] mb-1 font-black">System_Loading</span>
+                   <span className="text-2xl font-bold text-white tracking-widest font-display drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] uppercase">Preparing System Preview...</span>
                 </div>
              </div>
           </div>

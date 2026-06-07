@@ -4,14 +4,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>SKH.GLOBAL | Premium AI Systems & Web Architecture</title>
+    <title>SKH.GLOBAL | From Idea to System</title>
     
     <!-- Favicon / Browser Tab Logo -->
-    <link rel="icon" type="image/jpeg" href="https://files.catbox.moe/c4wuxn.jpeg">
-    <link rel="apple-touch-icon" href="https://files.catbox.moe/c4wuxn.jpeg">
+    <link rel="icon" type="image/png" href="/skh-logo-mark.png">
+    <link rel="apple-touch-icon" href="/skh-logo-mark.png">
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="SKH.GLOBAL is a premium web agency specializing in high-performance AI automation, custom dashboards, and scalable business systems.">
+    <meta name="description" content="SKH.GLOBAL is a premium digital systems studio turning real business problems into web apps, dashboards, booking systems, automation and SaaS products.">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,17 +20,17 @@
           extend: {
             colors: {
               brand: {
-                50: '#f0f9ff',
-                100: '#e0f2fe',
-                200: '#bae6fd',
-                300: '#7dd3fc',
-                400: '#38bdf8',
-                500: '#0ea5e9',
-                600: '#0284c7',
-                700: '#0369a1',
-                800: '#075985',
-                900: '#0c4a6e',
-                950: '#082f49',
+                50: '#eef8ff',
+                100: '#d9f0ff',
+                200: '#b9e6ff',
+                300: '#7ddfff',
+                400: '#38D8FF',
+                500: '#2563EB',
+                600: '#7C3AED',
+                700: '#6D28D9',
+                800: '#4C1D95',
+                900: '#1E1B4B',
+                950: '#050713',
               }
             },
             fontFamily: {
@@ -63,18 +63,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body { overflow-x: hidden; background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; }
+      html, body { overflow-x: hidden; background-color: #050713; color: #f8fafc; font-family: 'Inter', sans-serif; }
       #root { min-height: 100%; }
       .perspective-2000 { perspective: 2000px; }
       .preserve-3d { transform-style: preserve-3d; }
-      .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(56, 189, 248, 0.3); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+      .glass-panel { background: rgba(16, 24, 39, 0.72); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(124, 58, 237, 0.18); box-shadow: 0 24px 80px rgba(5, 7, 19, 0.55), 0 0 40px rgba(37, 99, 235, 0.08); }
       .text-3d-hero { transform-style: preserve-3d; transform: perspective(1000px) rotateX(5deg); text-shadow: 0 10px 30px rgba(0, 0, 0, 0.9); }
-      .glow-text { text-shadow: 0 0 25px rgba(56, 189, 248, 0.6), 0 0 50px rgba(56, 189, 248, 0.3); }
-      .bg-grid { background-image: linear-gradient(to right, rgba(14, 165, 233, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(14, 165, 233, 0.05) 1px, transparent 1px); background-size: 50px 50px; }
-      .reveal { opacity: 0; transform: translateY(15px); transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
-      .reveal.active { opacity: 1; transform: translateY(0); }
+      .glow-text { text-shadow: 0 0 25px rgba(56, 216, 255, 0.35), 0 0 50px rgba(124, 58, 237, 0.18); }
+      .bg-grid { background-image: linear-gradient(to right, rgba(56, 216, 255, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(168, 85, 247, 0.035) 1px, transparent 1px); background-size: 64px 64px; }
+      .reveal { opacity: 0; transform: translateY(22px) scale(0.985); filter: blur(8px); transition: opacity 0.78s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.78s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.78s cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .reveal.active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+        * { scroll-behavior: auto !important; }
+      }
       ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #020617; }
+      ::-webkit-scrollbar-track { background: #050713; }
       ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
     <script type="importmap">

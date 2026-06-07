@@ -26,6 +26,10 @@ const getSiteUrl = (req?: express.Request) => {
     return process.env.PUBLIC_SITE_URL.replace(/\/$/, "");
   }
 
+  if (process.env.URL) {
+    return process.env.URL.replace(/\/$/, "");
+  }
+
   if (req?.get("host")) {
     return `${req.protocol}://${req.get("host")}`;
   }
@@ -69,26 +73,34 @@ const languageNames: Record<string, string> = {
 };
 
 const emailUiCopy: Record<string, { button: string; ticket: string; received: string; subject: string; titlePrefix: string; genericBusiness: string }> = {
-  ar: { button: "عرض المسار المقترح", ticket: "رقم التذكرة", received: "تم استلام طلبكم في SKH Global.", subject: "تحليلكم جاهز", titlePrefix: "التقرير الأولي لهندسة الإيرادات لـ", genericBusiness: "عملكم" },
-  bn: { button: "প্রস্তাবিত পথ দেখুন", ticket: "টিকিট নম্বর", received: "SKH Global-এ আপনার অনুরোধ গ্রহণ করা হয়েছে।", subject: "আপনার বিশ্লেষণ প্রস্তুত", titlePrefix: "Revenue Architecture প্রাথমিক রিপোর্ট:", genericBusiness: "আপনার ব্যবসা" },
-  de: { button: "Vorgeschlagenen Plan ansehen", ticket: "Ticketnummer", received: "Ihre Anfrage bei SKH Global wurde empfangen.", subject: "Ihre Analyse ist bereit", titlePrefix: "Erster Revenue-Architecture-Bericht fuer", genericBusiness: "Ihr Unternehmen" },
-  en: { button: "View Proposed Path", ticket: "Ticket ID", received: "Your request has been received by SKH Global.", subject: "Your analysis is ready", titlePrefix: "Initial Revenue Architecture Report for", genericBusiness: "your business" },
-  es: { button: "Ver ruta propuesta", ticket: "Numero de ticket", received: "Hemos recibido su solicitud en SKH Global.", subject: "Su analisis esta listo", titlePrefix: "Informe inicial de Revenue Architecture para", genericBusiness: "su negocio" },
-  fa: { button: "مشاهده مسیر پیشنهادی", ticket: "شماره تیکت", received: "درخواست شما در SKH Global ثبت شد.", subject: "آنالیز شما آماده است", titlePrefix: "گزارش اولیه Revenue Architecture برای", genericBusiness: "بیزینس شما" },
-  fr: { button: "Voir le parcours propose", ticket: "Numero de ticket", received: "Votre demande a bien ete recue par SKH Global.", subject: "Votre analyse est prete", titlePrefix: "Rapport initial Revenue Architecture pour", genericBusiness: "votre entreprise" },
-  hi: { button: "प्रस्तावित मार्ग देखें", ticket: "टिकट नंबर", received: "SKH Global को आपका अनुरोध मिल गया है।", subject: "आपका विश्लेषण तैयार है", titlePrefix: "Revenue Architecture की प्रारंभिक रिपोर्ट:", genericBusiness: "आपका व्यवसाय" },
-  it: { button: "Vedi percorso proposto", ticket: "Numero ticket", received: "La tua richiesta e stata ricevuta da SKH Global.", subject: "La tua analisi e pronta", titlePrefix: "Report iniziale Revenue Architecture per", genericBusiness: "la tua azienda" },
-  ja: { button: "提案された流れを見る", ticket: "チケット番号", received: "SKH Global がリクエストを受け付けました。", subject: "分析が準備できました", titlePrefix: "Revenue Architecture 初期レポート：", genericBusiness: "あなたのビジネス" },
-  ko: { button: "제안 경로 보기", ticket: "티켓 번호", received: "SKH Global에서 요청을 접수했습니다.", subject: "분석이 준비되었습니다", titlePrefix: "Revenue Architecture 초기 리포트:", genericBusiness: "귀하의 비즈니스" },
-  pt: { button: "Ver caminho proposto", ticket: "Numero do ticket", received: "Recebemos a sua solicitacao na SKH Global.", subject: "A sua analise esta pronta", titlePrefix: "Relatorio inicial de Revenue Architecture para", genericBusiness: "o seu negocio" },
-  ru: { button: "Посмотреть предложенный путь", ticket: "Номер заявки", received: "Ваш запрос получен SKH Global.", subject: "Ваш анализ готов", titlePrefix: "Первичный отчет Revenue Architecture для", genericBusiness: "вашего бизнеса" },
-  sw: { button: "Angalia njia iliyopendekezwa", ticket: "Namba ya tiketi", received: "Ombi lako limepokelewa na SKH Global.", subject: "Uchambuzi wako uko tayari", titlePrefix: "Ripoti ya awali ya Revenue Architecture kwa", genericBusiness: "biashara yako" },
-  tr: { button: "Onerilen yolu gor", ticket: "Talep numarasi", received: "Talebiniz SKH Global tarafindan alindi.", subject: "Analiziniz hazir", titlePrefix: "Revenue Architecture ilk raporu:", genericBusiness: "isletmeniz" },
-  ur: { button: "مجوزہ راستہ دیکھیں", ticket: "ٹکٹ نمبر", received: "آپ کی درخواست SKH Global کو موصول ہو گئی ہے۔", subject: "آپ کا تجزیہ تیار ہے", titlePrefix: "Revenue Architecture کی ابتدائی رپورٹ برائے", genericBusiness: "آپ کا بزنس" },
-  zh: { button: "查看建议路径", ticket: "工单编号", received: "SKH Global 已收到您的请求。", subject: "您的分析已准备好", titlePrefix: "Revenue Architecture 初步报告：", genericBusiness: "您的业务" }
+  ar: { button: "عرض خدماتنا", ticket: "رقم الطلب", received: "تم استلام طلبكم.", subject: "تحليلكم جاهز", titlePrefix: "اقتراحنا الأولي لـ", genericBusiness: "عملكم" },
+  bn: { button: "আমাদের সেবা দেখুন", ticket: "রেফারেন্স নম্বর", received: "আপনার অনুরোধ গ্রহণ করা হয়েছে।", subject: "আপনার বিশ্লেষণ প্রস্তুত", titlePrefix: "প্রাথমিক প্রস্তাব:", genericBusiness: "আপনার ব্যবসা" },
+  de: { button: "Unsere Leistungen ansehen", ticket: "Referenznummer", received: "Ihre Anfrage wurde empfangen.", subject: "Ihre Analyse ist bereit", titlePrefix: "Erster Vorschlag fuer", genericBusiness: "Ihr Unternehmen" },
+  en: { button: "Explore Our Services", ticket: "Reference Number", received: "We have received your request.", subject: "Your analysis is ready", titlePrefix: "Recommended next steps for", genericBusiness: "your business" },
+  es: { button: "Ver nuestros servicios", ticket: "Numero de referencia", received: "Hemos recibido su solicitud.", subject: "Su analisis esta listo", titlePrefix: "Propuesta inicial para", genericBusiness: "su negocio" },
+  fa: { button: "مشاهده خدمات ما", ticket: "شماره پیگیری", received: "درخواست شما دریافت شد.", subject: "آنالیز شما آماده است", titlePrefix: "پیشنهاد اولیه برای", genericBusiness: "کسب‌وکار شما" },
+  fr: { button: "Voir nos services", ticket: "Numero de reference", received: "Votre demande a bien ete recue.", subject: "Votre analyse est prete", titlePrefix: "Premiere proposition pour", genericBusiness: "votre entreprise" },
+  hi: { button: "हमारी सेवाएं देखें", ticket: "संदर्भ नंबर", received: "आपका अनुरोध मिल गया है।", subject: "आपका विश्लेषण तैयार है", titlePrefix: "प्रारंभिक सुझाव:", genericBusiness: "आपका व्यवसाय" },
+  it: { button: "Scopri i nostri servizi", ticket: "Numero di riferimento", received: "La tua richiesta e stata ricevuta.", subject: "La tua analisi e pronta", titlePrefix: "Prima proposta per", genericBusiness: "la tua azienda" },
+  ja: { button: "サービスを見る", ticket: "受付番号", received: "リクエストを受け付けました。", subject: "分析が準備できました", titlePrefix: "最初のご提案：", genericBusiness: "あなたのビジネス" },
+  ko: { button: "서비스 보기", ticket: "접수 번호", received: "요청이 접수되었습니다.", subject: "분석이 준비되었습니다", titlePrefix: "첫 제안:", genericBusiness: "귀하의 비즈니스" },
+  pt: { button: "Ver os nossos servicos", ticket: "Numero de referencia", received: "Recebemos a sua solicitacao.", subject: "A sua analise esta pronta", titlePrefix: "Primeira proposta para", genericBusiness: "o seu negocio" },
+  ru: { button: "Посмотреть наши услуги", ticket: "Номер обращения", received: "Ваш запрос получен.", subject: "Ваш анализ готов", titlePrefix: "Первичное предложение для", genericBusiness: "вашего бизнеса" },
+  sw: { button: "Angalia huduma zetu", ticket: "Namba ya kumbukumbu", received: "Ombi lako limepokelewa.", subject: "Uchambuzi wako uko tayari", titlePrefix: "Pendekezo la awali kwa", genericBusiness: "biashara yako" },
+  tr: { button: "Hizmetlerimizi gorun", ticket: "Basvuru numarasi", received: "Talebiniz alindi.", subject: "Analiziniz hazir", titlePrefix: "Ilk onerimiz:", genericBusiness: "isletmeniz" },
+  ur: { button: "ہماری خدمات دیکھیں", ticket: "حوالہ نمبر", received: "آپ کی درخواست موصول ہو گئی ہے۔", subject: "آپ کا تجزیہ تیار ہے", titlePrefix: "ابتدائی تجویز برائے", genericBusiness: "آپ کا بزنس" },
+  zh: { button: "查看我们的服务", ticket: "申请编号", received: "我们已收到您的请求。", subject: "您的分析已准备好", titlePrefix: "初步建议：", genericBusiness: "您的业务" }
 };
 
 const getEmailCopy = (language?: string) => emailUiCopy[normalizeLanguage(language)] || emailUiCopy.en;
+
+const sanitizeCustomerEmail = (text: string) =>
+  text
+    .replace(/Revenue Architecture(s)?/gi, "business system")
+    .replace(/Blueprint/gi, "proposal")
+    .replace(/Architecture Unit/gi, "Team")
+    .replace(/\bartificial intelligence\b/gi, "automation")
+    .replace(/\bAI\b/g, "smart");
 
 const buildFallbackAutoReply = (clientData: Record<string, string>) => {
   const language = normalizeLanguage(clientData["Language"]);
@@ -100,16 +112,16 @@ const buildFallbackAutoReply = (clientData: Record<string, string>) => {
 
   if (language === "fa") {
     return `سلام،
-درخواست آنالیز اولیه برای ${businessName} دریافت شد و اطلاعات شما بررسی اولیه شد.
+درخواست شما برای ${businessName} دریافت شد و اطلاعات ثبت‌شده را بررسی کردیم.
 
-برداشت ما این است که تکیه روی ${channels} در کنار چالش اصلی شما یعنی ${painPoint}، بخشی از ظرفیت فروش و پیگیری را در مسیرهای دستی نگه داشته است.
+با توجه به کانال‌های فعلی شما (${channels}) و موضوعی که مطرح کرده‌اید (${painPoint})، احتمالاً بخشی از زمان شما صرف پیگیری‌ها و کارهای دستی می‌شود.
 
-برای بیزینسی با ${volume}، پیشنهاد ما ساخت یک Revenue Architecture اختصاصی است: سیستمی برای زمان‌بندی، دریافت بیعانه، ثبت لیدها در CRM و پیگیری خودکار، بدون اینکه کیفیت ارتباط با مشتری افت کند.
+برای کسب‌وکاری با ${volume}، می‌توانیم راهکاری متناسب شامل رزرو آنلاین، دریافت پرداخت، ثبت درخواست مشتری و پیگیری خودکار طراحی کنیم؛ یا در صورت نیاز، یک نرم‌افزار کامل اختصاصی بسازیم.
 
-کارشناسان ما به‌زودی با شما تماس خواهند گرفت تا Blueprint اولیه را مرور کنند و مشخص شود کدام بخش اتوماسیون بیشترین اثر را روی رشد شما دارد.
+کارشناسان ما به‌زودی با شما تماس خواهند گرفت تا نیازتان را دقیق‌تر بررسی کنند و بهترین قدم بعدی را پیشنهاد دهند.
 
 با احترام،
-SKH Global Architecture Unit`;
+تیم SKH Global`;
   }
 
   if (language === "fr") {
@@ -118,12 +130,12 @@ Nous avons bien recu la demande d'analyse initiale pour ${businessName}.
 
 Notre premiere lecture indique que votre dependance a ${channels}, combinee a votre enjeu principal (${painPoint}), peut ralentir le suivi commercial et la conversion.
 
-Pour une activite avec ${volume}, l'opportunite principale consiste a structurer une Revenue Architecture: planification automatisee, collecte d'acomptes, CRM et relances systematiques, sans perdre la qualite de la relation client.
+Pour une activite avec ${volume}, nous pouvons mettre en place un systeme adapte : prise de rendez-vous, paiements, suivi client et relances automatisees.
 
-Nos specialistes vous contacteront prochainement afin de revoir le Blueprint initial et d'identifier le point d'automatisation le plus utile pour votre croissance.
+Nos specialistes vous contacteront prochainement afin de comprendre vos besoins et de recommander la prochaine etape la plus utile.
 
 Cordialement,
-SKH Global Architecture Unit`;
+Equipe SKH Global`;
   }
 
   if (language === "ar") {
@@ -132,12 +144,12 @@ SKH Global Architecture Unit`;
 
 تشير مراجعتنا الاولية إلى أن الاعتماد على ${channels} مع التحدي الحالي (${painPoint}) قد يبطئ المتابعة والتحويل.
 
-بالنسبة لعمل بهذا الحجم (${volume})، تكمن الفرصة في بناء Revenue Architecture: جدولة آلية، تحصيل عربون، CRM، ومتابعات منظمة دون التأثير على جودة التواصل مع العملاء.
+بالنسبة لعمل بهذا الحجم (${volume})، يمكننا بناء نظام عملي للحجوزات والدفع وتسجيل العملاء والمتابعة الآلية.
 
-سيتواصل معكم خبراؤنا قريباً لمراجعة الـ Blueprint الاولي وتحديد نقطة الأتمتة الأعلى تأثيراً على النمو.
+سيتواصل معكم خبراؤنا قريباً لفهم احتياجاتكم واقتراح الخطوة المناسبة.
 
 مع التحية،
-SKH Global Architecture Unit`;
+فريق SKH Global`;
   }
 
   if (language === "es") {
@@ -146,12 +158,12 @@ Hemos recibido la solicitud de analisis inicial para ${businessName}.
 
 Nuestra primera lectura indica que depender de ${channels}, junto con el principal bloqueo que describio (${painPoint}), puede estar ralentizando el seguimiento y la conversion.
 
-Para un negocio con ${volume}, la primera oportunidad suele ser construir una Revenue Architecture mas solida: reservas automatizadas, cobro de depositos, CRM y seguimiento estructurado sin perder calidad en la comunicacion con el cliente.
+Para un negocio con ${volume}, podemos crear un sistema practico de reservas, pagos, registro de clientes y seguimiento automatizado.
 
-Nuestros especialistas se pondran en contacto pronto para revisar el Blueprint inicial e identificar el punto de automatizacion con mayor impacto en su crecimiento.
+Nuestros especialistas se pondran en contacto pronto para conocer sus necesidades y recomendar el siguiente paso adecuado.
 
 Saludos,
-SKH Global Architecture Unit`;
+Equipo SKH Global`;
   }
 
   if (language === "de") {
@@ -160,12 +172,12 @@ wir haben die erste Analyseanfrage fuer ${businessName} erhalten.
 
 Unsere erste Einschaetzung ist, dass die Abhaengigkeit von ${channels} zusammen mit dem beschriebenen Engpass (${painPoint}) Follow-up und Conversion verlangsamen kann.
 
-Fuer ein Unternehmen mit ${volume} liegt die groesste Chance meist in einer staerkeren Revenue Architecture: automatisierte Terminbuchung, Anzahlungen, CRM-Erfassung und strukturierte Nachverfolgung, ohne die Qualitaet der Kundenkommunikation zu senken.
+Fuer ein Unternehmen mit ${volume} koennen wir ein passendes System fuer Termine, Zahlungen, Kundenerfassung und automatische Nachverfolgung entwickeln.
 
-Unsere Spezialisten werden Sie in Kuerze kontaktieren, um den ersten Blueprint zu pruefen und den wirkungsvollsten Automationspunkt fuer Ihr Wachstum zu identifizieren.
+Unsere Spezialisten werden Sie in Kuerze kontaktieren, um Ihren Bedarf zu verstehen und den passenden naechsten Schritt zu empfehlen.
 
 Beste Gruesse,
-SKH Global Architecture Unit`;
+SKH Global Team`;
   }
 
   if (language === "pt") {
@@ -174,12 +186,12 @@ recebemos o pedido de analise inicial para ${businessName}.
 
 A nossa primeira leitura e que depender de ${channels}, juntamente com o principal bloqueio descrito (${painPoint}), pode estar a atrasar o acompanhamento e a conversao.
 
-Para um negocio com ${volume}, a primeira oportunidade costuma ser uma Revenue Architecture mais forte: agendamento automatico, recolha de depositos, CRM e follow-up estruturado sem perder qualidade na comunicacao com o cliente.
+Para um negocio com ${volume}, podemos criar um sistema pratico para agendamento, pagamentos, registo de clientes e acompanhamento automatico.
 
-Os nossos especialistas entrarao em contacto em breve para rever o Blueprint inicial e identificar o ponto de automacao com maior impacto no crescimento.
+Os nossos especialistas entrarao em contacto em breve para entender as suas necessidades e recomendar o proximo passo.
 
 Cumprimentos,
-SKH Global Architecture Unit`;
+Equipa SKH Global`;
   }
 
   if (language === "it") {
@@ -188,12 +200,12 @@ abbiamo ricevuto la richiesta di analisi iniziale per ${businessName}.
 
 La nostra prima lettura e che dipendere da ${channels}, insieme al principale blocco indicato (${painPoint}), possa rallentare follow-up e conversione.
 
-Per un'attivita con ${volume}, la prima opportunita e costruire una Revenue Architecture piu solida: prenotazioni automatiche, raccolta depositi, CRM e follow-up strutturato senza perdere qualita nella comunicazione con il cliente.
+Per un'attivita con ${volume}, possiamo creare un sistema pratico per prenotazioni, pagamenti, gestione clienti e follow-up automatico.
 
-I nostri specialisti ti contatteranno presto per rivedere il Blueprint iniziale e individuare il punto di automazione con maggiore impatto sulla crescita.
+I nostri specialisti ti contatteranno presto per comprendere le esigenze e consigliare il prossimo passo piu adatto.
 
 Cordiali saluti,
-SKH Global Architecture Unit`;
+Team SKH Global`;
   }
 
   if (language === "tr") {
@@ -202,12 +214,12 @@ ${businessName} icin ilk analiz talebini aldik.
 
 Ilk degerlendirmemiz, ${channels} kanallarina bagimli kalmanin ve belirttiginiz ana sorunun (${painPoint}) takip ve donusum surecini yavaslatabilecegi yonunde.
 
-${volume} hacmindeki bir isletme icin ilk firsat genellikle daha guclu bir Revenue Architecture kurmaktir: otomatik randevu, depozito toplama, CRM kaydi ve yapilandirilmis takip.
+${volume} hacmindeki bir isletme icin randevu, odeme, musteri kaydi ve otomatik takip iceren uygun bir sistem kurabiliriz.
 
-Uzmanlarimiz ilk Blueprint'i incelemek ve buyumeniz icin en etkili otomasyon noktasini belirlemek uzere yakinda sizinle iletisime gececek.
+Uzmanlarimiz ihtiyacinizi anlamak ve uygun sonraki adimi onermek uzere yakinda sizinle iletisime gececek.
 
 Saygilarimizla,
-SKH Global Architecture Unit`;
+SKH Global Ekibi`;
   }
 
   if (language === "ru") {
@@ -216,12 +228,12 @@ SKH Global Architecture Unit`;
 
 Первичная оценка показывает, что зависимость от ${channels} вместе с указанным узким местом (${painPoint}) может замедлять follow-up и конверсию.
 
-Для бизнеса с объемом ${volume} первая возможность обычно заключается в более сильной Revenue Architecture: автоматическая запись, сбор депозитов, CRM и структурированное сопровождение клиентов.
+Для бизнеса с объемом ${volume} мы можем создать удобную систему записи, оплаты, учета клиентов и автоматических напоминаний.
 
-Наши специалисты скоро свяжутся с вами, чтобы разобрать первичный Blueprint и определить самую эффективную точку автоматизации для роста.
+Наши специалисты скоро свяжутся с вами, чтобы понять потребности и рекомендовать следующий шаг.
 
 С уважением,
-SKH Global Architecture Unit`;
+Команда SKH Global`;
   }
 
   if (language === "zh") {
@@ -230,12 +242,12 @@ SKH Global Architecture Unit`;
 
 我们的初步判断是，依赖 ${channels}，再加上您描述的主要瓶颈（${painPoint}），可能正在减慢跟进和转化。
 
-对于客户规模为 ${volume} 的业务，第一步通常是建立更强的 Revenue Architecture：自动预约、定金收取、CRM 记录和结构化跟进，同时保持客户沟通质量。
+对于客户规模为 ${volume} 的业务，我们可以提供预约、付款、客户记录和自动跟进的一体化系统。
 
-我们的专家会尽快与您联系，审阅初步 Blueprint，并确定对增长影响最大的自动化节点。
+我们的专家会尽快与您联系，了解您的需求并建议合适的下一步。
 
 此致，
-SKH Global Architecture Unit`;
+SKH Global 团队`;
   }
 
   if (language === "ko") {
@@ -244,12 +256,12 @@ ${businessName}에 대한 초기 분석 요청을 받았습니다.
 
 저희의 첫 판단은 ${channels}에 대한 의존과 말씀하신 주요 병목(${painPoint})이 후속 응대와 전환 속도를 늦출 수 있다는 점입니다.
 
-${volume} 규모의 비즈니스에서는 보통 더 강한 Revenue Architecture가 첫 기회입니다. 자동 예약, 보증금 수집, CRM 기록, 구조화된 follow-up을 통해 고객 커뮤니케이션 품질을 유지하면서 운영을 정리할 수 있습니다.
+${volume} 규모의 비즈니스에는 예약, 결제, 고객 기록 및 자동 후속 응대를 포함한 실용적인 시스템을 구축할 수 있습니다.
 
-저희 전문가가 곧 연락드려 초기 Blueprint를 검토하고 성장에 가장 큰 영향을 줄 자동화 지점을 확인하겠습니다.
+저희 전문가가 곧 연락드려 필요 사항을 확인하고 적합한 다음 단계를 제안하겠습니다.
 
 감사합니다,
-SKH Global Architecture Unit`;
+SKH Global 팀`;
   }
 
   if (language === "ja") {
@@ -258,12 +270,12 @@ ${businessName} の初期分析リクエストを受け取りました。
 
 まず確認したところ、${channels} への依存と、現在の主な課題である「${painPoint}」が、フォローアップや成約までの流れを遅くしている可能性があります。
 
-${volume} 規模のビジネスでは、最初の改善ポイントはより強い Revenue Architecture を作ることです。予約の自動化、デポジット回収、CRM記録、体系的なフォローアップにより、顧客対応の質を保ちながら運用を整理できます。
+${volume} 規模のビジネスには、予約、決済、顧客管理、自動フォローアップをまとめた実用的なシステムをご提案できます。
 
-専門スタッフがまもなくご連絡し、初期 Blueprint を確認したうえで、成長に最も効果のある自動化ポイントを特定します。
+専門スタッフがまもなくご連絡し、ご要望を確認したうえで最適な次のステップをご提案します。
 
 よろしくお願いいたします。
-SKH Global Architecture Unit`;
+SKH Global チーム`;
   }
 
   if (language === "hi") {
@@ -272,12 +284,12 @@ SKH Global Architecture Unit`;
 
 हमारी पहली समझ यह है कि ${channels} पर निर्भरता और आपकी मुख्य समस्या (${painPoint}) follow-up और conversion को धीमा कर सकती है।
 
-${volume} वाले बिजनेस के लिए पहला अवसर आम तौर पर मजबूत Revenue Architecture बनाना होता है: automated scheduling, deposit collection, CRM capture और structured follow-up.
+${volume} वाले व्यवसाय के लिए हम बुकिंग, भुगतान, ग्राहक रिकॉर्ड और स्वचालित फॉलो-अप का व्यावहारिक सिस्टम बना सकते हैं।
 
-हमारे विशेषज्ञ जल्द ही आपसे संपर्क करेंगे ताकि initial Blueprint की समीक्षा हो सके और growth के लिए सबसे प्रभावी automation point पहचाना जा सके।
+हमारे विशेषज्ञ जल्द आपसे संपर्क करेंगे ताकि आपकी जरूरत समझकर सही अगला कदम सुझाया जा सके।
 
 सादर,
-SKH Global Architecture Unit`;
+SKH Global टीम`;
   }
 
   if (language === "bn") {
@@ -286,12 +298,12 @@ SKH Global Architecture Unit`;
 
 আমাদের প্রাথমিক ধারণা হলো ${channels}-এর উপর নির্ভরতা এবং আপনার উল্লেখ করা মূল bottleneck (${painPoint}) follow-up ও conversion ধীর করে দিতে পারে।
 
-${volume} পরিমাণ গ্রাহক সামলানো ব্যবসার জন্য প্রথম সুযোগ হলো একটি শক্তিশালী Revenue Architecture তৈরি করা: automated scheduling, deposit collection, CRM capture এবং structured follow-up.
+${volume} পরিমাণ গ্রাহক সামলানো ব্যবসার জন্য আমরা বুকিং, পেমেন্ট, গ্রাহক রেকর্ড এবং স্বয়ংক্রিয় ফলো-আপের কার্যকর ব্যবস্থা তৈরি করতে পারি।
 
-আমাদের বিশেষজ্ঞরা শীঘ্রই আপনার সাথে যোগাযোগ করবেন initial Blueprint পর্যালোচনা করতে এবং growth-এর জন্য সবচেয়ে কার্যকর automation point নির্ধারণ করতে।
+আমাদের বিশেষজ্ঞরা শীঘ্রই আপনার প্রয়োজন বুঝতে এবং উপযুক্ত পরবর্তী পদক্ষেপ জানাতে যোগাযোগ করবেন।
 
 শুভেচ্ছান্তে,
-SKH Global Architecture Unit`;
+SKH Global টিম`;
   }
 
   if (language === "ur") {
@@ -300,12 +312,12 @@ SKH Global Architecture Unit`;
 
 ہماری ابتدائی رائے یہ ہے کہ ${channels} پر انحصار اور آپ کا بیان کردہ بنیادی مسئلہ (${painPoint}) follow-up اور conversion کو سست کر سکتا ہے۔
 
-${volume} والے بزنس کے لیے پہلا موقع ایک مضبوط Revenue Architecture بنانا ہے: automated scheduling، deposit collection، CRM capture اور structured follow-up.
+${volume} والے کاروبار کے لیے ہم بکنگ، ادائیگی، کسٹمر ریکارڈ اور خودکار فالو اپ کا عملی نظام بنا سکتے ہیں۔
 
-ہمارے ماہرین جلد آپ سے رابطہ کریں گے تاکہ initial Blueprint کا جائزہ لیا جائے اور growth کے لیے سب سے مؤثر automation point کی شناخت ہو۔
+ہمارے ماہرین جلد آپ سے رابطہ کریں گے تاکہ آپ کی ضرورت سمجھ کر مناسب اگلا قدم تجویز کیا جا سکے۔
 
 خیر اندیش،
-SKH Global Architecture Unit`;
+SKH Global ٹیم`;
   }
 
   if (language === "sw") {
@@ -314,32 +326,32 @@ tumepokea ombi la uchambuzi wa awali kwa ${businessName}.
 
 Mtazamo wetu wa kwanza ni kwamba kutegemea ${channels}, pamoja na changamoto kuu uliyoeleza (${painPoint}), kunaweza kuchelewesha follow-up na conversion.
 
-Kwa biashara yenye ${volume}, fursa ya kwanza mara nyingi ni kujenga Revenue Architecture imara: automated scheduling, deposit collection, CRM capture na structured follow-up.
+Kwa biashara yenye ${volume}, tunaweza kujenga mfumo rahisi wa miadi, malipo, taarifa za wateja na ufuatiliaji wa kiotomatiki.
 
-Wataalamu wetu watawasiliana nawe hivi karibuni ili kupitia Blueprint ya awali na kubaini sehemu ya automation yenye athari kubwa zaidi kwenye ukuaji.
+Wataalamu wetu watawasiliana nawe hivi karibuni kuelewa mahitaji yako na kupendekeza hatua inayofaa.
 
 Kwa heshima,
-SKH Global Architecture Unit`;
+Timu ya SKH Global`;
   }
 
   return `Hello,
-We have received the initial audit request for ${businessName}.
+We have received your request for ${businessName}.
 
-Our first read is that relying on ${channels}, alongside the main bottleneck you described (${painPoint}), may be slowing down follow-up and conversion.
+Based on your current channels (${channels}) and the issue you described (${painPoint}), some customer follow-up may still be taking too much manual time.
 
-For a business handling ${volume}, the first opportunity is usually a stronger Revenue Architecture: automated scheduling, deposit collection, CRM capture, and structured follow-up without reducing the quality of customer communication.
+For a business handling ${volume}, we can design the right combination of online booking, secure payments, customer tracking and automated follow-up, or build a complete custom platform when needed.
 
-Our specialists will contact you soon to review the initial Blueprint and identify the highest-impact automation point for your growth.
+Our specialists will contact you soon to understand your needs and recommend the right next step.
 
 Best,
-SKH Global Architecture Unit`;
+SKH Global Team`;
 };
 
 const generateAutoReply = async (clientData: Record<string, string>) => {
   const geminiKey = process.env.GEMINI_API_KEY;
   if (!geminiKey) {
     console.warn("[AI] GEMINI_API_KEY missing. Using fallback auto-reply.");
-    return buildFallbackAutoReply(clientData);
+    return sanitizeCustomerEmail(buildFallbackAutoReply(clientData));
   }
 
   try {
@@ -355,17 +367,18 @@ ${promptInstructions}
 
 Use the instructions above to write the customer auto-reply email.
 Keep it premium, specific, concise, and ready to send. Do not include markdown headings.
-Do not mention AI, artificial intelligence, test messages, test submissions, or a 10-minute call.
+Do not mention AI, artificial intelligence, test messages, test submissions, architecture jargon, blueprints, or a 10-minute call.
+Use simple customer-friendly language. Describe practical options such as booking, payments, customer follow-up, chatbots, automation, or custom software only when relevant.
 For the next step, say that our specialists will contact them soon.
 
 CLIENT DATA:
 ${clientDataText}
 `);
 
-    return result.response.text();
+    return sanitizeCustomerEmail(result.response.text());
   } catch (error) {
     console.error("[AI] Auto-reply generation failed. Using fallback auto-reply.", error);
-    return buildFallbackAutoReply(clientData);
+    return sanitizeCustomerEmail(buildFallbackAutoReply(clientData));
   }
 };
 
@@ -432,7 +445,7 @@ const renderCustomerEmail = ({
             </tr>
             <tr>
               <td align="center" style="padding:24px 34px 12px;">
-                <a href="${escapeHtml(offersUrl)}" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#020617;text-decoration:none;border-radius:14px;padding:16px 26px;font-size:13px;font-weight:900;letter-spacing:1px;text-transform:uppercase;">
+                <a href="${escapeHtml(offersUrl)}" target="_blank" rel="noopener" style="display:inline-block;background:linear-gradient(135deg,#7C3AED 0%,#2563EB 55%,#38D8FF 100%);color:#ffffff;text-decoration:none;border-radius:14px;padding:16px 26px;font-size:13px;font-weight:900;letter-spacing:1px;text-transform:uppercase;box-shadow:0 14px 38px rgba(37,99,235,.32);">
                   ${escapeHtml(copy.button)}
                 </a>
               </td>
@@ -493,7 +506,7 @@ async function startServer() {
     console.log(`[API-AUDIT] POST received at ${new Date().toISOString()}`);
     console.log("[API-AUDIT] Headers:", JSON.stringify(req.headers));
     
-    const { businessName, email, phone, businessType, businessTypeLabel, volume, volumeLabel, ticketNumber, channels, channelsLabel, painPoint, painPointLabel, currentLanguage } = req.body;
+    const { businessName, email, phone, businessType, businessTypeLabel, volume, volumeLabel, ticketNumber, channels, channelsLabel, painPoint, painPointLabel, currentLanguage, name, reviewSummary } = req.body;
 
     try {
       if (!email) {
@@ -507,21 +520,64 @@ async function startServer() {
       console.log(`[API-AUDIT] Processing for ${displayBusinessName || "business"} (${email})`);
 
       console.log("[API-AUDIT] Generating AI response...");
-      const aiResponse = await generateAutoReply({
+      const review = (reviewSummary || {}) as Record<string, string>;
+      const aiInput = {
         "Business Name": displayBusinessName,
         "Business Type": businessTypeLabel || businessType,
         "Main Channels": channelsLabel || channels,
         "Biggest Pain Point": painPointLabel || painPoint,
         "Monthly Volume": volumeLabel || volume,
+        "Requested Features": review.systemIncludes || "",
+        "Customer Experience Needs": review.customerExperience || "",
+        "Admin Panel Needs": review.adminNeeds || "",
+        "Sensitive Data": review.sensitiveData || "",
+        "Budget": review.budget || "",
+        "Timeline": review.timeline || "",
+        "Additional Notes": review.finalNotes || "",
+        "Customer Name": name || review.name || "",
         "Customer Email": email,
         "Customer Phone": phone,
         "Ticket Number": ticketNumber,
         "Language": languageNames[language] || languageNames.en
-      });
+      };
+
+      const aiResponse = await generateAutoReply(aiInput);
 
       // 2. Transporter
       console.log("[API-AUDIT] Setting up email transporter...");
       const { emailUser, transporter } = createEmailTransporter();
+      const internalSummary = Object.entries({
+        "Name": name || review.name,
+        "Business": displayBusinessName || businessName,
+        "Email": email,
+        "Website / Social": review.website,
+        "Business Type": businessTypeLabel || businessType,
+        "Current Workflow": channelsLabel || channels,
+        "Workflow Notes": review.currentWorkflowNotes,
+        "Main Problem": painPointLabel || painPoint,
+        "System Includes": review.systemIncludes,
+        "Customer Experience": review.customerExperience,
+        "Admin Needs": review.adminNeeds,
+        "Sensitive Data": review.sensitiveData,
+        "Sensitive Notes": review.sensitiveNotes,
+        "Budget": review.budget,
+        "Timeline": review.timeline,
+        "Final Notes": review.finalNotes,
+        "Ticket": ticketNumber,
+        "Language": languageNames[language] || language
+      })
+        .filter(([, value]) => value)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
+
+      await transporter.sendMail({
+        from: `"SKH Global" <${emailUser}>`,
+        to: emailUser,
+        replyTo: email,
+        subject: `New System Review Request: ${displayBusinessName || email} (#${ticketNumber})`,
+        text: internalSummary
+      });
+
       const htmlTemplate = renderCustomerEmail({
         title: `${copy.titlePrefix} ${displayBusinessName || copy.genericBusiness}`,
         preheader: copy.received,
@@ -534,7 +590,7 @@ async function startServer() {
 
       console.log(`[API-AUDIT] Sending mail to ${email}...`);
       await transporter.sendMail({
-        from: `"SKH Architects" <${emailUser}>`,
+        from: `"SKH Global" <${emailUser}>`,
         to: email,
         subject: `${copy.subject} - SKH Global`,
         html: htmlTemplate,
@@ -602,7 +658,7 @@ async function startServer() {
       });
 
       await transporter.sendMail({
-        from: `"SKH Architects" <${emailUser}>`,
+        from: `"SKH Global" <${emailUser}>`,
         to: email,
         subject: `${copy.subject} - SKH Global`,
         html: renderCustomerEmail({
@@ -659,4 +715,18 @@ async function startServer() {
   });
 }
 
-startServer();
+export {
+  cleanDisplayName,
+  normalizeLanguage,
+  isRtlLanguage,
+  languageNames,
+  getEmailCopy,
+  generateAutoReply,
+  createEmailTransporter,
+  renderCustomerEmail,
+  logoAttachment
+};
+
+if (process.argv.some((argument) => /server\.ts$/.test(argument)) && !process.env.NETLIFY) {
+  startServer();
+}

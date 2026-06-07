@@ -26,7 +26,7 @@ export default function App() {
 
   // Update dynamic document title based on language
   useEffect(() => {
-    document.title = t('site_title', 'SKH.GLOBAL | Premium AI Systems & Web Architecture');
+    document.title = t('site_title', 'SKH.GLOBAL | From Idea to System');
   }, [i18n.language, t]);
 
   // Handle page transitions
@@ -65,9 +65,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden selection:bg-brand-500 selection:text-white bg-[#020617]">
+    <div className="min-h-screen relative overflow-x-hidden selection:bg-brand-500 selection:text-white bg-[#050713]">
       
-      {/* 1. Permanent Background Layer */}
+      {/* Subtle top-page atmosphere */}
       <DigitalRainBackground />
       
       {/* 2. Content Layer - Visible immediately */}
