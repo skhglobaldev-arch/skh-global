@@ -205,11 +205,6 @@ export const AuditView: React.FC = () => {
     };
   }, [step, formData.preferredNextStep]);
 
-  const encodeForm = (data: Record<string, string>) =>
-    Object.keys(data)
-      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(String(data[key]))}`)
-      .join('&');
-
   const buildPayload = () => {
     const businessTypeLabel = formData.businessType === 'other'
       ? formData.businessTypeOther
@@ -266,25 +261,6 @@ export const AuditView: React.FC = () => {
 
     try {
       const payload = buildPayload();
-
-      await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encodeForm({
-          'form-name': 'revenue-audit',
-          businessType: payload.businessTypeLabel || payload.businessType || '',
-          channels: payload.channelsLabel || payload.channels || '',
-          painPoint: payload.painPointLabel || payload.painPoint || '',
-          volume: payload.volumeLabel || payload.volume || '',
-          businessName: payload.businessName || '',
-          phone: payload.phone || '',
-          email: payload.email || '',
-          instagram: payload.instagram || '',
-          ticketNumber: payload.ticketNumber || '',
-          preferredNextStep: payload.preferredNextStep || '',
-          selectedSlotId: payload.selectedSlotId || '',
-        }),
-      });
 
       const response = await fetch('/api/audit', {
         method: 'POST',

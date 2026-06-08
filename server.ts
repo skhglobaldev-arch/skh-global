@@ -2,7 +2,7 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
-import { createSmtpTransporter, getSmtpUser } from "./netlify/functions/lib/mail";
+import { createSmtpTransporter, getSmtpUser } from "./functions/src/lib/mail";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -12,7 +12,7 @@ import {
   handleAvailabilityGet,
   handleBookSlotPost,
   handleContactPost,
-} from "./netlify/functions/lib/handlers";
+} from "./functions/src/lib/handlers";
 
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });

@@ -16,52 +16,32 @@ export const ContactCTA: React.FC = () => {
     systemFocus: ''
   });
 
-  const encode = (data: any) => {
-    return Object.keys(data)
-      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(String(data[key])))
-      .join("&");
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode({ 
-          "form-name": "contact-inquiry", 
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           ...formData,
           ticketNumber,
-          currentLanguage: i18n.language
-        })
+          currentLanguage: i18n.language,
+        }),
       });
 
-      // Send to custom backend for AI processing and email
-      try {
-        const contactUrl = "/api/contact";
-        console.log(`[CONTACT] Submitting to: ${window.location.origin}${contactUrl}`);
-        
-        await fetch(contactUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            ...formData,
-            ticketNumber,
-            currentLanguage: i18n.language
-          })
-        });
-      } catch (backendError) {
-        console.error("Backend error:", backendError);
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || `Server responded with ${response.status}`);
       }
 
-      setLoading(false);
       setSubmitted(true);
     } catch (error) {
-      console.error("Submission error:", error);
+      console.error('Submission error:', error);
+      setSubmitted(true);
+    } finally {
       setLoading(false);
-      setSubmitted(true); 
     }
   };
 
@@ -101,13 +81,10 @@ export const ContactCTA: React.FC = () => {
          
          <Reveal delay={200}>
             <div className="glass-panel mx-auto max-w-xl rounded-[2rem] border border-violet-400/12 bg-[#050713]/72 p-8 shadow-2xl md:p-10">
-               <form 
-                 name="contact-inquiry"
-                 data-netlify="true"
+               <form
                  onSubmit={handleSubmit}
                  className="space-y-6 text-left"
                >
-                  <input type="hidden" name="form-name" value="contact-inquiry" />
                   <input type="hidden" name="ticketNumber" value={ticketNumber} />
                   
                   <div className="grid md:grid-cols-2 gap-6">
