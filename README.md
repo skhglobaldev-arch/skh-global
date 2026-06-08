@@ -79,7 +79,7 @@ Firebase Console will provide a direct link when the first query runs.
 | --- | --- |
 | `VITE_FIREBASE_API_KEY` | Firebase Console → Project settings → Your apps → Web app |
 | `VITE_FIREBASE_AUTH_DOMAIN` | `{project-id}.firebaseapp.com` |
-| `VITE_FIREBASE_PROJECT_ID` | `skhglobal-c662b` |
+| `VITE_FIREBASE_PROJECT_ID` | `<YOUR_PROJECT_ID>` |
 | `VITE_FIREBASE_STORAGE_BUCKET` | `{project-id}.firebasestorage.app` |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase web app config |
 | `VITE_FIREBASE_APP_ID` | Firebase web app config |
@@ -87,7 +87,7 @@ Firebase Console will provide a direct link when the first query runs.
 
 **Server (Netlify Functions):** `ADMIN_EMAIL`, `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, plus SMTP/Resend vars from `.env.example`.
 
-To verify a deploy picked up Firebase config, search the built JS for your project id (e.g. `skhglobal-c662b`). If it is missing, the `VITE_FIREBASE_*` vars were not present during `npm run build`.
+To verify a deploy picked up Firebase config, search the built JS for your project id (e.g. `<YOUR_PROJECT_ID>`). If it is missing, the `VITE_FIREBASE_*` vars were not present during `npm run build`.
 
 ## Security notes
 
