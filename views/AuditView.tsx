@@ -13,6 +13,16 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { getSystemReviewCopy, ReviewChoice } from '../src/systemReviewCopy';
+import { fetchAvailableSlots } from '../src/admin/api';
+
+type PreferredNextStep = 'call' | 'email' | '';
+
+type AvailabilitySlotOption = {
+  id: string;
+  date: string;
+  time: string;
+  timezone: string;
+};
 
 type ReviewFormData = {
   name: string;
@@ -34,6 +44,8 @@ type ReviewFormData = {
   timeline: string;
   finalNotes: string;
   consent: boolean;
+  preferredNextStep: PreferredNextStep;
+  selectedSlotId: string;
 };
 
 const initialFormData: ReviewFormData = {
@@ -56,6 +68,8 @@ const initialFormData: ReviewFormData = {
   timeline: '',
   finalNotes: '',
   consent: false,
+  preferredNextStep: '',
+  selectedSlotId: '',
 };
 
 const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -81,9 +95,14 @@ export const AuditView: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [submitError, setSubmitError] = React.useState('');
   const [ticketNumber] = React.useState(() => `SKH-${Math.random().toString(36).slice(2, 8).toUpperCase()}`);
+  const [availableSlots, setAvailableSlots] = React.useState<AvailabilitySlotOption[]>([]);
+  const [slotsLoading, setSlotsLoading] = React.useState(false);
 
-  const totalSteps = copy.steps.length;
-  const currentStepCopy = copy.steps[step - 1];
+  const totalSteps = Math.max(copy.steps.length, 11);
+  const currentStepCopy = copy.steps[step - 1] || {
+    title: copy.nextStepTitle || 'How would you like to continue?',
+    helper: copy.nextStepHelper || 'Choose how you would like to continue.',
+  };
   const progress = (step / totalSteps) * 100;
 
   React.useEffect(() => {
@@ -139,6 +158,13 @@ export const AuditView: React.FC = () => {
     if (step === 8) return formData.sensitiveData ? '' : copy.validationRequired;
     if (step === 9) return formData.budget && formData.timeline ? '' : copy.validationRequired;
     if (step === 10) return formData.consent ? '' : copy.validationConsent;
+    if (step === 11) {
+      if (!formData.preferredNextStep) return copy.validationNextStep;
+      if (formData.preferredNextStep === 'call' && !formData.selectedSlotId) {
+        return availableSlots.length ? copy.validationSlot : copy.nextStepNoSlots;
+      }
+      return '';
+    }
     return '';
   };
 
@@ -157,6 +183,32 @@ export const AuditView: React.FC = () => {
     setSubmitError('');
     setStep((current) => Math.max(current - 1, 1));
   };
+
+  React.useEffect(() => {
+    if (step !== 11 || formData.preferredNextStep !== 'call') return;
+
+    let cancelled = false;
+    setSlotsLoading(true);
+    fetchAvailableSlots()
+      .then((data) => {
+        if (!cancelled) setAvailableSlots(data.slots || []);
+      })
+      .catch(() => {
+        if (!cancelled) setAvailableSlots([]);
+      })
+      .finally(() => {
+        if (!cancelled) setSlotsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [step, formData.preferredNextStep]);
+
+  const encodeForm = (data: Record<string, string>) =>
+    Object.keys(data)
+      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(String(data[key]))}`)
+      .join('&');
 
   const buildPayload = () => {
     const businessTypeLabel = formData.businessType === 'other'
@@ -200,6 +252,8 @@ export const AuditView: React.FC = () => {
       currentLanguage: i18n.language,
       review: formData,
       reviewSummary,
+      preferredNextStep: formData.preferredNextStep || 'email',
+      selectedSlotId: formData.preferredNextStep === 'call' ? formData.selectedSlotId : undefined,
     };
   };
 
@@ -211,13 +265,37 @@ export const AuditView: React.FC = () => {
     setSubmitError('');
 
     try {
+      const payload = buildPayload();
+
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encodeForm({
+          'form-name': 'revenue-audit',
+          businessType: payload.businessTypeLabel || payload.businessType || '',
+          channels: payload.channelsLabel || payload.channels || '',
+          painPoint: payload.painPointLabel || payload.painPoint || '',
+          volume: payload.volumeLabel || payload.volume || '',
+          businessName: payload.businessName || '',
+          phone: payload.phone || '',
+          email: payload.email || '',
+          instagram: payload.instagram || '',
+          ticketNumber: payload.ticketNumber || '',
+          preferredNextStep: payload.preferredNextStep || '',
+          selectedSlotId: payload.selectedSlotId || '',
+        }),
+      });
+
       const response = await fetch('/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildPayload()),
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || `Server responded with ${response.status}`);
+      }
       setSubmitted(true);
     } catch (error) {
       console.error('System review submission error:', error);
@@ -435,26 +513,80 @@ export const AuditView: React.FC = () => {
       );
     }
 
+    if (step === 10) {
+      return (
+        <div className="space-y-6">
+          <label className="block">
+            <span className={labelClass}>{copy.fields.finalNotes} <span className="text-slate-700">({copy.optional})</span></span>
+            <textarea className={`${inputClass} min-h-44 resize-none`} value={formData.finalNotes} onChange={(event) => update('finalNotes', event.target.value)} placeholder={copy.placeholders.finalNotes} />
+          </label>
+          <button
+            type="button"
+            onClick={() => update('consent', !formData.consent)}
+            className={`flex w-full items-start gap-4 rounded-2xl border p-5 transition-all ${isRtl ? 'text-right' : 'text-left'} ${
+              formData.consent
+                ? 'border-cyan-300/45 bg-cyan-300/[0.055] text-white'
+                : 'border-white/10 bg-[#101827]/60 text-slate-400 hover:border-cyan-300/25'
+            }`}
+          >
+            <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${formData.consent ? 'border-cyan-200 bg-cyan-200 text-[#050713]' : 'border-white/15'}`}>
+              {formData.consent && <Check size={15} strokeWidth={4} />}
+            </span>
+            <span className="text-sm leading-relaxed">{copy.consent}</span>
+          </button>
+        </div>
+      );
+    }
+
     return (
-      <div className="space-y-6">
-        <label className="block">
-          <span className={labelClass}>{copy.fields.finalNotes} <span className="text-slate-700">({copy.optional})</span></span>
-          <textarea className={`${inputClass} min-h-44 resize-none`} value={formData.finalNotes} onChange={(event) => update('finalNotes', event.target.value)} placeholder={copy.placeholders.finalNotes} />
-        </label>
-        <button
-          type="button"
-          onClick={() => update('consent', !formData.consent)}
-          className={`flex w-full items-start gap-4 rounded-2xl border p-5 transition-all ${isRtl ? 'text-right' : 'text-left'} ${
-            formData.consent
-              ? 'border-cyan-300/45 bg-cyan-300/[0.055] text-white'
-              : 'border-white/10 bg-[#101827]/60 text-slate-400 hover:border-cyan-300/25'
-          }`}
-        >
-          <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${formData.consent ? 'border-cyan-200 bg-cyan-200 text-[#050713]' : 'border-white/15'}`}>
-            {formData.consent && <Check size={15} strokeWidth={4} />}
-          </span>
-          <span className="text-sm leading-relaxed">{copy.consent}</span>
-        </button>
+      <div className="space-y-5">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {renderChoiceCard(
+            { value: 'call', label: copy.nextStepCall },
+            formData.preferredNextStep === 'call',
+            () => {
+              update('preferredNextStep', 'call');
+              update('selectedSlotId', '');
+            },
+            'radio',
+          )}
+          {renderChoiceCard(
+            { value: 'email', label: copy.nextStepEmail },
+            formData.preferredNextStep === 'email',
+            () => {
+              update('preferredNextStep', 'email');
+              update('selectedSlotId', '');
+            },
+            'radio',
+          )}
+        </div>
+        <p className={`text-sm text-slate-400 ${isRtl ? 'text-right' : 'text-left'}`}>
+          {formData.preferredNextStep === 'call' ? copy.nextStepCallDesc : copy.nextStepEmailDesc}
+        </p>
+        {formData.preferredNextStep === 'call' ? (
+          <div className="space-y-3">
+            <span className={labelClass}>{copy.nextStepSelectSlot}</span>
+            {slotsLoading ? (
+              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#050713]/60 px-5 py-4 text-sm text-slate-400">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-cyan-300 border-t-transparent" />
+                Loading available times…
+              </div>
+            ) : availableSlots.length ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {availableSlots.map((slot) => renderChoiceCard(
+                  { value: slot.id, label: `${slot.date} · ${slot.time} (${slot.timezone})` },
+                  formData.selectedSlotId === slot.id,
+                  () => update('selectedSlotId', slot.id),
+                  'radio',
+                ))}
+              </div>
+            ) : (
+              <p className={`rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-4 py-3 text-sm text-amber-100 ${isRtl ? 'text-right' : 'text-left'}`}>
+                {copy.nextStepNoSlots}
+              </p>
+            )}
+          </div>
+        ) : null}
       </div>
     );
   };
@@ -545,7 +677,7 @@ export const AuditView: React.FC = () => {
               >
                 <div className={`mb-8 ${isRtl ? 'text-right' : 'text-left'}`}>
                   <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/14 bg-[#050713]/80 text-cyan-200">
-                    {step === 1 ? <FileText size={24} /> : step === 10 ? <Send size={23} /> : <Layers3 size={24} />}
+                    {step === 1 ? <FileText size={24} /> : step >= 10 ? <Send size={23} /> : <Layers3 size={24} />}
                   </div>
                   <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-violet-200">{progressText}</p>
                   <h2 className="text-3xl font-black leading-tight text-white md:text-5xl">{currentStepCopy.title}</h2>

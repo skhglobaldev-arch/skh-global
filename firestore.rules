@@ -1,0 +1,22 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // All submission and booking data is server-only (Netlify functions via Admin SDK).
+    match /contactSubmissions/{docId} {
+      allow read, write: if false;
+    }
+
+    match /systemReviewSubmissions/{docId} {
+      allow read, write: if false;
+    }
+
+    match /availabilitySlots/{docId} {
+      allow read, write: if false;
+    }
+
+    match /callBookings/{docId} {
+      allow read, write: if false;
+    }
+  }
+}

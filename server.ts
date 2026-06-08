@@ -2,10 +2,17 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
-import nodemailer from "nodemailer";
+import { createSmtpTransporter, getSmtpUser } from "./netlify/functions/lib/mail";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import cors from "cors";
+import {
+  handleAdminRequest,
+  handleAuditPost,
+  handleAvailabilityGet,
+  handleBookSlotPost,
+  handleContactPost,
+} from "./netlify/functions/lib/handlers";
 
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
@@ -382,22 +389,21 @@ ${clientDataText}
   }
 };
 
-const createEmailTransporter = () => {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
-
-  if (!emailUser || !emailPass) {
-    throw new Error("Server Configuration Error: Email credentials not set.");
-  }
-
-  return {
-    emailUser,
-    transporter: nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: emailUser, pass: emailPass }
-    })
-  };
+const sendWebResponse = async (webResponse: Response, res: express.Response) => {
+  const body = await webResponse.text();
+  res.status(webResponse.status);
+  webResponse.headers.forEach((value, key) => {
+    if (key.toLowerCase() !== "transfer-encoding") {
+      res.setHeader(key, value);
+    }
+  });
+  res.send(body);
 };
+
+const createEmailTransporter = () => ({
+  emailUser: getSmtpUser(),
+  transporter: createSmtpTransporter(),
+});
 
 const renderCustomerEmail = ({
   title,
@@ -487,7 +493,7 @@ async function startServer() {
       status: "ok", 
       timestamp: new Date().toISOString(), 
       env: process.env.NODE_ENV,
-      email_config: !!process.env.EMAIL_USER && !!process.env.EMAIL_PASS,
+      email_config: !!process.env.SMTP_USER && !!process.env.SMTP_PASS,
       gemini_config: !!process.env.GEMINI_API_KEY
     });
   });
@@ -503,181 +509,73 @@ async function startServer() {
 
   // --- API ROUTES ---
   app.post("/api/audit", async (req, res) => {
-    console.log(`[API-AUDIT] POST received at ${new Date().toISOString()}`);
-    console.log("[API-AUDIT] Headers:", JSON.stringify(req.headers));
-    
-    const { businessName, email, phone, businessType, businessTypeLabel, volume, volumeLabel, ticketNumber, channels, channelsLabel, painPoint, painPointLabel, currentLanguage, name, reviewSummary } = req.body;
-
     try {
-      if (!email) {
-        return res.status(400).json({ error: "Email is required" });
-      }
-
-      const displayBusinessName = cleanDisplayName(businessName);
-      const language = normalizeLanguage(currentLanguage);
-      const copy = getEmailCopy(language);
-
-      console.log(`[API-AUDIT] Processing for ${displayBusinessName || "business"} (${email})`);
-
-      console.log("[API-AUDIT] Generating AI response...");
-      const review = (reviewSummary || {}) as Record<string, string>;
-      const aiInput = {
-        "Business Name": displayBusinessName,
-        "Business Type": businessTypeLabel || businessType,
-        "Main Channels": channelsLabel || channels,
-        "Biggest Pain Point": painPointLabel || painPoint,
-        "Monthly Volume": volumeLabel || volume,
-        "Requested Features": review.systemIncludes || "",
-        "Customer Experience Needs": review.customerExperience || "",
-        "Admin Panel Needs": review.adminNeeds || "",
-        "Sensitive Data": review.sensitiveData || "",
-        "Budget": review.budget || "",
-        "Timeline": review.timeline || "",
-        "Additional Notes": review.finalNotes || "",
-        "Customer Name": name || review.name || "",
-        "Customer Email": email,
-        "Customer Phone": phone,
-        "Ticket Number": ticketNumber,
-        "Language": languageNames[language] || languageNames.en
-      };
-
-      const aiResponse = await generateAutoReply(aiInput);
-
-      // 2. Transporter
-      console.log("[API-AUDIT] Setting up email transporter...");
-      const { emailUser, transporter } = createEmailTransporter();
-      const internalSummary = Object.entries({
-        "Name": name || review.name,
-        "Business": displayBusinessName || businessName,
-        "Email": email,
-        "Website / Social": review.website,
-        "Business Type": businessTypeLabel || businessType,
-        "Current Workflow": channelsLabel || channels,
-        "Workflow Notes": review.currentWorkflowNotes,
-        "Main Problem": painPointLabel || painPoint,
-        "System Includes": review.systemIncludes,
-        "Customer Experience": review.customerExperience,
-        "Admin Needs": review.adminNeeds,
-        "Sensitive Data": review.sensitiveData,
-        "Sensitive Notes": review.sensitiveNotes,
-        "Budget": review.budget,
-        "Timeline": review.timeline,
-        "Final Notes": review.finalNotes,
-        "Ticket": ticketNumber,
-        "Language": languageNames[language] || language
-      })
-        .filter(([, value]) => value)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join("\n");
-
-      await transporter.sendMail({
-        from: `"SKH Global" <${emailUser}>`,
-        to: emailUser,
-        replyTo: email,
-        subject: `New System Review Request: ${displayBusinessName || email} (#${ticketNumber})`,
-        text: internalSummary
+      const request = new Request(`${getSiteUrl(req)}/api/audit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(req.body),
       });
-
-      const htmlTemplate = renderCustomerEmail({
-        title: `${copy.titlePrefix} ${displayBusinessName || copy.genericBusiness}`,
-        preheader: copy.received,
-        body: aiResponse,
-        ticketNumber,
-        offersUrl: getOffersUrl(req),
-        language,
-        direction: isRtlLanguage(language) ? "rtl" : "ltr"
-      });
-
-      console.log(`[API-AUDIT] Sending mail to ${email}...`);
-      await transporter.sendMail({
-        from: `"SKH Global" <${emailUser}>`,
-        to: email,
-        subject: `${copy.subject} - SKH Global`,
-        html: htmlTemplate,
-        attachments: [logoAttachment]
-      });
-
-      console.log("[API-AUDIT] Success. Response sent to client.");
-      res.json({ 
-        success: true, 
-        message: "Audit report generated and sent via email.",
-        ticketId: ticketNumber
-      });
+      await sendWebResponse(await handleAuditPost(request), res);
     } catch (error) {
       console.error("[API-AUDIT] ERROR:", error);
-      res.status(500).json({ 
-        error: "Submission Failed", 
-        details: error instanceof Error ? error.message : String(error) 
+      res.status(500).json({
+        error: "Submission Failed",
+        details: error instanceof Error ? error.message : String(error),
       });
     }
   });
 
   app.post("/api/contact", async (req, res) => {
-    console.log(`[API-CONTACT] POST received at ${new Date().toISOString()}`);
-    const { fullName, email, company, investment, systemFocus, ticketNumber, currentLanguage } = req.body;
-    
     try {
-      if (!email) {
-        return res.status(400).json({ error: "Email is required" });
-      }
-
-      const language = normalizeLanguage(currentLanguage);
-      const copy = getEmailCopy(language);
-      const displayCompany = cleanDisplayName(company);
-      const { emailUser, transporter } = createEmailTransporter();
-
-      const text = `
-        New Contact Inquiry:
-        Name: ${fullName}
-        Email: ${email}
-        Company: ${displayCompany || company}
-        Investment: ${investment}
-        Focus: ${systemFocus}
-        Ticket: ${ticketNumber}
-      `;
-
-      await transporter.sendMail({
-        from: `"SKH Inquiries" <${emailUser}>`,
-        to: emailUser, // Send to self
-        subject: `New Inquiry: ${displayCompany || "Website Inquiry"} (#${ticketNumber})`,
-        text: text
+      const request = new Request(`${getSiteUrl(req)}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(req.body),
       });
-
-      console.log("[API-CONTACT] Inquiry email sent.");
-      console.log(`[API-CONTACT] Generating auto-reply for ${email}...`);
-      const aiResponse = await generateAutoReply({
-        "Business Name": displayCompany,
-        "Business Type": "Contact Inquiry",
-        "Main Channels": "Website contact form",
-        "Biggest Pain Point": systemFocus,
-        "Monthly Volume": investment,
-        "Customer Name": fullName,
-        "Customer Email": email,
-        "Ticket Number": ticketNumber,
-        "Language": languageNames[language] || languageNames.en
-      });
-
-      await transporter.sendMail({
-        from: `"SKH Global" <${emailUser}>`,
-        to: email,
-        subject: `${copy.subject} - SKH Global`,
-        html: renderCustomerEmail({
-          title: copy.received,
-          preheader: copy.received,
-          body: aiResponse,
-          ticketNumber,
-          offersUrl: getOffersUrl(req),
-          language,
-          direction: isRtlLanguage(language) ? "rtl" : "ltr"
-        }),
-        attachments: [logoAttachment]
-      });
-
-      console.log("[API-CONTACT] Auto-reply sent to client.");
-      res.json({ success: true });
+      await sendWebResponse(await handleContactPost(request), res);
     } catch (error) {
       console.error("[API-CONTACT] ERROR:", error);
       res.status(500).json({ error: "Contact submission failed" });
+    }
+  });
+
+  app.get("/api/availability", async (_req, res) => {
+    try {
+      await sendWebResponse(await handleAvailabilityGet(), res);
+    } catch (error) {
+      console.error("[API-AVAILABILITY] ERROR:", error);
+      res.status(500).json({ error: "Failed to load availability" });
+    }
+  });
+
+  app.post("/api/book-slot", async (req, res) => {
+    try {
+      const request = new Request(`${getSiteUrl(req)}/api/book-slot`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(req.body),
+      });
+      await sendWebResponse(await handleBookSlotPost(request), res);
+    } catch (error) {
+      console.error("[API-BOOK-SLOT] ERROR:", error);
+      res.status(500).json({ error: "Booking failed" });
+    }
+  });
+
+  app.all("/api/admin/*splat", async (req, res) => {
+    try {
+      const request = new Request(`${getSiteUrl(req)}${req.originalUrl}`, {
+        method: req.method,
+        headers: {
+          "Content-Type": "application/json",
+          ...(req.headers.authorization ? { Authorization: String(req.headers.authorization) } : {}),
+        },
+        body: ["POST", "PATCH", "PUT"].includes(req.method) ? JSON.stringify(req.body) : undefined,
+      });
+      await sendWebResponse(await handleAdminRequest(request), res);
+    } catch (error) {
+      console.error("[API-ADMIN] ERROR:", error);
+      res.status(500).json({ error: "Admin request failed" });
     }
   });
 

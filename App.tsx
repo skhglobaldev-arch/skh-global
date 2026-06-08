@@ -16,6 +16,9 @@ import { PrivacyView } from './views/PrivacyView';
 import { TermsView } from './views/TermsView';
 import { OffersView } from './views/OffersView';
 import { AuditView } from './views/AuditView';
+import { AdminLogin } from './src/admin/AdminLogin';
+import { AdminDashboard } from './src/admin/AdminDashboard';
+import { AdminProtectedRoute } from './src/admin/AdminProtectedRoute';
 
 export default function App() {
   const { t, i18n } = useTranslation();
@@ -63,6 +66,25 @@ export default function App() {
     const path = displayLocation.pathname.substring(1);
     return path === '' ? 'home' : path;
   };
+
+  const isAdminRoute = displayLocation.pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    return (
+      <Routes location={displayLocation}>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin"
+          element={(
+            <AdminProtectedRoute>
+              <AdminDashboard />
+            </AdminProtectedRoute>
+          )}
+        />
+        <Route path="/admin/*" element={<AdminLogin />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="min-h-screen relative overflow-x-hidden selection:bg-brand-500 selection:text-white bg-[#050713]">

@@ -66,6 +66,16 @@ export type SystemReviewCopy = {
   budgetOptions: ReviewChoice[];
   timelineOptions: ReviewChoice[];
   sensitiveHelper: string;
+  nextStepTitle?: string;
+  nextStepHelper?: string;
+  nextStepCall?: string;
+  nextStepCallDesc?: string;
+  nextStepEmail?: string;
+  nextStepEmailDesc?: string;
+  nextStepSelectSlot?: string;
+  nextStepNoSlots?: string;
+  validationSlot?: string;
+  validationNextStep?: string;
 };
 
 const commonSocial = [
@@ -132,6 +142,7 @@ export const systemReviewCopy: Record<string, SystemReviewCopy> = {
       { title: "Will the system store sensitive data or private files?", helper: "This helps us review access, security and data ownership properly." },
       { title: "Approximate budget and timeline", helper: "A rough range is enough for the first review." },
       { title: "Anything else we should know?", helper: "Add any extra context before sending the request." },
+      { title: "How would you like to continue?", helper: "Choose whether you want to book a System Review call or receive our initial response by email." },
     ],
     businessTypes: [
       { value: "beauty-health-clinic", label: "Beauty / health clinic" },
@@ -219,6 +230,16 @@ export const systemReviewCopy: Record<string, SystemReviewCopy> = {
       { value: "not-sure", label: "Not sure yet" },
     ],
     sensitiveHelper: "If sensitive or medical data is involved, the proposal will include a separate review of security, access levels and data ownership.",
+    nextStepTitle: "How would you like to continue?",
+    nextStepHelper: "Choose whether you want to book a System Review call or receive our initial response by email.",
+    nextStepCall: "Book a System Review call",
+    nextStepCallDesc: "Choose an available time for a focused review session with our team.",
+    nextStepEmail: "Receive a response by email",
+    nextStepEmailDesc: "We will review your answers and reply by email with recommended next steps.",
+    nextStepSelectSlot: "Select an available time",
+    nextStepNoSlots: "No call slots are available right now. Please choose email response or try again later.",
+    validationSlot: "Please select an available time slot.",
+    validationNextStep: "Please choose how you would like to continue.",
   },
   fa: {
     direction: "rtl",
@@ -1352,7 +1373,21 @@ applyReviewLocale("hi", {
   sensitiveHelper: "यदि sensitive या medical data है, तो proposal में security, access levels और data ownership अलग से review होंगे.",
 });
 
+const nextStepDefaults = {
+  nextStepTitle: systemReviewCopy.en.nextStepTitle,
+  nextStepHelper: systemReviewCopy.en.nextStepHelper,
+  nextStepCall: systemReviewCopy.en.nextStepCall,
+  nextStepCallDesc: systemReviewCopy.en.nextStepCallDesc,
+  nextStepEmail: systemReviewCopy.en.nextStepEmail,
+  nextStepEmailDesc: systemReviewCopy.en.nextStepEmailDesc,
+  nextStepSelectSlot: systemReviewCopy.en.nextStepSelectSlot,
+  nextStepNoSlots: systemReviewCopy.en.nextStepNoSlots,
+  validationSlot: systemReviewCopy.en.validationSlot,
+  validationNextStep: systemReviewCopy.en.validationNextStep,
+};
+
 export const getSystemReviewCopy = (language?: string) => {
   const normalized = String(language || "en").split("-")[0].toLowerCase();
-  return systemReviewCopy[normalized] || systemReviewCopy[aliasMap[normalized]] || systemReviewCopy.en;
+  const copy = systemReviewCopy[normalized] || systemReviewCopy[aliasMap[normalized]] || systemReviewCopy.en;
+  return { ...nextStepDefaults, ...copy };
 };
