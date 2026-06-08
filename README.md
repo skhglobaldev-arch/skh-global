@@ -106,12 +106,11 @@ firebase functions:secrets:set SMTP_USER
 firebase functions:secrets:set SMTP_PASS
 firebase functions:secrets:set SYSTEM_REVIEW_FROM_EMAIL
 firebase functions:secrets:set SYSTEM_REVIEW_ADMIN_EMAIL
-firebase functions:secrets:set FIREBASE_PROJECT_ID
-firebase functions:secrets:set FIREBASE_CLIENT_EMAIL
-firebase functions:secrets:set FIREBASE_PRIVATE_KEY
 ```
 
-Optional non-secret config can be set as environment params or included in `functions/.env` for local emulator use only.
+Cloud Functions use **Application Default Credentials** for Firestore/Auth — you do not need `FIREBASE_PRIVATE_KEY` in production unless overriding the default service account.
+
+Optional: set `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY` in `functions/.env` for local emulator use only.
 
 List configured secrets: `firebase functions:secrets:access`
 
