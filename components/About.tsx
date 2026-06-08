@@ -9,7 +9,7 @@ export const About: React.FC = () => {
   const caseStudies = [
     {
       name: 'BeautyTech',
-      label: t('home_case_beauty_label', 'From beauty website to booking, payment, and management system.'),
+      label: t('home_case_beauty_label', 'From beauty website to booking, payment, and management System.'),
       before: t('home_case_beauty_before', 'Bookings, staff schedules, deposits, and branch updates were spread across manual tools.'),
       built: t('home_case_beauty_built', 'A beauty business system with booking, staff logic, customer dashboards, payments, and branch management.'),
       features: [
