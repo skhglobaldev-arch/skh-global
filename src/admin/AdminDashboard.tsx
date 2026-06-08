@@ -45,11 +45,12 @@ export const AdminDashboard: React.FC = () => {
   const [error, setError] = React.useState('');
   const [slotForm, setSlotForm] = React.useState({
     date: '',
-    time: '',
+    time: '09:00',
     timezone: 'Europe/London',
-    durationMinutes: 30,
-    status: 'Available',
+    durationMinutes: 60,
+    status: 'Hidden',
   });
+  const [blockDayDate, setBlockDayDate] = React.useState('');
 
   const loadSection = React.useCallback(async () => {
     setLoading(true);
@@ -240,41 +241,73 @@ export const AdminDashboard: React.FC = () => {
 
   const renderSlots = () => (
     <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
-      <div className={cardClass}>
-        <h2 className="mb-4 text-lg font-black text-white">Add slot</h2>
-        <div className="space-y-3">
-          <input type="date" className={inputClass} value={slotForm.date} onChange={(e) => setSlotForm({ ...slotForm, date: e.target.value })} />
-          <input type="time" className={inputClass} value={slotForm.time} onChange={(e) => setSlotForm({ ...slotForm, time: e.target.value })} />
-          <input className={inputClass} value={slotForm.timezone} onChange={(e) => setSlotForm({ ...slotForm, timezone: e.target.value })} placeholder="Timezone" />
-          <select className={inputClass} value={slotForm.status} onChange={(e) => setSlotForm({ ...slotForm, status: e.target.value })}>
-            {slotStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <button
-            type="button"
-            className={btnPrimary}
-            onClick={async () => {
-              await adminApi.slotCreate(slotForm);
-              setSlotForm({ date: '', time: '', timezone: 'Europe/London', durationMinutes: 30, status: 'Available' });
-              loadSection();
-            }}
-          >
-            Create slot
-          </button>
+      <div className="space-y-6">
+        <div className={cardClass}>
+          <h2 className="mb-2 text-lg font-black text-white">Recurring schedule</h2>
+          <p className="mb-4 text-xs leading-relaxed text-slate-400">
+            Mon–Thu, 09:00–15:00 (hourly slots) in Europe/London are generated automatically for the next few weeks.
+            Block or hide individual slots below, or block an entire day.
+          </p>
+          <div className="space-y-3">
+            <input type="date" className={inputClass} value={blockDayDate} onChange={(e) => setBlockDayDate(e.target.value)} />
+            <button
+              type="button"
+              className={btnPrimary}
+              disabled={!blockDayDate}
+              onClick={async () => {
+                await adminApi.blockDay(blockDayDate, slotForm.timezone);
+                setBlockDayDate('');
+                loadSection();
+              }}
+            >
+              Block entire day
+            </button>
+          </div>
+        </div>
+        <div className={cardClass}>
+          <h2 className="mb-4 text-lg font-black text-white">Block / hide slot</h2>
+          <div className="space-y-3">
+            <input type="date" className={inputClass} value={slotForm.date} onChange={(e) => setSlotForm({ ...slotForm, date: e.target.value })} />
+            <select className={inputClass} value={slotForm.time} onChange={(e) => setSlotForm({ ...slotForm, time: e.target.value })}>
+              {['09:00', '10:00', '11:00', '12:00', '13:00', '14:00'].map((time) => (
+                <option key={time} value={time}>{time}</option>
+              ))}
+            </select>
+            <select className={inputClass} value={slotForm.status} onChange={(e) => setSlotForm({ ...slotForm, status: e.target.value })}>
+              {slotStatuses.filter((s) => s !== 'Available').map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <button
+              type="button"
+              className={btnPrimary}
+              disabled={!slotForm.date}
+              onClick={async () => {
+                await adminApi.slotCreate(slotForm);
+                setSlotForm({ date: '', time: '09:00', timezone: 'Europe/London', durationMinutes: 60, status: 'Hidden' });
+                loadSection();
+              }}
+            >
+              Save override
+            </button>
+          </div>
         </div>
       </div>
       <div className={cardClass}>
-        <h2 className="mb-4 text-lg font-black text-white">All slots</h2>
+        <h2 className="mb-4 text-lg font-black text-white">Calendar (generated + overrides)</h2>
         <div className="max-h-[60vh] space-y-2 overflow-y-auto">
           {slots.map((slot) => (
             <div key={slot.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-[#050713]/50 px-4 py-3">
               <div>
                 <p className="font-bold text-white">{slot.date} · {slot.time}</p>
-                <p className="text-xs text-slate-400">{slot.timezone} · {slot.status}</p>
+                <p className="text-xs text-slate-400">
+                  {slot.timezone} · {slot.status}
+                  {slot.generated ? ' · auto' : ''}
+                </p>
               </div>
               <div className="flex gap-2">
                 <select
                   className="rounded-lg border border-white/10 bg-[#101827] px-2 py-1 text-xs text-white"
                   value={slot.status}
+                  disabled={slot.status === 'Booked'}
                   onChange={async (e) => {
                     await adminApi.slotUpdate(slot.id, { status: e.target.value });
                     loadSection();
@@ -282,7 +315,9 @@ export const AdminDashboard: React.FC = () => {
                 >
                   {slotStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <button type="button" className={btnGhost} onClick={async () => { await adminApi.slotDelete(slot.id); loadSection(); }}>Delete</button>
+                {slot.hasOverride ? (
+                  <button type="button" className={btnGhost} onClick={async () => { await adminApi.slotDelete(slot.id); loadSection(); }}>Clear</button>
+                ) : null}
               </div>
             </div>
           ))}

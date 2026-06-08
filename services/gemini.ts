@@ -59,12 +59,23 @@ function cleanJsonResponse(text: string): string {
   return cleaned.trim();
 }
 
+const getGeminiApiKey = () => {
+  if (typeof window !== 'undefined') {
+    throw new Error('AUTH_REQUIRED');
+  }
+  const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  if (!key) {
+    throw new Error('AUTH_REQUIRED');
+  }
+  return key;
+};
+
 async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000): Promise<any> {
   try {
     return await fn();
   } catch (error: any) {
     const errorStr = error?.message?.toLowerCase() || "";
-    if (errorStr.includes("not found") || errorStr.includes("401") || errorStr.includes("invalid")) {
+    if (errorStr.includes("not found") || errorStr.includes("401") || errorStr.includes("invalid") || errorStr.includes("auth_required")) {
       throw new Error("AUTH_REQUIRED");
     }
     if ((errorStr.includes("503") || errorStr.includes("429") || errorStr.includes("overloaded")) && retries > 0) {
@@ -77,7 +88,7 @@ async function callWithRetry(fn: () => Promise<any>, retries = 2, delay = 1000):
 
 export const generateProjectPlan = async (userIdea: string): Promise<string> => {
   return callWithRetry(async () => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: getGeminiApiKey() });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview", 
       contents: userIdea,
@@ -92,7 +103,7 @@ export const generateProjectPlan = async (userIdea: string): Promise<string> => 
 
 export const generateVisualDemo = async (userIdea: string): Promise<any> => {
   return callWithRetry(async () => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: getGeminiApiKey() });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: userIdea,
@@ -111,7 +122,7 @@ export const generateVisualDemo = async (userIdea: string): Promise<any> => {
 
 export const chatWithAI = async (message: string, history: any[]): Promise<string> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: getGeminiApiKey() });
     const chat = ai.chats.create({
       model: "gemini-3-flash-preview",
       config: { systemInstruction: "You are the official SKH.GLOBAL AI." },

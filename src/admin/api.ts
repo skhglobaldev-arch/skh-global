@@ -43,6 +43,11 @@ export const adminApi = {
   slotUpdate: (id: string, data: Record<string, unknown>) =>
     adminFetch(`/api/admin/slots/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   slotDelete: (id: string) => adminFetch(`/api/admin/slots/${id}`, { method: 'DELETE' }),
+  blockDay: (date: string, timezone = 'Europe/London') =>
+    adminFetch('/api/admin/slots/block-day', {
+      method: 'POST',
+      body: JSON.stringify({ date, timezone }),
+    }),
   bookingsList: () => adminFetch('/api/admin/bookings'),
   settings: () => adminFetch('/api/admin/settings'),
 };

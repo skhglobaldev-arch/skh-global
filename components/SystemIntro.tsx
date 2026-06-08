@@ -1,36 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI, Modality } from "@google/genai";
 import { Zap, Power } from 'lucide-react';
-
-// Audio Decoding Helpers
-function decodeBase64(base64: string): Uint8Array {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
-
-async function createAudioBuffer(
-  data: Uint8Array,
-  ctx: AudioContext,
-  sampleRate: number,
-  numChannels: number,
-): Promise<AudioBuffer> {
-  const dataInt16 = new Int16Array(data.buffer, data.byteOffset, data.byteLength / 2);
-  const frameCount = dataInt16.length / numChannels;
-  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
-  for (let channel = 0; channel < numChannels; channel++) {
-    const channelData = buffer.getChannelData(channel);
-    for (let i = 0; i < frameCount; i++) {
-      channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
-    }
-  }
-  return buffer;
-}
 
 interface SystemIntroProps {
   onComplete: () => void;
@@ -39,11 +9,9 @@ interface SystemIntroProps {
 export const SystemIntro: React.FC<SystemIntroProps> = ({ onComplete }) => {
   const [phase, setPhase] = useState<'ready' | 'active' | 'exiting'>('ready');
   const videoRef = useRef<HTMLVideoElement>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
   const mountedRef = useRef(true);
 
   const videoUrl = "https://dl.dropboxusercontent.com/scl/fi/ryxm1c2utu1zu0fwmmpew/grok-video-4de00c75-f0d7-4b70-9048-0b9124eccd31-1.mp4?rlkey=b3fuw8m0gqj8izz4cccrrtvrl&raw=1";
-  const welcomeMessage = "Welcome to SKH. The connection is stable. Initializing neural bridge. We are ready to architect your future.";
 
   useEffect(() => {
     mountedRef.current = true;
@@ -52,55 +20,22 @@ export const SystemIntro: React.FC<SystemIntroProps> = ({ onComplete }) => {
 
   const handleInitialize = async () => {
     if (!mountedRef.current) return;
-    
-    // Resume/Start Audio Context
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-    }
-    const ctx = audioContextRef.current;
-    await ctx.resume();
 
     setPhase('active');
 
     try {
-      // Create AI instance inside the handler to ensure updated API key
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-preview-tts",
-        contents: [{ parts: [{ text: welcomeMessage }] }],
-        config: {
-          responseModalities: [Modality.AUDIO],
-          speechConfig: {
-            voiceConfig: { 
-              prebuiltVoiceConfig: { voiceName: 'Zephyr' } 
-            },
-          },
-        },
-      });
-
-      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (!base64Audio) throw new Error("Audio data missing");
-
-      const audioBuffer = await createAudioBuffer(decodeBase64(base64Audio), ctx, 24000, 1);
-      const source = ctx.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(ctx.destination);
-
       if (videoRef.current) {
-        videoRef.current.play().catch(console.warn);
+        await videoRef.current.play().catch(console.warn);
       }
 
-      source.start();
-      
-      source.onended = () => {
+      setTimeout(() => {
         if (mountedRef.current) {
           setPhase('exiting');
           setTimeout(() => onComplete(), 1000);
         }
-      };
+      }, 4000);
     } catch (err) {
       console.error("Intro Error:", err);
-      // Fallback: Transition anyway if AI fails after a delay
       setTimeout(() => {
         if (mountedRef.current && phase === 'active') {
           setPhase('exiting');
