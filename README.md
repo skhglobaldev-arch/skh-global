@@ -69,6 +69,26 @@ Firebase Console will provide a direct link when the first query runs.
 - Functions directory: `netlify/functions`
 - API routes are redirected in `netlify.toml`
 
+### Netlify environment variables (required for admin login)
+
+`VITE_*` variables are embedded at **build time**. After adding or changing them in Netlify, trigger **Deploys → Trigger deploy → Clear cache and deploy site**.
+
+**Client (scopes: Production, Deploy previews, Branch deploys):**
+
+| Variable | Example source |
+| --- | --- |
+| `VITE_FIREBASE_API_KEY` | Firebase Console → Project settings → Your apps → Web app |
+| `VITE_FIREBASE_AUTH_DOMAIN` | `{project-id}.firebaseapp.com` |
+| `VITE_FIREBASE_PROJECT_ID` | `skhglobal-c662b` |
+| `VITE_FIREBASE_STORAGE_BUCKET` | `{project-id}.firebasestorage.app` |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase web app config |
+| `VITE_FIREBASE_APP_ID` | Firebase web app config |
+| `VITE_FIREBASE_MEASUREMENT_ID` | Optional Analytics ID |
+
+**Server (Netlify Functions):** `ADMIN_EMAIL`, `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, plus SMTP/Resend vars from `.env.example`.
+
+To verify a deploy picked up Firebase config, search the built JS for your project id (e.g. `skhglobal-c662b`). If it is missing, the `VITE_FIREBASE_*` vars were not present during `npm run build`.
+
 ## Security notes
 
 - Gemini API key is **not** bundled in the frontend (`vite.config.ts` define removed)

@@ -2,7 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Lock, Sparkles } from 'lucide-react';
-import { getFirebaseAuth, isFirebaseConfigured } from '../firebase/client';
+import {
+  getFirebaseAuth,
+  getFirebaseConfigHelpMessage,
+  isFirebaseConfigured,
+} from '../firebase/client';
 import { adminApi } from './api';
 
 export const AdminLogin: React.FC = () => {
@@ -12,6 +16,11 @@ export const AdminLogin: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
 
+  const configError = React.useMemo(
+    () => (isFirebaseConfigured() ? '' : getFirebaseConfigHelpMessage()),
+    [],
+  );
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError('');
@@ -19,7 +28,7 @@ export const AdminLogin: React.FC = () => {
 
     try {
       if (!isFirebaseConfigured()) {
-        throw new Error('Firebase is not configured. Add VITE_FIREBASE_* env vars.');
+        throw new Error(getFirebaseConfigHelpMessage());
       }
 
       const auth = getFirebaseAuth();
@@ -48,6 +57,12 @@ export const AdminLogin: React.FC = () => {
           <h1 className="text-3xl font-black text-white">Sign in</h1>
           <p className="mt-2 text-sm text-slate-400">Authorized admin access only</p>
         </div>
+
+        {configError ? (
+          <p className="mb-5 rounded-2xl border border-amber-400/25 bg-amber-400/[0.08] px-4 py-3 text-sm leading-relaxed text-amber-50">
+            {configError}
+          </p>
+        ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <label className="block">
@@ -79,7 +94,7 @@ export const AdminLogin: React.FC = () => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || Boolean(configError)}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] px-6 py-4 text-sm font-black text-white shadow-[0_18px_52px_rgba(37,99,235,0.28)] disabled:opacity-50"
           >
             {loading ? 'Signing in…' : 'Sign in'}
