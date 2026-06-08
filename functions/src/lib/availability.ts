@@ -142,7 +142,7 @@ export const loadBookedSlotKeysInRange = async (startDate: string, endDate: stri
   return booked;
 };
 
-export const getAvailableSlots = async () => {
+export const getAvailableSlots = async (options?: { date?: string }) => {
   const generated = generateRecurringSlots();
   if (!generated.length) return [];
 
@@ -153,7 +153,7 @@ export const getAvailableSlots = async () => {
     loadBookedSlotKeysInRange(startDate, endDate),
   ]);
 
-  return generated
+  const available = generated
     .filter((slot) => {
       const override = overrides.get(slot.id);
       if (override?.status === 'Hidden' || override?.status === 'Booked') return false;
@@ -164,6 +164,12 @@ export const getAvailableSlots = async () => {
       ...slot,
       status: 'Available' as const,
     }));
+
+  if (options?.date) {
+    return available.filter((slot) => slot.date === options.date);
+  }
+
+  return available;
 };
 
 export const getAdminMergedSlots = async () => {

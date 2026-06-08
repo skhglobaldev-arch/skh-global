@@ -72,6 +72,7 @@ export type SystemReviewCopy = {
   nextStepCallDesc?: string;
   nextStepEmail?: string;
   nextStepEmailDesc?: string;
+  nextStepSelectDate?: string;
   nextStepSelectSlot?: string;
   nextStepNoSlots?: string;
   validationSlot?: string;
@@ -236,6 +237,7 @@ export const systemReviewCopy: Record<string, SystemReviewCopy> = {
     nextStepCallDesc: "Choose an available time for a focused review session with our team.",
     nextStepEmail: "Receive a response by email",
     nextStepEmailDesc: "We will review your answers and reply by email with recommended next steps.",
+    nextStepSelectDate: "Choose a date",
     nextStepSelectSlot: "Select an available time",
     nextStepNoSlots: "No call slots are available right now. Please choose email response or try again later.",
     validationSlot: "Please select an available time slot.",
@@ -1380,6 +1382,7 @@ const nextStepDefaults = {
   nextStepCallDesc: systemReviewCopy.en.nextStepCallDesc,
   nextStepEmail: systemReviewCopy.en.nextStepEmail,
   nextStepEmailDesc: systemReviewCopy.en.nextStepEmailDesc,
+  nextStepSelectDate: systemReviewCopy.en.nextStepSelectDate,
   nextStepSelectSlot: systemReviewCopy.en.nextStepSelectSlot,
   nextStepNoSlots: systemReviewCopy.en.nextStepNoSlots,
   validationSlot: systemReviewCopy.en.validationSlot,

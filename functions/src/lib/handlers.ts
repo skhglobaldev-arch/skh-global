@@ -183,8 +183,9 @@ export const handleContactPost = async (request: Request) => {
   return json({ success: true, ticketId: ticketNumber });
 };
 
-export const handleAvailabilityGet = async () => {
-  const slots = await getAvailableSlots();
+export const handleAvailabilityGet = async (request?: Request) => {
+  const date = request ? new URL(request.url).searchParams.get('date') || undefined : undefined;
+  const slots = await getAvailableSlots({ date });
   return json({ slots });
 };
 

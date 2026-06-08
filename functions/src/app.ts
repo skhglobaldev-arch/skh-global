@@ -34,7 +34,8 @@ const toWebRequest = (req: express.Request, path: string): Request => {
     }
   }
 
-  return new Request(`${getBaseUrl(req)}${path}`, init);
+  const requestPath = req.originalUrl || path;
+  return new Request(`${getBaseUrl(req)}${requestPath}`, init);
 };
 
 const sendWebResponse = async (webResponse: Response, res: express.Response) => {
@@ -80,9 +81,9 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-app.get('/api/availability', async (_req, res) => {
+app.get('/api/availability', async (req, res) => {
   try {
-    await sendWebResponse(await handleAvailabilityGet(), res);
+    await sendWebResponse(await handleAvailabilityGet(toWebRequest(req, '/api/availability')), res);
   } catch (error) {
     console.error('[API-AVAILABILITY] Failed', error);
     res.status(500).json({ error: 'Failed to load availability' });

@@ -14,15 +14,10 @@ import {
 } from 'lucide-react';
 import { getSystemReviewCopy, ReviewChoice } from '../src/systemReviewCopy';
 import { fetchAvailableSlots } from '../src/admin/api';
+import { BookingCalendar } from '../src/components/BookingCalendar';
+import type { BookingSlot } from '../src/components/bookingUtils';
 
 type PreferredNextStep = 'call' | 'email' | '';
-
-type AvailabilitySlotOption = {
-  id: string;
-  date: string;
-  time: string;
-  timezone: string;
-};
 
 type ReviewFormData = {
   name: string;
@@ -95,8 +90,9 @@ export const AuditView: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [submitError, setSubmitError] = React.useState('');
   const [ticketNumber] = React.useState(() => `SKH-${Math.random().toString(36).slice(2, 8).toUpperCase()}`);
-  const [availableSlots, setAvailableSlots] = React.useState<AvailabilitySlotOption[]>([]);
+  const [availableSlots, setAvailableSlots] = React.useState<BookingSlot[]>([]);
   const [slotsLoading, setSlotsLoading] = React.useState(false);
+  const [selectedBookingDate, setSelectedBookingDate] = React.useState('');
 
   const totalSteps = Math.max(copy.steps.length, 11);
   const currentStepCopy = copy.steps[step - 1] || {
@@ -189,6 +185,7 @@ export const AuditView: React.FC = () => {
 
     let cancelled = false;
     setSlotsLoading(true);
+    setSelectedBookingDate('');
     fetchAvailableSlots()
       .then((data) => {
         if (!cancelled) setAvailableSlots(data.slots || []);
@@ -523,6 +520,7 @@ export const AuditView: React.FC = () => {
             () => {
               update('preferredNextStep', 'call');
               update('selectedSlotId', '');
+              setSelectedBookingDate('');
             },
             'radio',
           )}
@@ -540,28 +538,29 @@ export const AuditView: React.FC = () => {
           {formData.preferredNextStep === 'call' ? copy.nextStepCallDesc : copy.nextStepEmailDesc}
         </p>
         {formData.preferredNextStep === 'call' ? (
-          <div className="space-y-3">
-            <span className={labelClass}>{copy.nextStepSelectSlot}</span>
-            {slotsLoading ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#050713]/60 px-5 py-4 text-sm text-slate-400">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-cyan-300 border-t-transparent" />
-                Loading available times…
-              </div>
-            ) : availableSlots.length ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {availableSlots.map((slot) => renderChoiceCard(
-                  { value: slot.id, label: `${slot.date} · ${slot.time} (${slot.timezone})` },
-                  formData.selectedSlotId === slot.id,
-                  () => update('selectedSlotId', slot.id),
-                  'radio',
-                ))}
-              </div>
-            ) : (
-              <p className={`rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-4 py-3 text-sm text-amber-100 ${isRtl ? 'text-right' : 'text-left'}`}>
-                {copy.nextStepNoSlots}
-              </p>
-            )}
-          </div>
+          <BookingCalendar
+            mode="client"
+            slots={availableSlots}
+            loading={slotsLoading}
+            selectedDate={selectedBookingDate}
+            selectedSlotId={formData.selectedSlotId}
+            onSelectDate={(date) => {
+              setSelectedBookingDate(date);
+              if (
+                formData.selectedSlotId
+                && !availableSlots.some((slot) => slot.id === formData.selectedSlotId && slot.date === date)
+              ) {
+                update('selectedSlotId', '');
+              }
+            }}
+            onSelectSlot={(slotId) => update('selectedSlotId', slotId)}
+            isRtl={isRtl}
+            labels={{
+              selectDate: copy.nextStepSelectDate,
+              selectTime: copy.nextStepSelectSlot,
+              noSlots: copy.nextStepNoSlots,
+            }}
+          />
         ) : null}
       </div>
     );

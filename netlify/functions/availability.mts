@@ -9,7 +9,7 @@ const json = (value: unknown, status = 200) =>
 export default async (request: Request) => {
   if (request.method === 'GET') {
     try {
-      return await handleAvailabilityGet();
+      return await handleAvailabilityGet(request);
     } catch (error) {
       console.error('[NETLIFY-AVAILABILITY] Failed', error);
       return json({ error: 'Failed to load availability' }, 500);

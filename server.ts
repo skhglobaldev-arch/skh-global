@@ -539,9 +539,10 @@ async function startServer() {
     }
   });
 
-  app.get("/api/availability", async (_req, res) => {
+  app.get("/api/availability", async (req, res) => {
     try {
-      await sendWebResponse(await handleAvailabilityGet(), res);
+      const request = new Request(`${getSiteUrl(req)}${req.originalUrl}`);
+      await sendWebResponse(await handleAvailabilityGet(request), res);
     } catch (error) {
       console.error("[API-AVAILABILITY] ERROR:", error);
       res.status(500).json({ error: "Failed to load availability" });

@@ -176,19 +176,29 @@ export const handleContactPost = async (request: Request) => {
   return json({ success: true, ticketId: ticketNumber });
 };
 
-export const handleAvailabilityGet = async () => {
+export const handleAvailabilityGet = async (request?: Request) => {
+  const dateFilter = request ? new URL(request.url).searchParams.get('date') || undefined : undefined;
   const { db } = getFirebaseAdmin();
   const now = new Date().toISOString().slice(0, 10);
 
-  const snapshot = await db
+  let query = db
     .collection(COLLECTIONS.availabilitySlots)
     .where('status', '==', 'Available')
-    .where('date', '>=', now)
+    .where('date', '>=', dateFilter || now)
     .orderBy('date')
     .orderBy('time')
-    .limit(50)
-    .get();
+    .limit(50);
 
+  if (dateFilter) {
+    query = db
+      .collection(COLLECTIONS.availabilitySlots)
+      .where('status', '==', 'Available')
+      .where('date', '==', dateFilter)
+      .orderBy('time')
+      .limit(20);
+  }
+
+  const snapshot = await query.get();
   const slots = snapshot.docs.map((doc) => serializeDoc(doc.id, doc.data() as Record<string, unknown>));
   return json({ slots });
 };

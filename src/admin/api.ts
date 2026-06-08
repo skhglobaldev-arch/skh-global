@@ -52,8 +52,17 @@ export const adminApi = {
   settings: () => adminFetch('/api/admin/settings'),
 };
 
-export const fetchAvailableSlots = async () => {
-  const response = await fetch('/api/availability');
+export type AvailabilitySlotResponse = {
+  id: string;
+  date: string;
+  time: string;
+  timezone: string;
+  status?: 'Available' | 'Booked' | 'Hidden';
+};
+
+export const fetchAvailableSlots = async (date?: string) => {
+  const query = date ? `?date=${encodeURIComponent(date)}` : '';
+  const response = await fetch(`/api/availability${query}`);
   if (!response.ok) throw new Error('Failed to load available slots');
-  return response.json() as Promise<{ slots: Array<{ id: string; date: string; time: string; timezone: string }> }>;
+  return response.json() as Promise<{ slots: AvailabilitySlotResponse[] }>;
 };

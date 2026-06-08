@@ -12,13 +12,14 @@ import {
   Users,
 } from 'lucide-react';
 import { getFirebaseAuth } from '../firebase/client';
+import { BookingCalendar } from '../components/BookingCalendar';
+import type { BookingSlot } from '../components/bookingUtils';
 import { adminApi } from './api';
 
 type Section = 'overview' | 'contacts' | 'reviews' | 'slots' | 'bookings' | 'settings';
 
 const cardClass = 'rounded-2xl border border-white/10 bg-[#101827]/70 p-5 backdrop-blur-xl';
 const inputClass = 'w-full rounded-xl border border-white/10 bg-[#050713]/80 px-4 py-3 text-sm text-white outline-none focus:border-cyan-300/45';
-const btnPrimary = 'rounded-xl bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] px-4 py-2 text-xs font-black uppercase tracking-wider text-white';
 const btnGhost = 'rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold text-white hover:border-cyan-300/25';
 
 const formatDate = (value?: string) => {
@@ -43,14 +44,8 @@ export const AdminDashboard: React.FC = () => {
   const [selectedReview, setSelectedReview] = React.useState<any | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
-  const [slotForm, setSlotForm] = React.useState({
-    date: '',
-    time: '09:00',
-    timezone: 'Europe/London',
-    durationMinutes: 60,
-    status: 'Hidden',
-  });
-  const [blockDayDate, setBlockDayDate] = React.useState('');
+  const [selectedSlotDate, setSelectedSlotDate] = React.useState('');
+  const [slotActionLoading, setSlotActionLoading] = React.useState(false);
 
   const loadSection = React.useCallback(async () => {
     setLoading(true);
@@ -89,7 +84,44 @@ export const AdminDashboard: React.FC = () => {
 
   const contactStatuses = ['New', 'Reviewed', 'Replied', 'Archived'];
   const reviewStatuses = ['New', 'Needs Review', 'Call Booked', 'Proposal Draft', 'Replied', 'Archived'];
-  const slotStatuses = ['Available', 'Booked', 'Hidden'];
+  const handleToggleSlot = async (slot: BookingSlot) => {
+    if (slot.status === 'Booked') return;
+    setSlotActionLoading(true);
+    setError('');
+    try {
+      if (slot.status === 'Available') {
+        await adminApi.slotCreate({
+          date: slot.date,
+          time: slot.time,
+          timezone: slot.timezone,
+          durationMinutes: 60,
+          status: 'Hidden',
+        });
+      } else if (slot.hasOverride) {
+        await adminApi.slotDelete(slot.id);
+      } else {
+        await adminApi.slotUpdate(slot.id, { status: 'Available' });
+      }
+      await loadSection();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update slot');
+    } finally {
+      setSlotActionLoading(false);
+    }
+  };
+
+  const handleBlockDay = async (date: string) => {
+    setSlotActionLoading(true);
+    setError('');
+    try {
+      await adminApi.blockDay(date, 'Europe/London');
+      await loadSection();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to block day');
+    } finally {
+      setSlotActionLoading(false);
+    }
+  };
 
   const renderOverview = () => (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -240,88 +272,35 @@ export const AdminDashboard: React.FC = () => {
   );
 
   const renderSlots = () => (
-    <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
-      <div className="space-y-6">
-        <div className={cardClass}>
-          <h2 className="mb-2 text-lg font-black text-white">Recurring schedule</h2>
-          <p className="mb-4 text-xs leading-relaxed text-slate-400">
-            Mon–Thu, 09:00–15:00 (hourly slots) in Europe/London are generated automatically for the next few weeks.
-            Block or hide individual slots below, or block an entire day.
-          </p>
-          <div className="space-y-3">
-            <input type="date" className={inputClass} value={blockDayDate} onChange={(e) => setBlockDayDate(e.target.value)} />
-            <button
-              type="button"
-              className={btnPrimary}
-              disabled={!blockDayDate}
-              onClick={async () => {
-                await adminApi.blockDay(blockDayDate, slotForm.timezone);
-                setBlockDayDate('');
-                loadSection();
-              }}
-            >
-              Block entire day
-            </button>
-          </div>
-        </div>
-        <div className={cardClass}>
-          <h2 className="mb-4 text-lg font-black text-white">Block / hide slot</h2>
-          <div className="space-y-3">
-            <input type="date" className={inputClass} value={slotForm.date} onChange={(e) => setSlotForm({ ...slotForm, date: e.target.value })} />
-            <select className={inputClass} value={slotForm.time} onChange={(e) => setSlotForm({ ...slotForm, time: e.target.value })}>
-              {['09:00', '10:00', '11:00', '12:00', '13:00', '14:00'].map((time) => (
-                <option key={time} value={time}>{time}</option>
-              ))}
-            </select>
-            <select className={inputClass} value={slotForm.status} onChange={(e) => setSlotForm({ ...slotForm, status: e.target.value })}>
-              {slotStatuses.filter((s) => s !== 'Available').map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <button
-              type="button"
-              className={btnPrimary}
-              disabled={!slotForm.date}
-              onClick={async () => {
-                await adminApi.slotCreate(slotForm);
-                setSlotForm({ date: '', time: '09:00', timezone: 'Europe/London', durationMinutes: 60, status: 'Hidden' });
-                loadSection();
-              }}
-            >
-              Save override
-            </button>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6">
       <div className={cardClass}>
-        <h2 className="mb-4 text-lg font-black text-white">Calendar (generated + overrides)</h2>
-        <div className="max-h-[60vh] space-y-2 overflow-y-auto">
-          {slots.map((slot) => (
-            <div key={slot.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-[#050713]/50 px-4 py-3">
-              <div>
-                <p className="font-bold text-white">{slot.date} · {slot.time}</p>
-                <p className="text-xs text-slate-400">
-                  {slot.timezone} · {slot.status}
-                  {slot.generated ? ' · auto' : ''}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <select
-                  className="rounded-lg border border-white/10 bg-[#101827] px-2 py-1 text-xs text-white"
-                  value={slot.status}
-                  disabled={slot.status === 'Booked'}
-                  onChange={async (e) => {
-                    await adminApi.slotUpdate(slot.id, { status: e.target.value });
-                    loadSection();
-                  }}
-                >
-                  {slotStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-                {slot.hasOverride ? (
-                  <button type="button" className={btnGhost} onClick={async () => { await adminApi.slotDelete(slot.id); loadSection(); }}>Clear</button>
-                ) : null}
-              </div>
-            </div>
-          ))}
+        <h2 className="mb-2 text-lg font-black text-white">Availability calendar</h2>
+        <p className="mb-5 text-xs leading-relaxed text-slate-400">
+          Mon–Thu, 09:00–14:00 (hourly) in Europe/London are generated automatically for the next few weeks.
+          Select a date, then click a time to block or restore it. Booked slots stay locked. Use “Block entire day” to hide all times on a date.
+        </p>
+        <div className="mb-4 flex flex-wrap gap-3 text-[10px] font-bold uppercase tracking-wider">
+          <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-emerald-100">Available</span>
+          <span className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-slate-400">Booked</span>
+          <span className="rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-red-100 line-through">Blocked</span>
         </div>
+        <BookingCalendar
+          mode="admin"
+          slots={slots as BookingSlot[]}
+          loading={loading || slotActionLoading}
+          selectedDate={selectedSlotDate}
+          onSelectDate={setSelectedSlotDate}
+          onSelectSlot={() => undefined}
+          onToggleSlot={handleToggleSlot}
+          onBlockDay={handleBlockDay}
+          labels={{
+            selectDate: 'Select a working day',
+            selectTime: 'Manage time slots',
+            noSlots: 'No generated slots in the current booking window.',
+            blockDay: 'Block entire day',
+            clickToToggle: 'Click an available slot to block it, or a blocked slot to restore it.',
+          }}
+        />
       </div>
     </div>
   );
