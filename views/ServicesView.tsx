@@ -3,9 +3,8 @@ import React from 'react';
 import { Services } from '../components/Services';
 import { Reveal } from '../components/Reveal';
 import { PageHero } from '../components/PageHero';
-import { Bell, CalendarCheck, Code, CreditCard, Database, LayoutDashboard, Lock, Zap, Server, Brain, BarChart3, Target, ShieldCheck } from 'lucide-react';
+import { Server, Brain, BarChart3, Target, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { JourneyTimeline } from '../components/JourneyTimeline';
 
 export const ServicesView: React.FC = () => {
   const { t } = useTranslation();
@@ -15,39 +14,6 @@ export const ServicesView: React.FC = () => {
     { icon: Target, title: t('outcome_2_title', "Better Customer Flow"), desc: t('outcome_2_desc', "Clearer paths for enquiries, bookings, payments and follow-up.") },
     { icon: BarChart3, title: t('outcome_3_title', "Clear Data"), desc: t('outcome_3_desc', "Simple reporting for bookings, customers, messages and performance.") },
     { icon: Server, title: t('outcome_4_title', "Reliable Setup"), desc: t('outcome_4_desc', "A stable technical setup for daily business use.") }
-  ];
-
-  const systemFlowItems = [
-    {
-      icon: CalendarCheck,
-      eyebrow: t('system_flow_step_1_label', 'Step 01'),
-      title: t('system_flow_1', 'Customer chooses a service'),
-      desc: t('system_flow_1_desc', 'The journey starts with a clear service page, availability and simple request flow.'),
-    },
-    {
-      icon: CreditCard,
-      eyebrow: t('system_flow_step_2_label', 'Step 02'),
-      title: t('system_flow_2', 'Booking and payment are confirmed'),
-      desc: t('system_flow_2_desc', 'Deposits, payment status and confirmations stay connected to the customer record.'),
-    },
-    {
-      icon: LayoutDashboard,
-      eyebrow: t('system_flow_step_3_label', 'Step 03'),
-      title: t('system_flow_3', 'Team sees the request in a dashboard'),
-      desc: t('system_flow_3_desc', 'Your team can see who booked, what changed and what needs attention next.'),
-    },
-    {
-      icon: Bell,
-      eyebrow: t('system_flow_step_4_label', 'Step 04'),
-      title: t('system_flow_4', 'Customer receives reminders and updates'),
-      desc: t('system_flow_4_desc', 'Useful messages go out at the right time without turning the experience cold.'),
-    },
-    {
-      icon: BarChart3,
-      eyebrow: t('system_flow_step_5_label', 'Step 05'),
-      title: t('system_flow_5', 'Owner sees data and next actions'),
-      desc: t('system_flow_5_desc', 'The system gives a clearer view of enquiries, bookings, payments and follow-up.'),
-    },
   ];
 
   return (
@@ -98,48 +64,6 @@ export const ServicesView: React.FC = () => {
                 </p>
               </div>
             </div>
-          </div>
-        </Reveal>
-
-        {/* Technical Stack Section */}
-        <Reveal>
-          <div className="glass-panel relative mb-24 overflow-hidden rounded-[2.4rem] border-violet-400/16 bg-[#101827]/64 p-6 shadow-[0_24px_100px_rgba(5,7,19,0.55)] md:mb-28 md:p-9">
-             <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(124,58,237,0.16),transparent_34%),radial-gradient(circle_at_95%_30%,rgba(56,216,255,0.10),transparent_32%)]"></div>
-             <div className="relative z-10 grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-start">
-                <div>
-                   <h3 className="mb-5 text-3xl font-black tracking-tight text-white md:text-4xl">{t('deep_tech_title', 'Tools We Use')}</h3>
-                   <p className="mb-8 text-base leading-relaxed text-slate-400 md:text-lg font-light">
-                     {t('deep_tech_desc', "We use reliable modern tools to build web apps, dashboards and automations that stay easy to manage.")}
-                   </p>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {[
-                        { icon: Server, label: t('tech_1', "Firebase / Google Cloud"), sub: t('tech_1_sub', "Backend and hosting") },
-                        { icon: Code, label: t('tech_2', "React / TypeScript"), sub: t('tech_2_sub', "Web apps and dashboards") },
-                        { icon: Lock, label: t('tech_3', "Stripe"), sub: t('tech_3_sub', "Payments and deposits") },
-                        { icon: Brain, label: t('tech_4', "Gemini / OpenAI"), sub: t('tech_4_sub', "Useful AI features") },
-                        { icon: Zap, label: t('tech_5', "Email & SMS"), sub: t('tech_5_sub', "Confirmations and reminders") },
-                        { icon: Database, label: t('tech_6', "GitHub / Deployment"), sub: t('tech_6_sub', "Versioning and launch") }
-                      ].map((item, i) => (
-                        <div key={i} className="group flex flex-col gap-2 rounded-2xl border border-violet-400/10 bg-[#050713]/45 p-4 transition-all duration-500 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-[#050713]/70">
-                           <div className="flex items-center gap-3">
-                              <item.icon size={20} className="text-cyan-300" />
-                              <span className="text-white font-bold">{item.label}</span>
-                           </div>
-                           <span className="text-xs text-slate-500 font-mono">{item.sub}</span>
-                        </div>
-                      ))}
-                   </div>
-                </div>
-                
-                <div className="group relative overflow-hidden rounded-[2rem] border border-violet-400/10 bg-[#050713]/72 p-5 shadow-inner md:p-7">
-                   <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.04)_1px,transparent_1px)] bg-[size:44px_44px] opacity-60"></div>
-                   <div className="relative z-10">
-                     <p className="mb-6 text-xs font-black uppercase tracking-[0.24em] text-cyan-200">{t('system_flow_title', 'Example System Flow')}</p>
-                     <JourneyTimeline items={systemFlowItems} compact />
-                   </div>
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/30"></div>
-                </div>
-             </div>
           </div>
         </Reveal>
 

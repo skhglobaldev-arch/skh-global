@@ -71,13 +71,56 @@ const brandedShell = (title: string, bodyHtml: string) => `
 </body>
 </html>`;
 
-const sendHtmlEmail = async (params: { to: string; subject: string; html: string }) => {
+type MailAttachment = {
+  filename: string;
+  contentType?: string;
+  data: string;
+};
+
+const textToHtml = (message: string) =>
+  String(message || '')
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br />')}</p>`)
+    .join('');
+
+const toNodemailerAttachments = (attachments: MailAttachment[] = []) =>
+  attachments
+    .filter((item) => item.filename && item.data)
+    .map((item) => ({
+      filename: item.filename,
+      contentType: item.contentType || undefined,
+      content: Buffer.from(item.data, 'base64'),
+    }));
+
+const sendHtmlEmail = async (params: { to: string; subject: string; html: string; attachments?: MailAttachment[] }) => {
   const transporter = createSmtpTransporter();
   await transporter.sendMail({
     from: getFromEmail(),
     to: params.to,
     subject: params.subject,
     html: params.html,
+    attachments: toNodemailerAttachments(params.attachments),
+  });
+};
+
+export const sendCustomClientEmail = async (params: {
+  to: string;
+  subject: string;
+  message: string;
+  attachments?: MailAttachment[];
+}) => {
+  const body = `
+    ${textToHtml(params.message)}
+    <p style="color:#64748b;font-size:14px;">— SKH.GLOBAL Team</p>
+  `;
+
+  await sendHtmlEmail({
+    to: params.to,
+    subject: params.subject,
+    html: brandedShell('Message from SKH.GLOBAL', body),
+    attachments: params.attachments,
   });
 };
 

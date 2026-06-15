@@ -442,7 +442,8 @@ export const translations = {
     investment_desc: "Three clear ways to start, grow or build a full custom system.",
     view_package_details: "View Package Details",
     carousel_view_solution: "View Solution",
-    carousel_drag_hint: "Drag to explore",
+    carousel_drag_hint: "Drag to rotate the cards",
+    carousel_hint: "Each card is a different kind of practical system. Rotate the carousel to explore them.",
 
     demo_1_title: "MediCare Pro",
     demo_1_desc: "Clinic management system with patient portals, appointment scheduling, and automated reminders.",
@@ -1075,7 +1076,8 @@ export const translations = {
     investment_desc: "سه سطح روشن برای شروع، رشد یا ساخت یک سیستم کامل اختصاصی.",
     view_package_details: "مشاهده جزئیات پکیج",
     carousel_view_solution: "مشاهده راهکار",
-    carousel_drag_hint: "برای مشاهده بیشتر بچرخانید",
+    carousel_drag_hint: "برای دیدن کارت‌ها، بکشید و بچرخانید",
+    carousel_hint: "هر کارت یک نوع سیستم کاربردی را نشان می‌دهد. کاروسل را بچرخانید و گزینه‌ها را ببینید.",
 
     demo_1_title: "مدی‌کیر پرو",
     demo_1_desc: "سیستم مدیریت کلینیک با پورتال بیماران، زمان‌بندی نوبت و یادآوری‌های خودکار.",

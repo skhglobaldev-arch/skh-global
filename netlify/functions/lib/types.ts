@@ -1,4 +1,4 @@
-export type ContactStatus = 'New' | 'Reviewed' | 'Replied' | 'Archived';
+export type ContactStatus = 'New' | 'Reviewed' | 'Call Booked' | 'Replied' | 'Archived';
 export type SystemReviewStatus = 'New' | 'Needs Review' | 'Call Booked' | 'Proposal Draft' | 'Replied' | 'Archived';
 export type SlotStatus = 'Available' | 'Booked' | 'Hidden';
 export type PreferredNextStep = 'call' | 'email';
@@ -64,4 +64,12 @@ export type CallBooking = {
   ticketNumber?: string;
   status?: string;
   createdAt?: string;
+};
+
+export type AdminEmailSourceType = 'contact' | 'review' | 'booking';
+
+export type AdminEmailAttachment = {
+  filename: string;
+  contentType?: string;
+  data: string;
 };

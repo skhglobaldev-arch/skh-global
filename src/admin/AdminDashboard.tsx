@@ -4,12 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import {
   Calendar,
   FileText,
+  History,
   LayoutDashboard,
   LogOut,
   Mail,
+  Paperclip,
   Phone,
+  Send,
   Settings,
   Users,
+  X,
 } from 'lucide-react';
 import { getFirebaseAuth } from '../firebase/client';
 import { BookingCalendar } from '../components/BookingCalendar';
@@ -21,6 +25,37 @@ type Section = 'overview' | 'contacts' | 'reviews' | 'slots' | 'bookings' | 'set
 const cardClass = 'rounded-2xl border border-white/10 bg-[#101827]/70 p-5 backdrop-blur-xl';
 const inputClass = 'w-full rounded-xl border border-white/10 bg-[#050713]/80 px-4 py-3 text-sm text-white outline-none focus:border-cyan-300/45';
 const btnGhost = 'rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold text-white hover:border-cyan-300/25';
+const btnPrimary = 'rounded-xl bg-gradient-to-br from-[#7C3AED] via-[#2563EB] to-[#38D8FF] px-4 py-2 text-xs font-black text-white shadow-[0_14px_40px_rgba(37,99,235,0.25)] transition hover:-translate-y-0.5';
+
+type EmailTarget = {
+  sourceType: 'contact' | 'review' | 'booking';
+  sourceId: string;
+  to: string;
+  name?: string;
+  label: string;
+  ticketNumber?: string;
+};
+
+type EmailAttachment = {
+  filename: string;
+  contentType?: string;
+  data: string;
+};
+
+const fileToAttachment = (file: File) =>
+  new Promise<EmailAttachment>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      resolve({
+        filename: file.name,
+        contentType: file.type || undefined,
+        data: result.includes(',') ? result.split(',')[1] : result,
+      });
+    };
+    reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+    reader.readAsDataURL(file);
+  });
 
 const formatDate = (value?: string) => {
   if (!value) return '—';
@@ -46,6 +81,15 @@ export const AdminDashboard: React.FC = () => {
   const [error, setError] = React.useState('');
   const [selectedSlotDate, setSelectedSlotDate] = React.useState('');
   const [slotActionLoading, setSlotActionLoading] = React.useState(false);
+  const [emailTarget, setEmailTarget] = React.useState<EmailTarget | null>(null);
+  const [emailSubject, setEmailSubject] = React.useState('');
+  const [emailMessage, setEmailMessage] = React.useState('');
+  const [emailAttachments, setEmailAttachments] = React.useState<EmailAttachment[]>([]);
+  const [emailHistory, setEmailHistory] = React.useState<any[]>([]);
+  const [emailLoading, setEmailLoading] = React.useState(false);
+  const [emailSending, setEmailSending] = React.useState(false);
+  const [emailError, setEmailError] = React.useState('');
+  const [emailSuccess, setEmailSuccess] = React.useState('');
 
   const loadSection = React.useCallback(async () => {
     setLoading(true);
@@ -82,8 +126,114 @@ export const AdminDashboard: React.FC = () => {
     { id: 'settings', label: 'Settings', icon: <Settings size={16} /> },
   ];
 
-  const contactStatuses = ['New', 'Reviewed', 'Replied', 'Archived'];
+  const contactStatuses = ['New', 'Reviewed', 'Call Booked', 'Replied', 'Archived'];
   const reviewStatuses = ['New', 'Needs Review', 'Call Booked', 'Proposal Draft', 'Replied', 'Archived'];
+
+  const loadEmailHistory = React.useCallback(async (target: EmailTarget) => {
+    setEmailLoading(true);
+    setEmailError('');
+    try {
+      const result = await adminApi.emailHistory(target.sourceType, target.sourceId);
+      setEmailHistory(result.items || []);
+    } catch (err) {
+      setEmailError(err instanceof Error ? err.message : 'Failed to load email history');
+    } finally {
+      setEmailLoading(false);
+    }
+  }, []);
+
+  const openEmailComposer = React.useCallback((target: EmailTarget) => {
+    setEmailTarget(target);
+    setEmailSubject(target.ticketNumber ? `Update for ${target.ticketNumber}` : 'Update from SKH.GLOBAL');
+    setEmailMessage('');
+    setEmailAttachments([]);
+    setEmailHistory([]);
+    setEmailError('');
+    setEmailSuccess('');
+    void loadEmailHistory(target);
+  }, [loadEmailHistory]);
+
+  const closeEmailComposer = () => {
+    setEmailTarget(null);
+    setEmailError('');
+    setEmailSuccess('');
+  };
+
+  const handleEmailFiles = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setEmailError('');
+    try {
+      const selected = Array.from(files).slice(0, 5);
+      const attachments = await Promise.all(selected.map(fileToAttachment));
+      setEmailAttachments(attachments);
+    } catch (err) {
+      setEmailError(err instanceof Error ? err.message : 'Could not attach files');
+    }
+  };
+
+  const sendAdminEmail = async () => {
+    if (!emailTarget) return;
+    if (!emailSubject.trim() || !emailMessage.trim()) {
+      setEmailError('Subject and message are required.');
+      return;
+    }
+
+    setEmailSending(true);
+    setEmailError('');
+    setEmailSuccess('');
+    try {
+      await adminApi.sendClientEmail({
+        sourceType: emailTarget.sourceType,
+        sourceId: emailTarget.sourceId,
+        to: emailTarget.to,
+        subject: emailSubject.trim(),
+        message: emailMessage.trim(),
+        attachments: emailAttachments,
+      });
+      if (emailTarget.sourceType === 'contact') {
+        await updateContactStatus(emailTarget.sourceId, 'Replied');
+      }
+      if (emailTarget.sourceType === 'review') {
+        await updateReviewStatus(emailTarget.sourceId, 'Replied');
+      }
+      setEmailSuccess('Email sent and saved to history.');
+      setEmailMessage('');
+      setEmailAttachments([]);
+      await loadEmailHistory(emailTarget);
+    } catch (err) {
+      setEmailError(err instanceof Error ? err.message : 'Email could not be sent');
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
+  const updateContactStatus = async (id: string, status: string) => {
+    setError('');
+    try {
+      await adminApi.contactUpdate(id, { status });
+      const updated = { ...selectedContact, status };
+      setSelectedContact((current) => (current?.id === id ? { ...current, status } : current));
+      setContacts((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)));
+      return updated;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update status');
+      return null;
+    }
+  };
+
+  const updateReviewStatus = async (id: string, status: string) => {
+    setError('');
+    try {
+      await adminApi.reviewUpdate(id, { status });
+      const updated = { ...selectedReview, status };
+      setSelectedReview((current) => (current?.id === id ? { ...current, status } : current));
+      setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+      return updated;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update status');
+      return null;
+    }
+  };
   const handleToggleSlot = async (slot: BookingSlot) => {
     if (slot.status === 'Booked') return;
     setSlotActionLoading(true);
@@ -129,11 +279,11 @@ export const AdminDashboard: React.FC = () => {
         { label: 'New contacts', value: stats?.newContacts ?? 0, color: 'from-violet-500/20 to-blue-500/10' },
         { label: 'Pending reviews', value: stats?.pendingReviews ?? 0, color: 'from-cyan-500/20 to-blue-500/10' },
         { label: 'Upcoming calls', value: stats?.upcomingCalls ?? 0, color: 'from-purple-500/20 to-pink-500/10' },
-        { label: 'Available slots', value: stats?.availableSlots ?? 0, color: 'from-emerald-500/20 to-cyan-500/10' },
+        { label: 'Availability', value: 'Managed in calendar', color: 'from-emerald-500/20 to-cyan-500/10' },
       ].map((item) => (
         <div key={item.label} className={`${cardClass} bg-gradient-to-br ${item.color}`}>
           <p className="text-xs font-bold uppercase tracking-widest text-slate-400">{item.label}</p>
-          <p className="mt-3 text-4xl font-black text-white">{item.value}</p>
+          <p className={`mt-3 font-black text-white ${typeof item.value === 'number' ? 'text-4xl' : 'text-lg'}`}>{item.value}</p>
         </div>
       ))}
     </div>
@@ -164,7 +314,24 @@ export const AdminDashboard: React.FC = () => {
       </div>
       {selectedContact ? (
         <div className={cardClass}>
-          <h3 className="text-lg font-black text-white">{selectedContact.fullName}</h3>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <h3 className="text-lg font-black text-white">{selectedContact.fullName || selectedContact.email}</h3>
+            <button
+              type="button"
+              className={`${btnPrimary} inline-flex items-center gap-2`}
+              onClick={() => openEmailComposer({
+                sourceType: 'contact',
+                sourceId: selectedContact.id,
+                to: selectedContact.email,
+                name: selectedContact.fullName,
+                label: selectedContact.fullName || selectedContact.company || selectedContact.email,
+                ticketNumber: selectedContact.ticketNumber,
+              })}
+            >
+              <Mail size={14} />
+              Email
+            </button>
+          </div>
           <dl className="mt-4 space-y-2 text-sm text-slate-300">
             <div><dt className="text-slate-500">Email</dt><dd>{selectedContact.email}</dd></div>
             <div><dt className="text-slate-500">Company</dt><dd>{selectedContact.company}</dd></div>
@@ -176,13 +343,8 @@ export const AdminDashboard: React.FC = () => {
             <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500">Status</span>
             <select
               className={inputClass}
-              value={selectedContact.status}
-              onChange={async (e) => {
-                await adminApi.contactUpdate(selectedContact.id, { status: e.target.value });
-                const updated = { ...selectedContact, status: e.target.value };
-                setSelectedContact(updated);
-                setContacts((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
-              }}
+              value={selectedContact.status || 'New'}
+              onChange={(e) => { void updateContactStatus(selectedContact.id, e.target.value); }}
             >
               {contactStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -194,7 +356,11 @@ export const AdminDashboard: React.FC = () => {
               value={selectedContact.adminNotes || ''}
               onChange={(e) => setSelectedContact({ ...selectedContact, adminNotes: e.target.value })}
               onBlur={async () => {
-                await adminApi.contactUpdate(selectedContact.id, { adminNotes: selectedContact.adminNotes || '' });
+                try {
+                  await adminApi.contactUpdate(selectedContact.id, { adminNotes: selectedContact.adminNotes || '' });
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : 'Failed to save notes');
+                }
               }}
             />
           </label>
@@ -230,7 +396,24 @@ export const AdminDashboard: React.FC = () => {
       </div>
       {selectedReview ? (
         <div className={cardClass}>
-          <h3 className="text-lg font-black text-white">{selectedReview.businessName}</h3>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <h3 className="text-lg font-black text-white">{selectedReview.businessName || selectedReview.name || selectedReview.email}</h3>
+            <button
+              type="button"
+              className={`${btnPrimary} inline-flex items-center gap-2`}
+              onClick={() => openEmailComposer({
+                sourceType: 'review',
+                sourceId: selectedReview.id,
+                to: selectedReview.email,
+                name: selectedReview.name,
+                label: selectedReview.businessName || selectedReview.name || selectedReview.email,
+                ticketNumber: selectedReview.ticketNumber,
+              })}
+            >
+              <Mail size={14} />
+              Email
+            </button>
+          </div>
           <dl className="mt-4 max-h-64 space-y-2 overflow-y-auto text-sm text-slate-300">
             {Object.entries(selectedReview.reviewSummary || {}).map(([key, value]) => (
               <div key={key}><dt className="text-slate-500">{key}</dt><dd className="whitespace-pre-wrap">{String(value)}</dd></div>
@@ -242,13 +425,8 @@ export const AdminDashboard: React.FC = () => {
             <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500">Status</span>
             <select
               className={inputClass}
-              value={selectedReview.status}
-              onChange={async (e) => {
-                await adminApi.reviewUpdate(selectedReview.id, { status: e.target.value });
-                const updated = { ...selectedReview, status: e.target.value };
-                setSelectedReview(updated);
-                setReviews((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
-              }}
+              value={selectedReview.status || 'New'}
+              onChange={(e) => { void updateReviewStatus(selectedReview.id, e.target.value); }}
             >
               {reviewStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -260,7 +438,11 @@ export const AdminDashboard: React.FC = () => {
               value={selectedReview.adminNotes || ''}
               onChange={(e) => setSelectedReview({ ...selectedReview, adminNotes: e.target.value })}
               onBlur={async () => {
-                await adminApi.reviewUpdate(selectedReview.id, { adminNotes: selectedReview.adminNotes || '' });
+                try {
+                  await adminApi.reviewUpdate(selectedReview.id, { adminNotes: selectedReview.adminNotes || '' });
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : 'Failed to save notes');
+                }
               }}
             />
           </label>
@@ -316,6 +498,7 @@ export const AdminDashboard: React.FC = () => {
               <th className="pb-3">Date</th>
               <th className="pb-3">Time</th>
               <th className="pb-3">Ticket</th>
+              <th className="pb-3">Actions</th>
             </tr>
           </thead>
           <tbody className="text-slate-300">
@@ -328,6 +511,23 @@ export const AdminDashboard: React.FC = () => {
                 <td className="py-3">{b.date}</td>
                 <td className="py-3">{b.time} ({b.timezone})</td>
                 <td className="py-3 text-cyan-200">{b.ticketNumber || '—'}</td>
+                <td className="py-3">
+                  <button
+                    type="button"
+                    className={`${btnGhost} inline-flex items-center gap-2`}
+                    onClick={() => openEmailComposer({
+                      sourceType: 'booking',
+                      sourceId: b.id,
+                      to: b.clientEmail,
+                      name: b.clientName,
+                      label: b.clientName || b.clientEmail,
+                      ticketNumber: b.ticketNumber,
+                    })}
+                  >
+                    <Mail size={13} />
+                    Email
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -349,6 +549,132 @@ export const AdminDashboard: React.FC = () => {
       </p>
     </div>
   );
+
+  const renderEmailComposer = () => {
+    if (!emailTarget) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#050713]/80 p-4 backdrop-blur-xl">
+        <div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] border border-cyan-300/16 bg-[#101827]/95 p-5 shadow-[0_30px_120px_rgba(5,7,19,0.75)] md:p-7">
+          <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-200">Client email</p>
+              <h2 className="text-2xl font-black text-white">Email {emailTarget.label}</h2>
+              <p className="mt-2 text-sm text-slate-400">
+                To: <span className="text-cyan-100">{emailTarget.to}</span>
+                {emailTarget.ticketNumber ? <span> · {emailTarget.ticketNumber}</span> : null}
+              </p>
+            </div>
+            <button type="button" onClick={closeEmailComposer} className={`${btnGhost} inline-flex items-center gap-2`}>
+              <X size={14} />
+              Close
+            </button>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="space-y-4">
+              <label className="block">
+                <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500">Recipient</span>
+                <input className={`${inputClass} text-slate-400`} value={emailTarget.to} readOnly />
+              </label>
+              <label className="block">
+                <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500">Subject</span>
+                <input
+                  className={inputClass}
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  placeholder="Email subject"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500">Message</span>
+                <textarea
+                  className={`${inputClass} min-h-56 resize-y leading-relaxed`}
+                  value={emailMessage}
+                  onChange={(e) => setEmailMessage(e.target.value)}
+                  placeholder="Write your email here. It will be sent inside the SKH.GLOBAL branded HTML template."
+                />
+              </label>
+
+              <div className="rounded-2xl border border-white/10 bg-[#050713]/50 p-4">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold text-white transition hover:border-cyan-300/25">
+                  <Paperclip size={14} />
+                  Attach files
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => { void handleEmailFiles(e.target.files); e.currentTarget.value = ''; }}
+                  />
+                </label>
+                {emailAttachments.length ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {emailAttachments.map((file) => (
+                      <span key={file.filename} className="rounded-full border border-cyan-300/15 bg-cyan-300/[0.06] px-3 py-1 text-xs text-cyan-100">
+                        {file.filename}
+                      </span>
+                    ))}
+                    <button type="button" className="text-xs font-bold text-slate-400 hover:text-white" onClick={() => setEmailAttachments([])}>
+                      Clear
+                    </button>
+                  </div>
+                ) : (
+                  <p className="mt-3 text-xs text-slate-500">Optional. Up to 5 files per email.</p>
+                )}
+              </div>
+
+              {emailError ? <p className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">{emailError}</p> : null}
+              {emailSuccess ? <p className="rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">{emailSuccess}</p> : null}
+
+              <button
+                type="button"
+                disabled={emailSending}
+                onClick={() => { void sendAdminEmail(); }}
+                className={`${btnPrimary} inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-60`}
+              >
+                <Send size={14} />
+                {emailSending ? 'Sending...' : 'Send email'}
+              </button>
+            </div>
+
+            <div className="rounded-2xl border border-violet-400/14 bg-[#050713]/48 p-4">
+              <div className="mb-4 flex items-center gap-2">
+                <History size={15} className="text-cyan-200" />
+                <h3 className="text-sm font-black uppercase tracking-widest text-white">Email history</h3>
+              </div>
+              {emailLoading ? (
+                <div className="flex h-24 items-center justify-center">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-300 border-t-transparent" />
+                </div>
+              ) : emailHistory.length ? (
+                <div className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
+                  {emailHistory.map((item) => (
+                    <div key={item.id} className="rounded-2xl border border-white/10 bg-[#101827]/72 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="font-bold text-white">{item.subject}</p>
+                        <span className="rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-2 py-1 text-[10px] font-bold text-emerald-100">
+                          {item.status || 'Sent'}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs text-slate-500">{formatDate(item.sentAt || item.createdAt)}</p>
+                      <p className="mt-3 line-clamp-4 whitespace-pre-wrap text-sm leading-relaxed text-slate-300">{item.message}</p>
+                      {Array.isArray(item.attachmentNames) && item.attachmentNames.length ? (
+                        <p className="mt-3 text-xs text-cyan-200">Attachments: {item.attachmentNames.join(', ')}</p>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center text-sm text-slate-500">
+                  No emails sent to this client from this record yet.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const sectionRenderers: Record<Section, () => React.ReactNode> = {
     overview: renderOverview,
@@ -409,6 +735,7 @@ export const AdminDashboard: React.FC = () => {
           ) : (
             sectionRenderers[section]()
           )}
+          {renderEmailComposer()}
         </main>
       </div>
     </div>

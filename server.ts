@@ -2,20 +2,25 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
-import { createSmtpTransporter, getSmtpUser } from "./functions/src/lib/mail";
+import * as mailModuleRaw from "./functions/src/lib/mail.ts";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import cors from "cors";
-import {
+import * as handlersModuleRaw from "./functions/src/lib/handlers.ts";
+
+dotenv.config();
+dotenv.config({ path: ".env.local", override: true });
+
+const mailModule = ("default" in mailModuleRaw ? mailModuleRaw.default : mailModuleRaw) as typeof import("./functions/src/lib/mail.ts");
+const handlersModule = ("default" in handlersModuleRaw ? handlersModuleRaw.default : handlersModuleRaw) as typeof import("./functions/src/lib/handlers.ts");
+const { createSmtpTransporter, getSmtpUser } = mailModule;
+const {
   handleAdminRequest,
   handleAuditPost,
   handleAvailabilityGet,
   handleBookSlotPost,
   handleContactPost,
-} from "./functions/src/lib/handlers";
-
-dotenv.config();
-dotenv.config({ path: ".env.local", override: true });
+} = handlersModule;
 
 const escapeHtml = (value: string) =>
   String(value || "")

@@ -49,6 +49,17 @@ export const adminApi = {
       body: JSON.stringify({ date, timezone }),
     }),
   bookingsList: () => adminFetch('/api/admin/bookings'),
+  emailHistory: (sourceType: string, sourceId: string) =>
+    adminFetch(`/api/admin/emails?sourceType=${encodeURIComponent(sourceType)}&sourceId=${encodeURIComponent(sourceId)}`),
+  sendClientEmail: (data: {
+    sourceType: 'contact' | 'review' | 'booking';
+    sourceId: string;
+    to: string;
+    subject: string;
+    message: string;
+    attachments?: { filename: string; contentType?: string; data: string }[];
+  }) =>
+    adminFetch('/api/admin/emails', { method: 'POST', body: JSON.stringify(data) }),
   settings: () => adminFetch('/api/admin/settings'),
 };
 

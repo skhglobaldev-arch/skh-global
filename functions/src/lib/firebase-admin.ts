@@ -43,4 +43,5 @@ export const COLLECTIONS = {
   systemReviewSubmissions: 'systemReviewSubmissions',
   availabilitySlots: 'availabilitySlots',
   callBookings: 'callBookings',
+  adminEmails: 'adminEmails',
 } as const;

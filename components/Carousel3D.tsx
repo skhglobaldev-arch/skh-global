@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { LucideIcon, ArrowRight } from 'lucide-react';
+import { LucideIcon, ArrowRight, MoveHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface CarouselItem {
@@ -64,7 +64,7 @@ export const Carousel3D: React.FC<Carousel3DProps> = ({ items }) => {
 
   return (
     <div 
-      className="w-full h-[550px] relative flex items-center justify-center overflow-visible touch-none cursor-grab active:cursor-grabbing perspective-2000"
+      className="relative flex h-[500px] w-full touch-none items-center justify-center overflow-visible cursor-grab perspective-2000 active:cursor-grabbing md:h-[540px]"
       onMouseDown={(e) => handleStart(e.clientX)}
       onMouseMove={(e) => handleMove(e.clientX)}
       onMouseUp={handleEnd}
@@ -73,12 +73,11 @@ export const Carousel3D: React.FC<Carousel3DProps> = ({ items }) => {
       onTouchMove={(e) => handleMove(e.touches[0].clientX)}
       onTouchEnd={handleEnd}
     >
-        {/* Floor Shadow - Brightened */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] h-24 bg-brand-400/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+        <div className="pointer-events-none absolute bottom-8 left-1/2 -z-10 h-24 w-[82%] -translate-x-1/2 rounded-full bg-gradient-to-r from-[#7C3AED]/10 via-[#2563EB]/12 to-[#38D8FF]/10 blur-[90px]"></div>
 
-        <div className="scene-3d w-full h-full flex items-center justify-center preserve-3d">
+        <div className="scene-3d flex h-full w-full items-center justify-center preserve-3d">
             <div 
-                className="carousel-3d preserve-3d transition-transform duration-200 ease-out"
+                className="carousel-3d preserve-3d transition-transform duration-300 ease-out"
                 style={{ 
                     transform: `translateZ(-${radius}px) rotateY(${rotation}deg)`,
                     width: '100%',
@@ -97,38 +96,33 @@ export const Carousel3D: React.FC<Carousel3DProps> = ({ items }) => {
                             style={{
                                 transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
                                 width: `${itemWidth}px`,
-                                height: '420px',
+                                height: '390px',
                                 marginLeft: `-${itemWidth / 2}px`
                             }}
                         >
-                            <div className="relative w-full h-full group preserve-3d transition-all duration-700 hover:scale-[1.05]">
-                                
-                                {/* Slab Depth Layer - Lightened for visibility */}
-                                <div className="absolute inset-0 bg-slate-800 rounded-[2.5rem] [transform:translateZ(-30px)] shadow-[0_0_40px_rgba(14,165,233,0.1)] border border-brand-500/20 transition-transform group-hover:[transform:translateZ(-40px)]"></div>
+                            <div className="group relative h-full w-full preserve-3d transition-all duration-700 hover:scale-[1.025]">
+                                <div className="absolute inset-3 rounded-[2rem] border border-violet-400/10 bg-[#070A16]/80 shadow-[0_26px_90px_rgba(5,7,19,0.65)] [transform:translateZ(-24px)] transition-transform duration-700 group-hover:[transform:translateZ(-32px)]"></div>
 
-                                {/* Main Card Face - Higher opacity & clearer gradient */}
-                                <div className="card-galaxy p-10 rounded-[2.5rem] h-full flex flex-col items-center text-center select-none border-brand-500/40 backdrop-blur-3xl bg-slate-900/95 preserve-3d shadow-[0_30px_60px_rgba(0,0,0,0.9)] border-t border-l border-white/20">
+                                <div className="relative flex h-full select-none flex-col items-center overflow-hidden rounded-[2rem] border border-white/10 bg-[#101827]/78 p-8 text-center shadow-[0_28px_90px_rgba(5,7,19,0.62)] backdrop-blur-3xl preserve-3d transition-all duration-700 before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_20%_0%,rgba(168,85,247,0.18),transparent_34%),radial-gradient(circle_at_90%_16%,rgba(56,216,255,0.12),transparent_34%)] hover:border-cyan-300/24 hover:bg-[#101827]/88 md:p-9">
+                                    <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/35 to-transparent" />
                                     
-                                    {/* Icon (High Elevation) */}
-                                    <div className="w-20 h-20 rounded-2xl bg-slate-800 border border-brand-500/50 flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(14,165,233,0.2)] group-hover:shadow-[0_0_60px_rgba(14,165,233,0.5)] transition-all duration-700 [transform:translateZ(100px)] group-hover:[transform:translateZ(120px)]">
-                                        <item.icon size={44} className="text-brand-400 group-hover:text-white transition-colors" />
+                                    <div className="relative z-10 mb-7 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/18 bg-[#050713]/70 shadow-[0_18px_60px_rgba(37,99,235,0.20)] transition-all duration-700 [transform:translateZ(82px)] group-hover:border-violet-300/35 group-hover:shadow-[0_18px_70px_rgba(168,85,247,0.22)] group-hover:[transform:translateZ(96px)]">
+                                        <item.icon size={34} className="text-cyan-200 transition-colors group-hover:text-white" />
                                     </div>
 
-                                    {/* Text (Mid Elevation) - Pure White for maximum readability */}
-                                    <div className="[transform:translateZ(60px)] px-4 group-hover:[transform:translateZ(80px)] transition-transform duration-700">
-                                      <h3 className="text-2xl font-bold text-white mb-4 font-display leading-tight group-hover:text-brand-300 transition-colors drop-shadow-md">
+                                    <div className="relative z-10 px-2 transition-transform duration-700 [transform:translateZ(54px)] group-hover:[transform:translateZ(66px)]">
+                                      <h3 className="mb-4 text-xl font-black leading-tight text-white transition-colors group-hover:text-cyan-100 md:text-2xl">
                                         {item.title}
                                       </h3>
                                       
-                                      <p className="text-slate-200 text-sm leading-relaxed font-normal mb-6 opacity-100 drop-shadow-sm">
+                                      <p className="mb-6 text-sm font-light leading-relaxed text-slate-300">
                                         {item.description}
                                       </p>
                                     </div>
                                     
-                                    {/* Link (Base Elevation) */}
-                                    <div className="mt-auto w-full flex flex-col items-center [transform:translateZ(30px)]">
-                                        <div className="h-1 w-14 bg-slate-700 rounded-full group-hover:w-28 group-hover:bg-brand-400 transition-all duration-700 mb-6"></div>
-                                        <div className="flex items-center gap-2 text-brand-300 font-bold text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                                    <div className="relative z-10 mt-auto flex w-full flex-col items-center [transform:translateZ(28px)]">
+                                        <div className="mb-6 h-px w-16 rounded-full bg-gradient-to-r from-violet-400/30 via-cyan-300/70 to-blue-400/30 transition-all duration-700 group-hover:w-28"></div>
+                                        <div className="flex translate-y-2 items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-200 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
                                           {t('carousel_view_solution', 'View Solution')} <ArrowRight size={14} />
                                         </div>
                                     </div>
@@ -140,11 +134,13 @@ export const Carousel3D: React.FC<Carousel3DProps> = ({ items }) => {
             </div>
         </div>
 
-        {/* User Interaction Cue */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none z-20">
+        <div className="pointer-events-none absolute bottom-5 left-1/2 z-20 -translate-x-1/2">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-[10px] font-mono font-bold text-brand-200 uppercase tracking-[0.3em] animate-pulse">{t('carousel_drag_hint', 'Drag to explore')}</span>
-              <div className="h-px w-20 bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/14 bg-[#050713]/74 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100 shadow-[0_16px_55px_rgba(5,7,19,0.55)] backdrop-blur-xl">
+                <MoveHorizontal size={14} className="text-violet-200" />
+                <span>{t('carousel_drag_hint', 'Drag to rotate the cards')}</span>
+              </div>
+              <div className="h-px w-24 bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent"></div>
             </div>
         </div>
     </div>

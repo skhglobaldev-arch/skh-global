@@ -5,10 +5,13 @@ import { bookSlotTransaction, SlotUnavailableError } from './booking';
 import {
   sendCallBookedEmail,
   sendContactConfirmation,
+  sendCustomClientEmail,
   sendEmailResponseConfirmation,
   sendInternalNotification,
 } from './mail';
 import type {
+  AdminEmailAttachment,
+  AdminEmailSourceType,
   AvailabilitySlot,
   ContactStatus,
   ContactSubmission,
@@ -26,7 +29,7 @@ const json = (value: unknown, status = 200) =>
 
 const serializeDoc = (id: string, data: Record<string, unknown>) => {
   const out: Record<string, unknown> = { id, ...data };
-  for (const key of ['createdAt', 'updatedAt']) {
+  for (const key of ['createdAt', 'updatedAt', 'sentAt']) {
     const val = out[key];
     if (val && typeof val === 'object' && 'toDate' in (val as object)) {
       out[key] = (val as { toDate: () => Date }).toDate().toISOString();
@@ -34,6 +37,9 @@ const serializeDoc = (id: string, data: Record<string, unknown>) => {
   }
   return out;
 };
+
+const isAdminEmailSourceType = (value: string): value is AdminEmailSourceType =>
+  ['contact', 'review', 'booking'].includes(value);
 
 export const handleAuditPost = async (request: Request) => {
   const submission = (await request.json()) as SystemReviewSubmission & {
@@ -373,6 +379,71 @@ export const handleAdminRequest = async (request: Request) => {
   if (resource === 'bookings' && method === 'GET') {
     const snapshot = await db.collection(COLLECTIONS.callBookings).orderBy('createdAt', 'desc').limit(100).get();
     return json({ items: snapshot.docs.map((doc) => serializeDoc(doc.id, doc.data() as Record<string, unknown>)) });
+  }
+
+  if (resource === 'emails') {
+    if (method === 'GET') {
+      const url = new URL(request.url);
+      const sourceType = url.searchParams.get('sourceType') || '';
+      const sourceId = url.searchParams.get('sourceId') || '';
+
+      if (!isAdminEmailSourceType(sourceType) || !sourceId) {
+        return json({ error: 'sourceType and sourceId are required.' }, 400);
+      }
+
+      const snapshot = await db
+        .collection(COLLECTIONS.adminEmails)
+        .where('sourceKey', '==', `${sourceType}:${sourceId}`)
+        .limit(50)
+        .get();
+      const items = snapshot.docs
+        .map((doc) => serializeDoc(doc.id, doc.data() as Record<string, unknown>))
+        .sort((a, b) => String(b.sentAt || b.createdAt || '').localeCompare(String(a.sentAt || a.createdAt || '')));
+      return json({ items });
+    }
+
+    if (method === 'POST') {
+      const body = (await request.json()) as {
+        sourceType?: AdminEmailSourceType;
+        sourceId?: string;
+        to?: string;
+        subject?: string;
+        message?: string;
+        attachments?: AdminEmailAttachment[];
+      };
+
+      if (!body.sourceType || !isAdminEmailSourceType(body.sourceType) || !body.sourceId) {
+        return json({ error: 'Valid sourceType and sourceId are required.' }, 400);
+      }
+      if (!body.to || !body.subject || !body.message) {
+        return json({ error: 'To, subject, and message are required.' }, 400);
+      }
+
+      const attachments = Array.isArray(body.attachments) ? body.attachments.slice(0, 5) : [];
+
+      await sendCustomClientEmail({
+        to: body.to,
+        subject: body.subject,
+        message: body.message,
+        attachments,
+      });
+
+      const docRef = await db.collection(COLLECTIONS.adminEmails).add({
+        sourceType: body.sourceType,
+        sourceId: body.sourceId,
+        sourceKey: `${body.sourceType}:${body.sourceId}`,
+        to: body.to,
+        subject: body.subject,
+        message: body.message,
+        attachmentNames: attachments.map((item) => item.filename).filter(Boolean),
+        status: 'Sent',
+        sentAt: FieldValue.serverTimestamp(),
+        createdAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      return json({ success: true, id: docRef.id });
+    }
   }
 
   if (resource === 'settings' && method === 'GET') {
