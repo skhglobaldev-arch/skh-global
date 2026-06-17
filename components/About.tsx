@@ -115,8 +115,7 @@ export const About: React.FC = () => {
                   </div>
 
                   <a href="#/audit" className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-white transition-colors hover:text-cyan-200">
-                    {t('home_case_explore', 'View case study')}
-                    <ArrowRight size={16} />
+                    {t('home_case_explore', 'Preview Your System Idea →')}
                   </a>
                 </div>
               </article>
