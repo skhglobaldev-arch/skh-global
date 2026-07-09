@@ -9,6 +9,7 @@ const FUNCTION_SECRETS = [
   'SMTP_PASS',
   'SYSTEM_REVIEW_FROM_EMAIL',
   'SYSTEM_REVIEW_ADMIN_EMAIL',
+  'GEMINI_API_KEY',
 ] as const;
 
 export const api = onRequest(

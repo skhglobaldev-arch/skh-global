@@ -16,7 +16,6 @@
     "emulators": "npm run build:functions && firebase emulators:start"
   },
   "dependencies": {
-    "@google/genai": "^1.33.0",
     "@google/generative-ai": "^0.24.1",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
